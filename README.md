@@ -1,17 +1,26 @@
-# 🚀 AION Yield – AI-Orchestrated Money Market Protocol
+<p align="center">
+  <a href="https://chain.link/" target="blank"><img src="https://assets-global.website-files.com/5f6b7190899f41fb70882d08/5f760a499b56c47b8fa74fbb_chainlink-logo.svg" width="200" alt="Chainlink Logo" /></a>
+</p>
 
-[![Hackathon](https://img.shields.io/badge/Hackathon-Chainlink--Convergence-blueviolet)](https://chain.link/)
-[![Network](https://img.shields.io/badge/Network-Base-blue)](https://base.org/)
-[![Identity](https://img.shields.io/badge/Standard-ERC--8004-green)](https://github.com/ethereum/ERCs)
-[![Payments](https://img.shields.io/badge/Protocol-x402-orange)](https://x402.org/)
+<p align="center">
+  <a href="https://chain.link/" target="_blank"><img src="https://img.shields.io/badge/Hackathon-Chainlink--Convergence-blueviolet" alt="Hackathon" /></a>
+  <a href="https://base.org/" target="_blank"><img src="https://img.shields.io/badge/Network-Base-blue" alt="Network" /></a>
+  <a href="https://github.com/ethereum/ERCs" target="_blank"><img src="https://img.shields.io/badge/Standard-ERC--8004-green" alt="Standard" /></a>
+  <a href="https://x402.org/" target="_blank"><img src="https://img.shields.io/badge/Protocol-x402-orange" alt="Protocol" /></a>
+</p>
 
-**AION Yield** is a next-generation decentralized money market protocol that merges **Chainlink CRE orchestration**, **AI-driven yield optimization**, and **autonomous agent payments**. It represents the first step toward a machine-to-machine DeFi economy.
+<p align="center">
+  A next-generation decentralized money market protocol orchestrating <strong>AI-driven yield optimization</strong> and <strong>autonomous agent payments</strong> via Chainlink CRE.
+</p>
+<p align="center">
+  Built for the <strong>Chainlink Convergence Hackathon</strong>.
+</p>
 
 ---
 
 ## 📌 Overview
 
-AION Yield moves beyond passive lending. It utilizes autonomous AI agents to manage capital, forecast liquidation risks, and optimize cross-chain yield. Built for the **Chainlink Convergence Hackathon**, the protocol showcases the power of the **Chainlink Runtime Environment (CRE)** to orchestrate complex workflows between smart contracts, AI models, and off-chain data.
+**AION Yield** moves beyond passive lending. It utilizes autonomous AI agents to manage capital, forecast liquidation risks, and optimize cross-chain yield. The protocol showcases the power of the **Chainlink Runtime Environment (CRE)** to orchestrate complex workflows between smart contracts, AI models, and off-chain data.
 
 ### The "AION" Innovation:
 
