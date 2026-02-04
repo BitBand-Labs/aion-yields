@@ -1,6 +1,6 @@
 # 📋 AION Yield – Development Issues & Task Tracker
 
-> This document tracks development tasks, milestones, and known issues for the **AI-Orchestrated Money Market Yield Protocol (AION Yield)** built for the Chainlink Convergence Hackathon on **Base / Base Sepolia**.
+> This document tracks development tasks, milestones, and known issues for the **AI-Orchestrated Money Market Yield Protocol (AION Yield)** built for the Chainlink Convergence Hackathon on **Base**.
 
 ---
 
@@ -8,7 +8,7 @@
 
 ## ✅ Phase 0 – Project Setup
 - [x] Define protocol architecture
-- [x] Select Base / Base Sepolia as deployment target
+- [x] Select Base as deployment target
 - [x] Define Chainlink service integration scope (CRE, Functions, Automation, CCIP, Data Feeds)
 - [x] Define AI + x402 + ERC-8004 integration architecture
 - [ ] Monorepo setup (contracts, frontend, subgraph, infra)
@@ -68,7 +68,7 @@
 ## 🌐 Core UI
 - [ ] Next.js / React project setup
 - [ ] Wallet connection (RainbowKit / wagmi)
-- [ ] Base & Base Sepolia network switching
+- [ ] Base & Base network switching
 - [ ] Lending dashboard UI
 - [ ] Borrowing dashboard UI
 - [ ] Position health visualization
@@ -130,7 +130,7 @@
 - [ ] Agent payment settlement webhook
 
 ## 🧾 DevOps
-- [ ] RPC provider configuration (Base Sepolia)
+- [ ] RPC provider configuration (Base)
 - [ ] Contract deployment scripts (Foundry/Hardhat)
 - [ ] Environment variable management
 - [ ] Monitoring & logging (OpenTelemetry / custom)
@@ -199,7 +199,7 @@
 - [ ] x402 integration guide
 - [ ] ERC-8004 registry specification
 - [ ] Frontend developer guide
-- [ ] Deployment guide for Base Sepolia
+- [ ] Deployment guide for Base
 
 ---
 
@@ -216,7 +216,7 @@
 ---
 
 # 🌍 BASE ECOSYSTEM ALIGNMENT
-- [ ] Base Sepolia contract deployment
+- [ ] Base contract deployment
 - [ ] Base RPC optimization
 - [ ] Base block explorer integration
 - [ ] Base-native token support
@@ -252,6 +252,6 @@
 ---
 
 **Maintainers:** Taiwo & Team  
-**Target Network:** Base / Base Sepolia  
+**Target Network:** Base  
 **Hackathon:** Chainlink Convergence
 

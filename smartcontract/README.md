@@ -1,6 +1,6 @@
 # 🏦 AION Yield – Smart Contracts
 
-This directory contains the core Solidity protocol for the **AION Yield** money market. The contracts are designed to run on **Base Sepolia** and integrate deeply with the **Chainlink** infrastructure stack.
+This directory contains the core Solidity protocol for the **AION Yield** money market. The contracts are designed to run on **Base** and integrate deeply with the **Chainlink** infrastructure stack.
 
 ---
 
@@ -42,7 +42,7 @@ Create a `.env` file based on `.env.example`:
 ```bash
 cp .env.example .env
 ```
-Ensure you have your **BASE_SEPOLIA_RPC** and **PRIVATE_KEY** configured.
+Ensure you have your **BASE_RPC** and **PRIVATE_KEY** configured.
 
 ### Compilation & Testing
 ```bash
@@ -51,9 +51,9 @@ npx hardhat test
 ```
 
 ### Deployment
-To deploy to Base Sepolia:
+To deploy to Base:
 ```bash
-npx hardhat run scripts/deploy.ts --network baseSepolia
+npx hardhat run scripts/deploy.ts --network base
 ```
 
 ---

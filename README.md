@@ -1,7 +1,7 @@
 # 🚀 AION Yield – AI-Orchestrated Money Market Protocol
 
 [![Hackathon](https://img.shields.io/badge/Hackathon-Chainlink--Convergence-blueviolet)](https://chain.link/)
-[![Network](https://img.shields.io/badge/Network-Base--Sepolia-blue)](https://base.org/)
+[![Network](https://img.shields.io/badge/Network-Base-blue)](https://base.org/)
 [![Identity](https://img.shields.io/badge/Standard-ERC--8004-green)](https://github.com/ethereum/ERCs)
 [![Payments](https://img.shields.io/badge/Protocol-x402-orange)](https://x402.org/)
 
@@ -24,7 +24,7 @@ AION Yield moves beyond passive lending. It utilizes autonomous AI agents to man
 ## 🏗️ Technical Architecture
 
 ```mermaid
-graph TD
+flowchart TD
     User((User)) -->|Deposit/Borrow| MM[Money Market Contracts]
     MM -->|Trigger| CRE[Chainlink CRE]
     CRE -->|Orchestrate| AI[AI Agent Pool]
@@ -85,7 +85,7 @@ This is a monorepo containing the full protocol stack:
 
 - Node.js v18+
 - Hardhat / Foundry
-- Base Sepolia RPC & Testnet ETH
+- Base RPC & Testnet ETH
 
 ### Installation
 
@@ -110,7 +110,7 @@ This is a monorepo containing the full protocol stack:
 ## 🗺️ Roadmap
 
 - [x] **Phase 0:** Project architecture & repository scaffolding.
-- [ ] **Phase 1:** Core Lending & Borrowing on Base Sepolia.
+- [ ] **Phase 1:** Core Lending & Borrowing on Base.
 - [ ] **Phase 2:** Chainlink CRE integration for AI orchestration.
 - [ ] **Phase 3:** x402 Payment middleware implementation.
 - [ ] **Phase 4:** ERC-8004 Reputation dashboard.
