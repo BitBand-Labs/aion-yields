@@ -1,0 +1,257 @@
+# 📋 AION Yield – Development Issues & Task Tracker
+
+> This document tracks development tasks, milestones, and known issues for the **AI-Orchestrated Money Market Yield Protocol (AION Yield)** built for the Chainlink Convergence Hackathon on **Base / Base Sepolia**.
+
+---
+
+# 🚀 High Priority Milestones
+
+## ✅ Phase 0 – Project Setup
+- [x] Define protocol architecture
+- [x] Select Base / Base Sepolia as deployment target
+- [x] Define Chainlink service integration scope (CRE, Functions, Automation, CCIP, Data Feeds)
+- [x] Define AI + x402 + ERC-8004 integration architecture
+- [ ] Monorepo setup (contracts, frontend, subgraph, infra)
+- [ ] CI/CD pipeline (GitHub Actions)
+
+---
+
+# 🧠 SMART CONTRACTS (Core Protocol)
+
+## 🏦 Money Market Core
+- [ ] Implement LendingPool contract
+- [ ] Implement Borrowing logic
+- [ ] Implement Interest Rate Model (kink model or AI-adjusted curve)
+- [ ] Implement Collateral management
+- [ ] Implement Liquidation Engine
+- [ ] Implement Health Factor calculations
+- [ ] Add protocol fees module
+- [ ] Add governance-controlled parameters
+
+## 📊 Chainlink Integration
+- [ ] Integrate Chainlink Data Feeds for asset pricing
+- [ ] Add price oracle adapter layer
+- [ ] Implement fallback oracle logic
+- [ ] Integrate Chainlink Automation for liquidations
+- [ ] Integrate Chainlink Functions consumer contract
+- [ ] Implement CRE-compatible execution hooks
+- [ ] CCIP liquidity bridge adapter (mock for MVP)
+
+## 🤖 AI Agent Registry (ERC-8004 Inspired)
+- [ ] Agent Identity Registry contract
+- [ ] Agent Reputation Scoring contract
+- [ ] Agent Staking & Slashing logic
+- [ ] Agent Selection Algorithm (top-N ranking)
+- [ ] Governance-controlled agent whitelist
+
+## 💸 x402 Payment Integration (On-chain Hooks)
+- [ ] AI Payment Escrow contract
+- [ ] Payment settlement logic (USDC / native token)
+- [ ] AI agent revenue distribution contract
+- [ ] Event emission for AI inference payments
+
+## 🧪 Testing & Security
+- [ ] Unit tests for LendingPool
+- [ ] Unit tests for Borrowing
+- [ ] Oracle manipulation tests
+- [ ] Liquidation edge case tests
+- [ ] Chainlink Functions mock tests
+- [ ] Automation simulation tests
+- [ ] Gas optimization pass
+- [ ] Static analysis (Slither / MythX)
+- [ ] Initial security review checklist
+
+---
+
+# 🎨 FRONTEND (User & Developer Dashboard)
+
+## 🌐 Core UI
+- [ ] Next.js / React project setup
+- [ ] Wallet connection (RainbowKit / wagmi)
+- [ ] Base & Base Sepolia network switching
+- [ ] Lending dashboard UI
+- [ ] Borrowing dashboard UI
+- [ ] Position health visualization
+- [ ] Liquidation risk indicators
+
+## 🤖 AI Yield Dashboard
+- [ ] AI recommended allocation UI
+- [ ] AI risk score display
+- [ ] Yield optimization visualizations
+- [ ] AI agent leaderboard (ERC-8004 reputation)
+
+## 💸 AI Marketplace UI (x402)
+- [ ] AI agent marketplace listing page
+- [ ] Pay-per-inference UI
+- [ ] Transaction history for AI payments
+- [ ] Revenue dashboard for AI providers
+
+## 📊 Analytics & Monitoring
+- [ ] Protocol TVL dashboard
+- [ ] APY charts
+- [ ] Cross-chain liquidity visualization
+- [ ] Chainlink CRE workflow logs viewer
+
+## 🌍 Subgraph + IPFS Integration
+### Subgraph (Indexing)
+- [ ] Deploy subgraph for LendingPool events
+- [ ] Index borrowing positions
+- [ ] Index liquidation events
+- [ ] Index AI agent registry events
+- [ ] GraphQL query layer for frontend
+
+### IPFS (Storage)
+- [ ] Store AI model metadata on IPFS
+- [ ] Store agent metadata & descriptions
+- [ ] Store UI configuration files (optional)
+- [ ] IPFS gateway fallback configuration
+
+👉 **Subgraph and IPFS are treated as Frontend Data Infrastructure Layer.**
+
+---
+
+# ⚙️ INFRASTRUCTURE & ORCHESTRATION
+
+## 🌐 Chainlink CRE Workflows
+- [ ] Define CRE workflow for AI inference calls
+- [ ] Define CRE workflow for liquidation automation
+- [ ] Define CRE workflow for cross-chain liquidity routing
+- [ ] CRE workflow observability & logging
+
+## 🌍 Chainlink Functions Backend
+- [ ] AI API wrapper service (FastAPI / Node)
+- [ ] Risk model endpoint
+- [ ] Yield prediction endpoint
+- [ ] Macro data ingestion endpoint
+
+## 💸 x402 Middleware Service
+- [ ] HTTP 402 payment gateway middleware
+- [ ] USDC payment verification service
+- [ ] Agent payment settlement webhook
+
+## 🧾 DevOps
+- [ ] RPC provider configuration (Base Sepolia)
+- [ ] Contract deployment scripts (Foundry/Hardhat)
+- [ ] Environment variable management
+- [ ] Monitoring & logging (OpenTelemetry / custom)
+
+---
+
+# 🧩 FEATURE ROADMAP
+
+## Phase 1 – MVP (Hackathon)
+- [ ] Basic lending & borrowing
+- [ ] Chainlink Data Feeds integration
+- [ ] CRE orchestration demo
+- [ ] AI prediction via Functions
+- [ ] Mock x402 payment flow
+- [ ] ERC-8004 skeleton registry
+
+## Phase 2 – Enhanced Protocol
+- [ ] Cross-chain lending via CCIP
+- [ ] AI-driven liquidation prevention
+- [ ] Multi-agent AI competition
+- [ ] DAO governance module
+- [ ] Insurance fund
+
+## Phase 3 – Advanced Research
+- [ ] zk-verified AI inference
+- [ ] Decentralized AI compute marketplace
+- [ ] Fully autonomous capital allocator agent
+- [ ] Institutional onboarding via DataLink + DTA
+
+---
+
+# 🔒 SECURITY & RISK TRACKING
+
+## Smart Contract Risks
+- [ ] Oracle manipulation
+- [ ] Liquidation race conditions
+- [ ] Flash loan exploits
+- [ ] Cross-chain message spoofing
+- [ ] Governance capture risk
+
+## AI Risks
+- [ ] Model hallucination affecting capital allocation
+- [ ] Sybil AI agents
+- [ ] Reputation gaming
+- [ ] Adversarial ML attacks
+
+## x402 Risks
+- [ ] Payment replay attacks
+- [ ] Agent payment fraud
+- [ ] Escrow insolvency
+
+---
+
+# 🐛 KNOWN ISSUES
+- [ ] None identified yet (MVP)
+- [ ] Potential oracle latency during market spikes
+- [ ] AI latency affecting liquidation decisions
+- [ ] Subgraph indexing lag
+
+---
+
+# 📚 DOCUMENTATION TASKS
+- [ ] Smart contract API docs
+- [ ] Chainlink CRE workflow documentation
+- [ ] AI architecture whitepaper
+- [ ] x402 integration guide
+- [ ] ERC-8004 registry specification
+- [ ] Frontend developer guide
+- [ ] Deployment guide for Base Sepolia
+
+---
+
+# 📈 METRICS TO TRACK
+- [ ] Total Value Locked (TVL)
+- [ ] Borrowed volume
+- [ ] Liquidation events
+- [ ] AI inference count
+- [ ] AI agent revenue paid (x402)
+- [ ] Chainlink workflow executions
+- [ ] Cross-chain transfers via CCIP
+- [ ] User retention
+
+---
+
+# 🌍 BASE ECOSYSTEM ALIGNMENT
+- [ ] Base Sepolia contract deployment
+- [ ] Base RPC optimization
+- [ ] Base block explorer integration
+- [ ] Base-native token support
+
+---
+
+# 🧠 TECHNICAL DEBT
+- [ ] Modularize contract architecture
+- [ ] Optimize gas usage
+- [ ] Refactor AI interface layer
+- [ ] Improve error handling
+- [ ] Add upgradeability (UUPS/Beacon)
+- [ ] Improve CRE workflow reliability
+
+---
+
+# 🤝 TEAM COORDINATION
+- [ ] Weekly sprint planning
+- [ ] Task assignment to frontend / backend / infra
+- [ ] Hackathon submission checklist
+- [ ] Demo script & pitch deck
+
+---
+
+# 🎯 SUCCESS CRITERIA (Hackathon)
+- [ ] Working DeFi lending protocol demo
+- [ ] Live Chainlink CRE workflow execution
+- [ ] AI model integrated via Functions
+- [ ] Mock x402 payment flow demonstrated
+- [ ] ERC-8004 agent registry contract deployed
+- [ ] Frontend dashboard showing AI-driven yield optimization
+
+---
+
+**Maintainers:** Taiwo & Team  
+**Target Network:** Base / Base Sepolia  
+**Hackathon:** Chainlink Convergence
+
