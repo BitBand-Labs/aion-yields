@@ -1,3 +1,5 @@
+![AION Yield Banner](https://placehold.co/1200x400/212121/ffffff/png?text=AION+Yield)
+
 # 🚀 AION Yield – AI-Orchestrated Money Market Protocol
 
 [![Hackathon](https://img.shields.io/badge/Hackathon-Chainlink--Convergence-blueviolet)](https://chain.link/)
