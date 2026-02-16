@@ -1,0 +1,20 @@
+{
+  "name": "aion-yield-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "smartcontract",
+    "subgraph"
+  ],
+  "scripts": {
+    "dev:frontend": "npm run dev --workspace=frontend",
+    "build:frontend": "npm run build --workspace=frontend",
+    "compile:contracts": "npm run compile --workspace=smartcontract",
+    "test:contracts": "npm run test --workspace=smartcontract",
+    "deploy:contracts": "npm run deploy --workspace=smartcontract"
+  },
+  "devDependencies": {
+    "prettier": "^3.0.0"
+  }
+}
