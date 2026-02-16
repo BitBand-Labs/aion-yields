@@ -20,7 +20,7 @@
 
 ## 🏦 Money Market Core
 - [x] Implement LendingPool contract
-- [ ] Implement Borrowing logic
+- [x] Implement Borrowing logic
 - [ ] Implement Interest Rate Model (kink model or AI-adjusted curve)
 - [ ] Implement Collateral management
 - [ ] Implement Liquidation Engine
