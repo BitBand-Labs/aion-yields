@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "../interfaces/IAToken.sol";
 
 /**
  * @title LendingPool
@@ -83,5 +84,30 @@ contract LendingPool is ReentrancyGuard, Ownable {
         reservesListArray.push(asset);
         
         emit ReserveInitialized(asset, aTokenAddress, interestRateStrategyAddress);
+    }
+
+    /**
+     * @notice Deposits an `amount` of underlying asset into the reserve, receiving in return overlying aTokens.
+     */
+    function deposit(
+        address asset, 
+        uint256 amount, 
+        address onBehalfOf, 
+        uint16 referralCode
+    ) external nonReentrant {
+        ReserveData storage reserve = reserves[asset];
+        
+        require(amount > 0, "INVALID_AMOUNT");
+        require(reserve.isActive, "RESERVE_INACTIVE");
+        require(!reserve.isFrozen, "RESERVE_FROZEN");
+
+        // TODO: Update state (accrue interest) before changing balances
+        // _updateState(asset);
+
+        // Mint aTokens to the user (or onBehalfOf)
+        bool success = IAToken(reserve.aTokenAddress).mint(onBehalfOf, amount, reserve.liquidityIndex);
+        require(success, "ATOKEN_MINT_FAILED");
+
+        emit Deposit(asset, msg.sender, onBehalfOf, amount, referralCode);
     }
 }
