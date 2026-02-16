@@ -11,7 +11,7 @@
 - [x] Select Base as deployment target
 - [x] Define Chainlink service integration scope (CRE, Functions, Automation, CCIP, Data Feeds)
 - [x] Define AI + x402 + ERC-8004 integration architecture
-- [ ] Monorepo setup (contracts, frontend, subgraph, infra)
+- [x] Monorepo setup (contracts, frontend, subgraph, infra)
 - [ ] CI/CD pipeline (GitHub Actions)
 
 ---
