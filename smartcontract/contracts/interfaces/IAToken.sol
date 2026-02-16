@@ -8,5 +8,6 @@ interface IAToken is IERC20 {
     function burn(address user, address receiverOfUnderlying, uint256 amount, uint256 index) external;
     function mintToTreasury(uint256 amount, uint256 index) external;
     function transferOnLiquidation(address from, address to, uint256 value) external;
+    function transferUnderlyingTo(address user, uint256 amount) external returns (uint256);
     function balanceOf(address user) external view returns (uint256);
 }

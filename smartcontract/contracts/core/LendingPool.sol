@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "../interfaces/IAToken.sol";
+import "../interfaces/IVariableDebtToken.sol";
 
 /**
  * @title LendingPool
@@ -131,5 +132,50 @@ contract LendingPool is ReentrancyGuard, Ownable {
         emit Withdraw(asset, user, to, amount);
         
         return amount;
+    }
+
+    /**
+     * @notice Allows users to borrow a specific `amount` of the reserve underlying asset, provided that the borrower
+     * already deposited enough collateral, or he was given enough delegation allowance by another user
+     * @param asset The address of the underlying asset to borrow
+     * @param amount The amount to be borrowed
+     * @param interestRateMode The interest rate mode at which the user wants to borrow: 2 for Variable
+     * @param referralCode Code used to register the integrator originating the operation, for potential rewards.
+     * @param onBehalfOf Address of the user who will receive the debt. Tokens will be received by `msg.sender`
+     */
+    function borrow(
+        address asset,
+        uint256 amount,
+        uint256 interestRateMode,
+        uint16 referralCode,
+        address onBehalfOf
+    ) external nonReentrant {
+        ReserveData storage reserve = reserves[asset];
+        
+        // 1. Validation
+        require(reserve.isActive, "RESERVE_INACTIVE");
+        require(!reserve.isFrozen, "RESERVE_FROZEN");
+        require(amount > 0, "INVALID_AMOUNT");
+        require(interestRateMode == 2, "ONLY_VARIABLE_DEBT_SUPPORTED"); // MVP: Only variable debt
+        
+        // 2. Health Factor Check 
+        // TODO: Implement getUserAccountData and check LTV
+        // require(hf >= 1e18, "HEALTH_FACTOR_LOWER_THAN_LIQUIDATION_THRESHOLD");
+
+        // 3. Mint Debt
+        // Mint variable debt tokens to onBehalfOf
+        bool success = IVariableDebtToken(reserve.variableDebtTokenAddress).mint(
+            onBehalfOf, 
+            onBehalfOf, 
+            amount, 
+            reserve.variableBorrowIndex
+        );
+        require(success, "DEBT_MINT_FAILED");
+
+        // 4. Transfer Asset
+        // Transfer underlying from aToken (liquidity) to msg.sender (borrower)
+        IAToken(reserve.aTokenAddress).transferUnderlyingTo(msg.sender, amount);
+        
+        emit Borrow(asset, msg.sender, onBehalfOf, amount, interestRateMode, reserve.currentVariableBorrowRate, referralCode);
     }
 }
