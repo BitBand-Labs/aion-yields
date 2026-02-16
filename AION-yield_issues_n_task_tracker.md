@@ -19,7 +19,7 @@
 # 🧠 SMART CONTRACTS (Core Protocol)
 
 ## 🏦 Money Market Core
-- [ ] Implement LendingPool contract
+- [x] Implement LendingPool contract
 - [ ] Implement Borrowing logic
 - [ ] Implement Interest Rate Model (kink model or AI-adjusted curve)
 - [ ] Implement Collateral management
