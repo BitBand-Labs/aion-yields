@@ -5,7 +5,6 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "../interfaces/IAToken.sol";
 
 /**
  * @title LendingPool
@@ -84,67 +83,5 @@ contract LendingPool is ReentrancyGuard, Ownable {
         reservesListArray.push(asset);
         
         emit ReserveInitialized(asset, aTokenAddress, interestRateStrategyAddress);
-    }
-
-    /**
-     * @notice Deposits an `amount` of underlying asset into the reserve, receiving in return overlying aTokens.
-     * @param asset The address of the underlying asset to deposit
-     * @param amount The amount to be deposited
-     * @param onBehalfOf The address that will receive the aTokens, same as msg.sender if the user
-     *   wants to receive them on his own wallet, or a different address if the beneficiary of aTokens
-     *   is a different wallet
-     * @param referralCode Code used to register the integrator originating the operation, for potential rewards.
-     *   0 if the action is executed directly by the user, without any middle-man
-     */
-    function deposit(
-        address asset, 
-        uint256 amount, 
-        address onBehalfOf, 
-        uint16 referralCode
-    ) external nonReentrant {
-        ReserveData storage reserve = reserves[asset];
-        
-        require(amount > 0, "INVALID_AMOUNT");
-        require(reserve.isActive, "RESERVE_INACTIVE");
-        require(!reserve.isFrozen, "RESERVE_FROZEN");
-
-        // TODO: Update state (accrue interest) before changing balances
-        // _updateState(asset);
-
-        // Mint aTokens to the user (or onBehalfOf)
-        // The aToken contract handles the transferFrom of the underlying asset
-        bool success = IAToken(reserve.aTokenAddress).mint(onBehalfOf, amount, reserve.liquidityIndex);
-        require(success, "ATOKEN_MINT_FAILED");
-
-        emit Deposit(asset, msg.sender, onBehalfOf, amount, referralCode);
-    }
-
-    /**
-     * @notice Withdraws an `amount` of underlying asset from the reserve, burning the equivalent aTokens owned
-     * E.g. User has 100 aUSDC, calls withdraw(USDC, 100), gets 100 USDC.
-     * @param asset The address of the underlying asset to withdraw
-     * @param amount The underlying amount to be withdrawn
-     * @param to The address that will receive the underlying, same as msg.sender if the user
-     *   wants to receive it on his own wallet, or a different address if the beneficiary is a
-     *   different wallet
-     * @return The final amount withdrawn
-     */
-    function withdraw(address asset, uint256 amount, address to) external nonReentrant returns (uint256) {
-        ReserveData storage reserve = reserves[asset];
-        
-        require(amount > 0, "INVALID_AMOUNT");
-        require(reserve.isActive, "RESERVE_INACTIVE");
-        
-        address user = msg.sender;
-        
-        // TODO: Update state (accrue interest)
-        // _updateState(asset);
-        
-        // Burn aTokens. The aToken contract handles the transfer of the underlying asset to `to`
-        IAToken(reserve.aTokenAddress).burn(user, to, amount, reserve.liquidityIndex);
-        
-        emit Withdraw(asset, user, to, amount);
-        
-        return amount;
     }
 }
