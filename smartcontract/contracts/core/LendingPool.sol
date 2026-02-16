@@ -110,4 +110,26 @@ contract LendingPool is ReentrancyGuard, Ownable {
 
         emit Deposit(asset, msg.sender, onBehalfOf, amount, referralCode);
     }
+
+    /**
+     * @notice Withdraws an `amount` of underlying asset from the reserve, burning the equivalent aTokens owned
+     */
+    function withdraw(address asset, uint256 amount, address to) external nonReentrant returns (uint256) {
+        ReserveData storage reserve = reserves[asset];
+        
+        require(amount > 0, "INVALID_AMOUNT");
+        require(reserve.isActive, "RESERVE_INACTIVE");
+        
+        address user = msg.sender;
+        
+        // TODO: Update state (accrue interest)
+        // _updateState(asset);
+        
+        // Burn aTokens. The aToken contract handles the transfer of the underlying asset to `to`
+        IAToken(reserve.aTokenAddress).burn(user, to, amount, reserve.liquidityIndex);
+        
+        emit Withdraw(asset, user, to, amount);
+        
+        return amount;
+    }
 }
