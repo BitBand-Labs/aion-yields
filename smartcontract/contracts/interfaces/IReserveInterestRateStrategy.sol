@@ -1,15 +1,28 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-interface IReserveInterestRateStrategy {
+/**
+ * @title IInterestRateModel
+ * @notice Interface for the interest rate calculation model.
+ */
+interface IInterestRateModel {
     function calculateInterestRates(
-        address reserve,
-        uint256 availableLiquidity,
-        uint256 totalStableDebt,
-        uint256 totalVariableDebt,
-        uint256 averageStableBorrowRate,
-        uint256 reserveFactor,
-        address reserveAddress,
-        address aTokenAddress
-    ) external view returns (uint256, uint256, uint256);
+        address asset,
+        uint256 totalSupply,
+        uint256 totalBorrow,
+        uint256 reserveFactor
+    ) external view returns (uint256 liquidityRate, uint256 variableBorrowRate);
+
+    function getUtilizationRate(
+        uint256 totalSupply,
+        uint256 totalBorrow
+    ) external pure returns (uint256);
+
+    function setRateParams(
+        address asset,
+        uint256 baseRate,
+        uint256 rateSlope1,
+        uint256 rateSlope2,
+        uint256 optimalUtilization
+    ) external;
 }
