@@ -1,8 +1,10 @@
 'use client'
 
 import React from 'react'
-import { Bell } from 'lucide-react'
+import { Bell, Sun, Moon } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useTheme } from 'next-themes'
+import { useEffect, useState } from 'react'
 
 interface HeaderProps {
   title: string
@@ -10,6 +12,14 @@ interface HeaderProps {
 }
 
 export function Header({ title, subtitle }: HeaderProps) {
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  // Avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   return (
     <header
       style={{
@@ -18,10 +28,10 @@ export function Header({ title, subtitle }: HeaderProps) {
         justifyContent: 'space-between',
         padding: '0 24px',
         height: 'var(--header-height)',
-        background: 'rgba(255, 255, 255, 0.6)',
+        background: 'var(--color-bg)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(0, 0, 0, 0.05)',
+        borderBottom: '1px solid var(--color-border)',
       }}
     >
       {/* Page title */}
@@ -110,6 +120,28 @@ export function Header({ title, subtitle }: HeaderProps) {
             }}
           />
         </button>
+
+        {/* Theme toggle */}
+        {mounted && (
+          <button
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            className="btn-ghost btn-icon"
+            style={{
+              width: 36,
+              height: 36,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 'var(--radius-md)',
+              border: 'none',
+              cursor: 'pointer',
+              background: 'transparent',
+              color: 'var(--color-text-secondary)',
+            }}
+          >
+            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
+        )}
 
         {/* Wallet connect (Reown AppKit Web Component) */}
         <appkit-button size="sm" />

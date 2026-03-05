@@ -57,7 +57,7 @@ export default function BorrowPage() {
             marginBottom: 'var(--space-8)', 
             padding: '32px 40px',
             background: 'var(--color-surface-dark)',
-            color: '#fff',
+            color: 'var(--color-text-primary)',
             position: 'relative',
             overflow: 'hidden'
           }}
@@ -85,7 +85,7 @@ export default function BorrowPage() {
             </div>
           </div>
 
-          <div style={{ width: '100%', height: 12, background: 'rgba(255,255,255,0.05)', borderRadius: 6, overflow: 'hidden', marginBottom: 'var(--space-6)', border: '1px solid rgba(255,255,255,0.05)' }}>
+          <div style={{ width: '100%', height: 12, background: 'var(--overlay-light)', borderRadius: 6, overflow: 'hidden', marginBottom: 'var(--space-6)', border: '1px solid var(--overlay-light)' }}>
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${utilization}%` }}
@@ -144,7 +144,7 @@ export default function BorrowPage() {
                       <tr key={pos.asset}>
                         <td>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                            <div style={{ width: 32, height: 32, borderRadius: 10, background: assetColors[pos.asset] || 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: '#fff' }}>
+                            <div style={{ width: 32, height: 32, borderRadius: 10, background: assetColors[pos.asset] || 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: 'var(--color-text-primary)' }}>
                               {pos.asset.slice(0, 2)}
                             </div>
                             <span style={{ fontWeight: 700, fontSize: 14 }}>{pos.asset}</span>
@@ -204,7 +204,7 @@ export default function BorrowPage() {
                       <tr key={pos.asset}>
                         <td>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                            <div style={{ width: 32, height: 32, borderRadius: 10, background: assetColors[pos.asset] || 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: '#fff' }}>
+                            <div style={{ width: 32, height: 32, borderRadius: 10, background: assetColors[pos.asset] || 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: 'var(--color-text-primary)' }}>
                               {pos.asset.slice(0, 2)}
                             </div>
                             <span style={{ fontWeight: 700, fontSize: 14 }}>{pos.asset}</span>

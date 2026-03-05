@@ -76,7 +76,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             fontWeight: 700,
             fontSize: 14,
             letterSpacing: '0.05em',
-            color: '#fff',
+            color: 'var(--color-text-primary)',
             flexShrink: 0,
           }}
         >

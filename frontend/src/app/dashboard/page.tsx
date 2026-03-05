@@ -56,12 +56,12 @@ export default function DashboardPage() {
             padding: '32px 40px',
             borderRadius: 'var(--radius-lg)',
             background: 'linear-gradient(135deg, var(--color-primary), var(--color-primary-light))',
-            color: '#fff',
+            color: 'var(--color-text-primary)',
             marginBottom: 'var(--space-8)',
             overflow: 'hidden',
           }}
         >
-          <div style={{ position: 'absolute', top: '-20%', right: '-5%', width: '300px', height: '300px', background: 'rgba(255,255,255,0.1)', borderRadius: '50%', filter: 'blur(60px)' }} />
+          <div style={{ position: 'absolute', top: '-20%', right: '-5%', width: '300px', height: '300px', background: 'var(--overlay-medium)', borderRadius: '50%', filter: 'blur(60px)' }} />
           <div style={{ position: 'relative', zIndex: 1, maxWidth: '600px' }}>
             <h2 style={{ fontSize: 24, fontWeight: 700, margin: '0 0 12px', letterSpacing: '-0.02em' }}>
               Welcome back, Alpha Optimizer
@@ -70,10 +70,10 @@ export default function DashboardPage() {
               Your AI agents have successfully prevented 2 liquidation risks in the last 24 hours. Net portfolio yield updated to 4.20% APY.
             </p>
             <div style={{ display: 'flex', gap: 12 }}>
-              <button className="btn btn-secondary btn-sm" style={{ border: 'none', background: 'rgba(255,255,255,0.2)', color: '#fff', backdropFilter: 'blur(10px)' }}>
+              <button className="btn btn-secondary btn-sm" style={{ border: 'none', background: 'var(--overlay-strong)', color: 'var(--color-text-primary)', backdropFilter: 'blur(10px)' }}>
                 View Agent Logs
               </button>
-              <button className="btn btn-ghost btn-sm" style={{ color: '#fff' }}>
+              <button className="btn btn-ghost btn-sm" style={{ color: 'var(--color-text-primary)' }}>
                 Strategy Settings <ChevronRight size={14} />
               </button>
             </div>

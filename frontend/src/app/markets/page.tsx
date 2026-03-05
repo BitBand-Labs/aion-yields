@@ -177,7 +177,7 @@ export default function MarketsPage() {
                             justifyContent: 'center',
                             fontSize: 13,
                             fontWeight: 700,
-                            color: '#fff',
+                            color: 'var(--color-text-primary)',
                             boxShadow: `0 4px 12px ${assetColors[market.symbol]}33`,
                           }}
                         >
@@ -288,7 +288,7 @@ export default function MarketsPage() {
                   justifyContent: 'center',
                   fontSize: 16,
                   fontWeight: 700,
-                  color: '#fff',
+                  color: 'var(--color-text-primary)',
                 }}
               >
                 {selectedAsset.symbol.slice(0, 2)}

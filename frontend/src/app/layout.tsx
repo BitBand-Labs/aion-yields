@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Web3Providers } from "./providers";
+import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
   applicationName: "AION Yield",
@@ -59,7 +60,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
-        <Web3Providers>{children}</Web3Providers>
+        <Web3Providers>
+          <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+            {children}
+          </ThemeProvider>
+        </Web3Providers>
       </body>
     </html>
   );
