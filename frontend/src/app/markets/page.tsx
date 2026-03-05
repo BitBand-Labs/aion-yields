@@ -4,7 +4,8 @@ import React, { useState } from 'react'
 import { AppShell } from '@/components/layout/AppShell'
 import { Badge } from '@/components/ui/Badge'
 import { ActionModal } from '@/components/ui/ActionModal'
-import { ArrowDownLeft, ArrowUpRight, ExternalLink } from 'lucide-react'
+import { ArrowDownLeft, ArrowUpRight, ExternalLink, Globe } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 const markets = [
   {
@@ -65,160 +66,201 @@ export default function MarketsPage() {
 
   return (
     <AppShell>
-      <div className="animate-fade-in">
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: { opacity: 0 },
+          visible: {
+            opacity: 1,
+            transition: { staggerChildren: 0.1 }
+          }
+        }}
+      >
+        <motion.div 
+          variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}
+          style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-8)' }}
+        >
+          <div>
+            <h2 className="heading-md" style={{ margin: '0 0 var(--space-2)', fontWeight: 700, letterSpacing: '-0.02em' }}>
+              Financial Markets
+            </h2>
+            <p className="text-secondary" style={{ margin: 0 }}>
+              Real-time liquidity monitoring on Base Mainnet
+            </p>
+          </div>
+          <div style={{ display: 'flex', gap: 12 }}>
+             <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', borderRadius: 8, background: 'var(--color-success-muted)', color: 'var(--color-success)', fontSize: 13, fontWeight: 600 }}>
+                 <Globe size={14} /> Network Stable
+             </div>
+          </div>
+        </motion.div>
+
         {/* Summary row */}
         <div
           style={{
-            display: 'flex',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
             gap: 'var(--space-6)',
-            marginBottom: 'var(--space-6)',
-            flexWrap: 'wrap',
+            marginBottom: 'var(--space-8)',
           }}
         >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <span className="text-label">Total Markets</span>
-            <span style={{ fontSize: 20, fontWeight: 600 }}>{markets.length}</span>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <span className="text-label">Total Supply</span>
-            <span style={{ fontSize: 20, fontWeight: 600 }}>$24.8M</span>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <span className="text-label">Total Borrow</span>
-            <span style={{ fontSize: 20, fontWeight: 600 }}>$14.2M</span>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <span className="text-label">Avg Utilization</span>
-            <span style={{ fontSize: 20, fontWeight: 600 }}>46.9%</span>
-          </div>
+          {[
+            { label: 'Total Markets', value: markets.length, icon: null },
+            { label: 'Total Supply', value: '$24.8M', icon: null },
+            { label: 'Total Borrow', value: '$14.2M', icon: null },
+            { label: 'Avg Utilization', value: '46.9%', icon: null },
+          ].map((stat, i) => (
+            <motion.div 
+              key={stat.label}
+              variants={{ hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1 } }}
+              className="card"
+              style={{ padding: '20px 24px' }}
+            >
+              <span className="text-label" style={{ marginBottom: 8, display: 'block' }}>{stat.label}</span>
+              <span style={{ fontSize: 24, fontWeight: 700, color: 'var(--color-text-primary)' }}>{stat.value}</span>
+            </motion.div>
+          ))}
         </div>
 
         {/* Markets table */}
-        <div
+        <motion.div
+          variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
           className="card-flat"
           style={{ padding: 0, overflow: 'hidden' }}
         >
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Asset</th>
-                <th>Price</th>
-                <th>Supply APY</th>
-                <th>Borrow APY</th>
-                <th>Total Supplied</th>
-                <th>Total Borrowed</th>
-                <th>Utilization</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {markets.map((market) => (
-                <tr
-                  key={market.symbol}
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => setSelectedAsset(market)}
-                >
-                  <td>
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 12,
-                      }}
-                    >
+          <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+             <h3 className="heading-sm" style={{ margin: 0, fontWeight: 700 }}>Available Markets</h3>
+             <input 
+               type="text" 
+               placeholder="Search assets..." 
+               style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid var(--color-border)', fontSize: 13, background: 'var(--color-bg)', outline: 'none', width: 240 }} 
+             />
+          </div>
+          <div style={{ overflowX: 'auto' }}>
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Asset</th>
+                  <th>Price</th>
+                  <th>Supply APY</th>
+                  <th>Borrow APY</th>
+                  <th>Total Supplied</th>
+                  <th>Total Borrowed</th>
+                  <th>Utilization</th>
+                  <th style={{ textAlign: 'right' }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {markets.map((market) => (
+                  <tr
+                    key={market.symbol}
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => setSelectedAsset(market)}
+                  >
+                    <td>
                       <div
                         style={{
-                          width: 32,
-                          height: 32,
-                          borderRadius: 'var(--radius-full)',
-                          background: assetColors[market.symbol] || 'var(--color-primary)',
                           display: 'flex',
                           alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: 12,
-                          fontWeight: 700,
-                          color: '#fff',
-                        }}
-                      >
-                        {market.symbol.slice(0, 2)}
-                      </div>
-                      <div>
-                        <p style={{ fontWeight: 500, margin: 0, fontSize: 14 }}>
-                          {market.asset}
-                        </p>
-                        <p className="text-caption" style={{ margin: 0, fontSize: 11 }}>
-                          {market.symbol}
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-                  <td style={{ fontFamily: 'var(--font-mono)', fontSize: 13 }}>
-                    {market.price}
-                  </td>
-                  <td>
-                    <span style={{ color: 'var(--color-success)', fontWeight: 500 }}>
-                      {market.supplyAPY}
-                    </span>
-                  </td>
-                  <td>
-                    <span style={{ color: 'var(--color-warning)', fontWeight: 500 }}>
-                      {market.borrowAPY}
-                    </span>
-                  </td>
-                  <td style={{ fontFamily: 'var(--font-mono)', fontSize: 13 }}>
-                    {market.totalSupplied}
-                  </td>
-                  <td style={{ fontFamily: 'var(--font-mono)', fontSize: 13 }}>
-                    {market.totalBorrowed}
-                  </td>
-                  <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <div
-                        style={{
-                          width: 48,
-                          height: 4,
-                          background: 'var(--color-border)',
-                          borderRadius: 2,
-                          overflow: 'hidden',
+                          gap: 12,
                         }}
                       >
                         <div
                           style={{
-                            width: market.utilization,
-                            height: '100%',
-                            background:
-                              parseFloat(market.utilization) > 80
-                                ? 'var(--color-error)'
-                                : parseFloat(market.utilization) > 60
-                                ? 'var(--color-warning)'
-                                : 'var(--color-primary)',
-                            borderRadius: 2,
+                            width: 36,
+                            height: 36,
+                            borderRadius: 10,
+                            background: assetColors[market.symbol] || 'var(--color-primary)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: 13,
+                            fontWeight: 700,
+                            color: '#fff',
+                            boxShadow: `0 4px 12px ${assetColors[market.symbol]}33`,
                           }}
-                        />
+                        >
+                          {market.symbol.slice(0, 2)}
+                        </div>
+                        <div>
+                          <p style={{ fontWeight: 600, margin: '0 0 2px', fontSize: 14 }}>
+                            {market.asset}
+                          </p>
+                          <p className="text-caption" style={{ margin: 0, fontSize: 11, fontWeight: 600, color: 'var(--color-text-tertiary)' }}>
+                            {market.symbol}
+                          </p>
+                        </div>
                       </div>
-                      <span style={{ fontSize: 13, fontWeight: 500 }}>
-                        {market.utilization}
+                    </td>
+                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 500 }}>
+                      {market.price}
+                    </td>
+                    <td>
+                      <span style={{ color: 'var(--color-success)', fontWeight: 700, fontSize: 14 }}>
+                        {market.supplyAPY}
                       </span>
-                    </div>
-                  </td>
-                  <td>
-                    <div style={{ display: 'flex', gap: 6 }}>
-                      <button className="btn btn-sm btn-primary">
-                        <ArrowDownLeft size={14} />
-                        Supply
-                      </button>
-                      <button className="btn btn-sm btn-secondary">
-                        <ArrowUpRight size={14} />
-                        Borrow
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                    </td>
+                    <td>
+                      <span style={{ color: 'var(--color-warning)', fontWeight: 700, fontSize: 14 }}>
+                        {market.borrowAPY}
+                      </span>
+                    </td>
+                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 13, color: 'var(--color-text-secondary)', fontWeight: 500 }}>
+                      {market.totalSupplied}
+                    </td>
+                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 13, color: 'var(--color-text-secondary)', fontWeight: 500 }}>
+                      {market.totalBorrowed}
+                    </td>
+                    <td>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <div
+                          style={{
+                            width: 48,
+                            height: 6,
+                            background: 'var(--color-bg)',
+                            borderRadius: 3,
+                            overflow: 'hidden',
+                          }}
+                        >
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: market.utilization }}
+                            transition={{ duration: 1, ease: 'easeOut' }}
+                            style={{
+                              height: '100%',
+                              background:
+                                parseFloat(market.utilization) > 80
+                                  ? 'var(--color-error)'
+                                  : parseFloat(market.utilization) > 60
+                                  ? 'var(--color-warning)'
+                                  : 'var(--color-primary)',
+                              borderRadius: 3,
+                            }}
+                          />
+                        </div>
+                        <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--color-text-secondary)' }}>
+                          {market.utilization}
+                        </span>
+                      </div>
+                    </td>
+                    <td style={{ textAlign: 'right' }}>
+                      <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                        <button className="btn btn-sm btn-primary" style={{ borderRadius: 8, padding: '0 12px' }}>
+                          Supply
+                        </button>
+                        <button className="btn btn-sm btn-secondary" style={{ borderRadius: 8, padding: '0 12px' }}>
+                          Borrow
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </motion.div>
+      </motion.div>
 
       {/* Asset Detail Modal */}
       <ActionModal
