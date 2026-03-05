@@ -12,9 +12,9 @@ const queryClient = new QueryClient()
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID || 'b56816460394348a735c02450371424c'
 
 const metadata = {
-  name: 'Cat Daily Login',
-  description: 'Claim your daily $CAT rewards on Base',
-  url: 'https://cat-daily-login.vercel.app',
+  name: 'AionYield',
+  description: 'AI-Orchestrated Money Market Protocol on Base',
+  url: 'https://aionyield.vercel.app',
   icons: ['https://assets.reown.com/reown-profile-pic.png']
 }
 
@@ -34,10 +34,12 @@ createAppKit({
   features: {
     analytics: true
   },
-  themeMode: 'light',
+  themeMode: 'dark',
   themeVariables: {
-    '--w3m-accent': '#442F8C',
-    '--w3m-color-mix': '#B0A5D0',
+    '--w3m-accent': '#375BD2',
+    '--w3m-color-mix': '#0B101C',
+    '--w3m-color-mix-strength': 20,
+    '--w3m-border-radius-master': '2px',
   }
 })
 

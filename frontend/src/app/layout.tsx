@@ -1,22 +1,49 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { Web3Providers } from "./providers";
-import { Navbar } from "@/components/Navbar";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
-  title: "Cat Daily Login",
-  description: "Claim your daily $CAT rewards on Base",
+  title: "AionYield — AI-Orchestrated Money Market Protocol",
+  description:
+    "Next-generation decentralized money market protocol powered by Chainlink CRE, AI-driven yield optimization, and autonomous agent payments on Base.",
+  keywords: [
+    "DeFi",
+    "Chainlink",
+    "Money Market",
+    "AI Yield",
+    "Lending",
+    "Borrowing",
+    "Base",
+    "ERC-8004",
+    "x402",
+    "CCIP",
+  ],
+  openGraph: {
+    title: "AionYield — AI-Orchestrated Money Market Protocol",
+    description:
+      "Next-generation decentralized money market protocol powered by Chainlink CRE, AI-driven yield optimization, and autonomous agent payments on Base.",
+    url: "https://aionyield.vercel.app",
+    siteName: "AionYield",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AionYield — AI-Orchestrated Money Market Protocol",
+    description:
+      "Next-generation DeFi money market powered by Chainlink CRE and AI agents on Base.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
@@ -26,15 +53,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-[#F8F7FF]`}
-      >
-        <Web3Providers>
-          <Navbar />
-          <main className="max-w-7xl mx-auto">
-            {children}
-          </main>
-        </Web3Providers>
+      <body className={`${inter.variable} antialiased`}>
+        <Web3Providers>{children}</Web3Providers>
       </body>
     </html>
   );
