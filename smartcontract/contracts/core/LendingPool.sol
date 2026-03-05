@@ -807,11 +807,57 @@ contract LendingPool is ReentrancyGuard, Ownable {
         address asset,
         uint256 withdrawAmount
     ) internal view {
-        // Temporarily calculate what HF would be after withdrawal
-        // For simplicity in MVP, we just check current HF
-        // In production, this would simulate the withdrawal
-        uint256 hf = _calculateHealthFactor(user);
-        require(hf >= MathUtils.WAD, "WITHDRAWAL_WOULD_BREAK_HF");
+        // Simulate health factor after withdrawal by subtracting the
+        // collateral value that would be removed
+        uint256 totalCollateralUSD = 0;
+        uint256 totalDebtUSD = 0;
+
+        for (uint256 i = 0; i < reservesList.length; i++) {
+            address reserveAsset = reservesList[i];
+            DataTypes.ReserveData storage reserve = reserves[reserveAsset];
+            DataTypes.UserReserveData storage userData = userReserves[user][
+                reserveAsset
+            ];
+
+            uint256 assetPrice = _getAssetPrice(reserveAsset);
+
+            // Add collateral value (weighted by liquidation threshold)
+            if (userData.isCollateral && userData.scaledSupplyBalance > 0) {
+                uint256 supplyBalance = userData.scaledSupplyBalance.rayMul(
+                    reserve.liquidityIndex
+                );
+
+                // Subtract withdrawal amount for the target asset
+                if (reserveAsset == asset && withdrawAmount > 0) {
+                    supplyBalance = supplyBalance > withdrawAmount
+                        ? supplyBalance - withdrawAmount
+                        : 0;
+                }
+
+                uint256 collateralValueUSD = (supplyBalance * assetPrice) /
+                    (10 ** reserve.decimals);
+                totalCollateralUSD +=
+                    (collateralValueUSD * reserve.liquidationThreshold) /
+                    MathUtils.PERCENTAGE_FACTOR;
+            }
+
+            // Add debt value
+            if (userData.scaledBorrowBalance > 0) {
+                uint256 borrowBalance = userData.scaledBorrowBalance.rayMul(
+                    reserve.variableBorrowIndex
+                );
+                totalDebtUSD +=
+                    (borrowBalance * assetPrice) /
+                    (10 ** reserve.decimals);
+            }
+        }
+
+        // No debt = always safe
+        if (totalDebtUSD == 0) return;
+
+        uint256 simulatedHF = (totalCollateralUSD * MathUtils.WAD) /
+            totalDebtUSD;
+        require(simulatedHF >= MathUtils.WAD, "WITHDRAWAL_WOULD_BREAK_HF");
     }
 
     // ============================================================

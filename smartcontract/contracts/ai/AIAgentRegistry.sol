@@ -58,6 +58,15 @@ contract AIAgentRegistry is Ownable {
     /// @dev Reward percentage of stake for good predictions (bps)
     uint256 public rewardPercentage = 100; // 1%
 
+    /// @dev Governance-controlled whitelist of approved agents
+    mapping(address => bool) public whitelistedAgents;
+
+    /// @dev Whether whitelist enforcement is enabled
+    bool public whitelistEnabled;
+
+    /// @dev Governance controller address (can manage whitelist)
+    address public governanceController;
+
     // ============================================================
     //                     DATA TYPES
     // ============================================================
@@ -97,6 +106,10 @@ contract AIAgentRegistry is Ownable {
     );
     event StakeAdded(address indexed agent, uint256 amount);
     event StakeWithdrawn(address indexed agent, uint256 amount);
+    event AgentWhitelisted(address indexed agent);
+    event AgentRemovedFromWhitelist(address indexed agent);
+    event WhitelistToggled(bool enabled);
+    event GovernanceControllerUpdated(address indexed newController);
 
     // ============================================================
     //                    CONSTRUCTOR
@@ -128,6 +141,9 @@ contract AIAgentRegistry is Ownable {
     ) external {
         require(!agents[msg.sender].isActive, "Agent already registered");
         require(stakeAmount >= minStake, "Insufficient stake");
+        if (whitelistEnabled) {
+            require(whitelistedAgents[msg.sender], "Agent not whitelisted");
+        }
 
         // Transfer stake
         stakingToken.safeTransferFrom(msg.sender, address(this), stakeAmount);
@@ -393,5 +409,64 @@ contract AIAgentRegistry is Ownable {
     function setSlashPercentage(uint256 newPercentage) external onlyOwner {
         require(newPercentage <= 10000, "Invalid percentage");
         slashPercentage = newPercentage;
+    }
+
+    // ============================================================
+    //          GOVERNANCE WHITELIST MANAGEMENT
+    // ============================================================
+
+    /**
+     * @notice Add an agent to the governance-controlled whitelist.
+     * @dev Only owner or governance controller can whitelist agents.
+     */
+    function whitelistAgent(address agent) external {
+        require(
+            msg.sender == owner() || msg.sender == governanceController,
+            "Not authorized"
+        );
+        whitelistedAgents[agent] = true;
+        emit AgentWhitelisted(agent);
+    }
+
+    /**
+     * @notice Remove an agent from the whitelist.
+     */
+    function removeFromWhitelist(address agent) external {
+        require(
+            msg.sender == owner() || msg.sender == governanceController,
+            "Not authorized"
+        );
+        whitelistedAgents[agent] = false;
+        emit AgentRemovedFromWhitelist(agent);
+    }
+
+    /**
+     * @notice Batch whitelist multiple agents.
+     */
+    function batchWhitelist(address[] calldata agents_) external onlyOwner {
+        for (uint256 i = 0; i < agents_.length; i++) {
+            whitelistedAgents[agents_[i]] = true;
+            emit AgentWhitelisted(agents_[i]);
+        }
+    }
+
+    /**
+     * @notice Enable or disable whitelist enforcement.
+     */
+    function setWhitelistEnabled(bool enabled) external onlyOwner {
+        whitelistEnabled = enabled;
+        emit WhitelistToggled(enabled);
+    }
+
+    /**
+     * @notice Set the governance controller address.
+     */
+    function setGovernanceController(address controller) external onlyOwner {
+        governanceController = controller;
+        emit GovernanceControllerUpdated(controller);
+    }
+
+    function isWhitelisted(address agent) external view returns (bool) {
+        return whitelistedAgents[agent];
     }
 }
