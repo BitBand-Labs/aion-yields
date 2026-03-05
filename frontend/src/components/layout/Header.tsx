@@ -106,7 +106,6 @@ export function Header({ title, subtitle }: HeaderProps) {
         </button>
 
         {/* Wallet connect (Reown AppKit Web Component) */}
-        {/* @ts-expect-error -- Web Component from Reown AppKit */}
         <appkit-button size="sm" />
       </div>
     </header>
