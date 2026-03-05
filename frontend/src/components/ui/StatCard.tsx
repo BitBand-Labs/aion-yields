@@ -2,12 +2,13 @@
 
 import React, { ReactNode } from 'react'
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 interface StatCardProps {
   label: string
   value: string
   change?: string
-  changeType?: 'positive' | 'negative' | 'neutral'
+  changeType?: 'positive' | 'negative' | 'neutral' | 'warning'
   icon?: ReactNode
   loading?: boolean
 }
@@ -43,6 +44,7 @@ export function StatCard({
     positive: 'var(--color-success)',
     negative: 'var(--color-error)',
     neutral: 'var(--color-text-tertiary)',
+    warning: 'var(--color-warning)',
   }
 
   const ChangeIcon =
@@ -53,20 +55,32 @@ export function StatCard({
       : Minus
 
   return (
-    <div className="card" style={{ minHeight: 120, position: 'relative', overflow: 'hidden' }}>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -4, transition: { duration: 0.2 } }}
+      className="card"
+      style={{
+        minHeight: 120,
+        position: 'relative',
+        overflow: 'hidden',
+        transition: 'border-color 0.2s, box-shadow 0.2s',
+      }}
+    >
       {/* Background icon (subtle) */}
       {icon && (
-        <div
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 0.08, scale: 1 }}
           style={{
             position: 'absolute',
             top: 16,
             right: 16,
-            opacity: 0.08,
             color: 'var(--color-primary)',
           }}
         >
           {icon}
-        </div>
+        </motion.div>
       )}
 
       <p className="text-label" style={{ marginBottom: 12, margin: 0 }}>
@@ -101,6 +115,6 @@ export function StatCard({
           <span>{change}</span>
         </div>
       )}
-    </div>
+    </motion.div>
   )
 }

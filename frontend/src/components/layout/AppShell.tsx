@@ -5,13 +5,15 @@ import { usePathname } from 'next/navigation'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { Header } from '@/components/layout/Header'
 import { MobileNav } from '@/components/layout/MobileNav'
-
+import { motion, AnimatePresence } from 'framer-motion'
 const pageTitles: Record<string, { title: string; subtitle: string }> = {
-  '/': { title: 'Dashboard', subtitle: 'Protocol overview & AI yield insights' },
+  '/': { title: 'Dashboard', subtitle: 'Protocol overview & real-time analytics' },
   '/markets': { title: 'Markets', subtitle: 'Explore lending & borrowing markets' },
-  '/portfolio': { title: 'Portfolio', subtitle: 'Manage your positions' },
-  '/agents': { title: 'AI Agents', subtitle: 'ERC-8004 agent marketplace' },
-  '/analytics': { title: 'Analytics', subtitle: 'Protocol metrics & data' },
+  '/borrow': { title: 'Borrowing', subtitle: 'Manage your borrowing positions' },
+  '/ai-yield': { title: 'AI Yield', subtitle: 'AI-driven allocation & risk forecasting' },
+  '/agents': { title: 'AI Marketplace', subtitle: 'ERC-8004 agent reputation & HTTP 402 inferences' },
+  '/analytics': { title: 'Analytics', subtitle: 'Protocol metrics & data flows' },
+  '/settings': { title: 'Settings', subtitle: 'User preferences & configuration' },
 }
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -45,14 +47,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </div>
 
       {/* Main content */}
-      <div
+      <motion.div
+        key={pathname}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: 'easeOut' }}
         className="main-content"
         style={{
           marginLeft: sidebarCollapsed ? 'var(--sidebar-collapsed)' : 'var(--sidebar-width)',
         }}
       >
         {children}
-      </div>
+      </motion.div>
 
       {/* Mobile bottom nav */}
       <MobileNav />

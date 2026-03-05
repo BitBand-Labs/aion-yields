@@ -8,17 +8,22 @@ import {
   TrendingUp,
   Wallet,
   Bot,
+  Cpu,
   BarChart3,
+  Settings,
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 
 const navItems = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/markets', label: 'Markets', icon: TrendingUp },
-  { href: '/portfolio', label: 'Portfolio', icon: Wallet },
-  { href: '/agents', label: 'AI Agents', icon: Bot },
+  { href: '/borrow', label: 'Borrowing', icon: Wallet },
+  { href: '/ai-yield', label: 'AI Yield', icon: Cpu },
+  { href: '/agents', label: 'AI Marketplace', icon: Bot },
   { href: '/analytics', label: 'Analytics', icon: BarChart3 },
+  { href: '/settings', label: 'Settings', icon: Settings },
 ]
 
 interface SidebarProps {
@@ -83,7 +88,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
               style={{
                 fontSize: 16,
                 fontWeight: 700,
-                color: 'var(--color-text-primary)',
+                color: 'var(--color-primary)',
                 letterSpacing: '-0.01em',
               }}
             >
@@ -113,67 +118,77 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           gap: '2px',
         }}
       >
-        {navItems.map((item) => {
+        {navItems.map((item, i) => {
           const isActive = pathname === item.href
           const Icon = item.icon
           return (
-            <Link
+            <motion.div
               key={item.href}
-              href={item.href}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                padding: collapsed ? '12px 16px' : '10px 16px',
-                borderRadius: 'var(--radius-md)',
-                textDecoration: 'none',
-                fontSize: 14,
-                fontWeight: isActive ? 500 : 400,
-                color: isActive
-                  ? 'var(--color-text-primary)'
-                  : 'var(--color-text-secondary)',
-                background: isActive
-                  ? 'var(--color-primary-muted)'
-                  : 'transparent',
-                transition: 'all var(--transition-fast)',
-                position: 'relative',
-              }}
-              onMouseEnter={(e) => {
-                if (!isActive) {
-                  e.currentTarget.style.background = 'var(--color-surface-raised)'
-                  e.currentTarget.style.color = 'var(--color-text-primary)'
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isActive) {
-                  e.currentTarget.style.background = 'transparent'
-                  e.currentTarget.style.color = 'var(--color-text-secondary)'
-                }
-              }}
+              initial={{ x: -20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: i * 0.05, duration: 0.3 }}
             >
-              {isActive && (
-                <div
+              <Link
+                href={item.href}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: collapsed ? '12px 16px' : '10px 16px',
+                  borderRadius: 'var(--radius-md)',
+                  textDecoration: 'none',
+                  fontSize: 14,
+                  fontWeight: isActive ? 600 : 400,
+                  color: isActive
+                    ? 'var(--color-text-primary)'
+                    : 'var(--color-text-secondary)',
+                  background: isActive
+                    ? 'var(--color-primary-muted)'
+                    : 'transparent',
+                  transition: 'background var(--transition-fast), color var(--transition-fast)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.background = 'var(--color-surface-raised)'
+                    e.currentTarget.style.color = 'var(--color-text-primary)'
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.background = 'transparent'
+                    e.currentTarget.style.color = 'var(--color-text-secondary)'
+                  }
+                }}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="active-indicator"
+                    style={{
+                      position: 'absolute',
+                      left: 0,
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      width: 3,
+                      height: 20,
+                      borderRadius: '0 4px 4px 0',
+                      background: 'var(--color-primary)',
+                      boxShadow: '0 0 10px var(--color-primary)',
+                    }}
+                  />
+                )}
+                <Icon
+                  size={20}
                   style={{
-                    position: 'absolute',
-                    left: 0,
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    width: 3,
-                    height: 20,
-                    borderRadius: '0 4px 4px 0',
-                    background: 'var(--color-primary)',
+                    flexShrink: 0,
+                    color: isActive ? 'var(--color-primary)' : 'inherit',
+                    transition: 'color 0.2s',
                   }}
                 />
-              )}
-              <Icon
-                size={20}
-                style={{
-                  flexShrink: 0,
-                  color: isActive ? 'var(--color-primary-light)' : 'inherit',
-                }}
-              />
-              {!collapsed && <span>{item.label}</span>}
-            </Link>
+                {!collapsed && <span>{item.label}</span>}
+              </Link>
+            </motion.div>
           )
         })}
       </nav>

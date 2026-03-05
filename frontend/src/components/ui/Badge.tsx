@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import React, { ReactNode, CSSProperties } from 'react'
 
 type BadgeVariant = 'primary' | 'success' | 'warning' | 'error' | 'accent' | 'neutral'
 
@@ -6,6 +6,7 @@ interface BadgeProps {
   children: ReactNode
   variant?: BadgeVariant
   dot?: boolean
+  style?: CSSProperties
 }
 
 const variantMap: Record<BadgeVariant, string> = {
@@ -26,18 +27,19 @@ const dotColorMap: Record<BadgeVariant, string> = {
   neutral: 'var(--color-text-tertiary)',
 }
 
-export function Badge({ children, variant = 'primary', dot = false }: BadgeProps) {
+export function Badge({ children, variant = 'primary', dot = false, style }: BadgeProps) {
   return (
     <span
       className={`badge ${variantMap[variant]}`}
-      style={
-        variant === 'neutral'
+      style={{
+        ...(variant === 'neutral'
           ? {
               background: 'var(--color-surface-raised)',
               color: 'var(--color-text-secondary)',
             }
-          : undefined
-      }
+          : {}),
+        ...style,
+      }}
     >
       {dot && (
         <span

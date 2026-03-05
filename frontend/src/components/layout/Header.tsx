@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { Bell } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 
 interface HeaderProps {
   title: string
@@ -12,46 +13,51 @@ export function Header({ title, subtitle }: HeaderProps) {
   return (
     <header
       style={{
-        position: 'fixed',
-        top: 0,
-        right: 0,
-        left: 'var(--sidebar-width)',
-        height: 'var(--header-height)',
-        background: 'rgba(11, 16, 28, 0.85)',
-        backdropFilter: 'blur(12px)',
-        borderBottom: '1px solid var(--color-border)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: '0 24px',
-        zIndex: 30,
-        transition: 'left var(--transition-slow)',
+        height: 'var(--header-height)',
+        background: 'rgba(255, 255, 255, 0.6)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderBottom: '1px solid rgba(0, 0, 0, 0.05)',
       }}
     >
       {/* Page title */}
-      <div>
-        <h1
-          style={{
-            fontSize: 18,
-            fontWeight: 600,
-            color: 'var(--color-text-primary)',
-            letterSpacing: '-0.01em',
-            margin: 0,
-          }}
-        >
-          {title}
-        </h1>
-        {subtitle && (
-          <p
-            style={{
-              fontSize: 13,
-              color: 'var(--color-text-secondary)',
-              margin: 0,
-            }}
+      <div style={{ overflow: 'hidden' }}>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={title}
+            initial={{ y: 10, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -10, opacity: 0 }}
+            transition={{ duration: 0.2 }}
           >
-            {subtitle}
-          </p>
-        )}
+            <h1
+              style={{
+                fontSize: 18,
+                fontWeight: 600,
+                color: 'var(--color-text-primary)',
+                letterSpacing: '-0.02em',
+                margin: 0,
+              }}
+            >
+              {title}
+            </h1>
+            {subtitle && (
+              <p
+                style={{
+                  fontSize: 12,
+                  color: 'var(--color-text-secondary)',
+                  margin: 0,
+                }}
+              >
+                {subtitle}
+              </p>
+            )}
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       {/* Right actions */}
