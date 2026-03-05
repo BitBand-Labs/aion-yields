@@ -22,10 +22,10 @@
 - [x] Implement LendingPool contract
 - [x] Implement Borrowing logic
 - [x] Implement Interest Rate Model (kink model or AI-adjusted curve)
-- [ ] Implement Collateral management
+- [x] Implement Collateral management
 - [x] Implement Liquidation Engine
-- [ ] Implement Health Factor calculations
-- [ ] Add protocol fees module
+- [x] Implement Health Factor calculations
+- [x] Add protocol fees module
 - [ ] Add governance-controlled parameters
 
 ## 📊 Chainlink Integration
@@ -38,17 +38,17 @@
 - [x] CCIP liquidity bridge adapter (mock for MVP)
 
 ## 🤖 AI Agent Registry (ERC-8004 Inspired)
-- [ ] Agent Identity Registry contract
-- [ ] Agent Reputation Scoring contract
-- [ ] Agent Staking & Slashing logic
-- [ ] Agent Selection Algorithm (top-N ranking)
+- [x] Agent Identity Registry contract
+- [x] Agent Reputation Scoring contract
+- [x] Agent Staking & Slashing logic
+- [x] Agent Selection Algorithm (top-N ranking)
 - [ ] Governance-controlled agent whitelist
 
 ## 💸 x402 Payment Integration (On-chain Hooks)
 - [x] AI Payment Escrow contract
-- [ ] Payment settlement logic (USDC / native token)
-- [ ] AI agent revenue distribution contract
-- [ ] Event emission for AI inference payments
+- [x] Payment settlement logic (USDC / native token)
+- [x] AI agent revenue distribution contract
+- [x] Event emission for AI inference payments
 
 ## 🧪 Testing & Security
 - [x] Unit tests for LendingPool
@@ -140,12 +140,12 @@
 # 🧩 FEATURE ROADMAP
 
 ## Phase 1 – MVP (Hackathon)
-- [ ] Basic lending & borrowing
-- [ ] Chainlink Data Feeds integration
+- [x] Basic lending & borrowing
+- [x] Chainlink Data Feeds integration
 - [ ] CRE orchestration demo
 - [ ] AI prediction via Functions
-- [ ] Mock x402 payment flow
-- [ ] ERC-8004 skeleton registry
+- [x] Mock x402 payment flow
+- [x] ERC-8004 skeleton registry
 
 ## Phase 2 – Enhanced Protocol
 - [ ] Cross-chain lending via CCIP
