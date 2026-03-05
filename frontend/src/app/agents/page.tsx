@@ -12,7 +12,9 @@ import {
   TrendingUp,
   Zap,
   ExternalLink,
+  Search,
 } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 const agents = [
   {
@@ -89,197 +91,188 @@ function getReputationColor(score: number): string {
 export default function AgentsPage() {
   return (
     <AppShell>
-      <div className="animate-fade-in">
-        {/* Summary cards */}
-        <div className="grid-stats" style={{ marginBottom: 'var(--space-6)' }}>
-          <div className="card-flat" style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            <div
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 'var(--radius-md)',
-                background: 'var(--color-accent-muted)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'var(--color-accent)',
-              }}
-            >
-              <Bot size={20} />
-            </div>
-            <div>
-              <p className="text-label" style={{ margin: 0 }}>Registered Agents</p>
-              <p style={{ fontSize: 22, fontWeight: 700, margin: '4px 0 0' }}>{agents.length}</p>
-            </div>
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: { opacity: 0 },
+          visible: {
+            opacity: 1,
+            transition: { staggerChildren: 0.1 }
+          }
+        }}
+      >
+        <motion.div 
+          variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}
+          style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-8)' }}
+        >
+          <div>
+            <h2 className="heading-md" style={{ margin: '0 0 var(--space-2)', fontWeight: 700, letterSpacing: '-0.02em' }}>
+              AI Agent Marketplace
+            </h2>
+            <p className="text-secondary" style={{ margin: 0 }}>
+               Discover and stake on top-performing autonomous yield agents
+            </p>
           </div>
+          <div style={{ display: 'flex', gap: 12 }}>
+             <div style={{ position: 'relative' }}>
+                <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-tertiary)' }} />
+                <input 
+                  type="text" 
+                  placeholder="Filter agents..." 
+                  style={{ padding: '10px 12px 10px 36px', borderRadius: 10, border: '1px solid var(--color-border)', fontSize: 13, background: 'var(--color-bg)', outline: 'none', width: 260 }} 
+                />
+             </div>
+             <button className="btn btn-primary" style={{ borderRadius: 10 }}>Register Agent</button>
+          </div>
+        </motion.div>
 
-          <div className="card-flat" style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            <div
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 'var(--radius-md)',
-                background: 'var(--color-success-muted)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'var(--color-success)',
-              }}
+        {/* Summary cards (Staggered) */}
+        <div className="grid-stats" style={{ marginBottom: 'var(--space-8)' }}>
+          {[
+            { label: 'Registered Agents', value: agents.length, icon: Bot, color: 'var(--color-accent)' },
+            { label: 'Total Staked', value: '41,700 LINK', icon: Coins, color: 'var(--color-success)' },
+            { label: 'Total Inferences', value: '3,409', icon: Zap, color: 'var(--color-primary)' },
+            { label: 'Revenue Distributed', value: '$6,920', icon: Trophy, color: 'var(--color-warning)' },
+          ].map((stat, i) => (
+            <motion.div 
+              key={stat.label}
+              variants={{ hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1 } }}
+              className="card-flat" 
+              style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '24px' }}
             >
-              <Coins size={20} />
-            </div>
-            <div>
-              <p className="text-label" style={{ margin: 0 }}>Total Staked</p>
-              <p style={{ fontSize: 22, fontWeight: 700, margin: '4px 0 0' }}>41,700 LINK</p>
-            </div>
-          </div>
-
-          <div className="card-flat" style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            <div
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 'var(--radius-md)',
-                background: 'var(--color-primary-muted)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'var(--color-primary-light)',
-              }}
-            >
-              <Zap size={20} />
-            </div>
-            <div>
-              <p className="text-label" style={{ margin: 0 }}>Total Inferences</p>
-              <p style={{ fontSize: 22, fontWeight: 700, margin: '4px 0 0' }}>3,409</p>
-            </div>
-          </div>
-
-          <div className="card-flat" style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            <div
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 'var(--radius-md)',
-                background: 'var(--color-warning-muted)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'var(--color-warning)',
-              }}
-            >
-              <Trophy size={20} />
-            </div>
-            <div>
-              <p className="text-label" style={{ margin: 0 }}>Revenue Paid (x402)</p>
-              <p style={{ fontSize: 22, fontWeight: 700, margin: '4px 0 0' }}>$6,920</p>
-            </div>
-          </div>
+              <div
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 12,
+                  background: `${stat.color}15`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: stat.color,
+                }}
+              >
+                <stat.icon size={22} />
+              </div>
+              <div>
+                <p className="text-label" style={{ margin: '0 0 4px', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1 }}>{stat.label}</p>
+                <p style={{ fontSize: 24, fontWeight: 700, margin: 0, color: 'var(--color-text-primary)' }}>{stat.value}</p>
+              </div>
+            </motion.div>
+          ))}
         </div>
 
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: '2fr 1fr',
-            gap: 'var(--space-4)',
+            gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr)',
+            gap: 'var(--space-8)',
           }}
           className="agents-grid"
         >
           {/* Agent Leaderboard */}
-          <div className="card-flat" style={{ padding: 0, overflow: 'hidden' }}>
+          <motion.div 
+            variants={{ hidden: { opacity: 0, x: -20 }, visible: { opacity: 1, x: 0 } }}
+            className="card-flat" style={{ padding: 0, overflow: 'hidden' }}
+          >
             <div
               style={{
-                padding: '16px 24px',
+                padding: '20px 24px',
                 borderBottom: '1px solid var(--color-border)',
                 display: 'flex',
                 alignItems: 'center',
-                gap: 8,
+                justifyContent: 'space-between',
               }}
             >
-              <Trophy size={16} style={{ color: 'var(--color-warning)' }} />
-              <h3 style={{ fontSize: 16, fontWeight: 600, margin: 0 }}>
-                Agent Leaderboard
-              </h3>
-              <Badge variant="accent" dot>ERC-8004</Badge>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <Trophy size={18} style={{ color: 'var(--color-warning)' }} />
+                <h3 style={{ fontSize: 18, fontWeight: 700, margin: 0 }}>
+                  Agent Leaderboard
+                </h3>
+                <Badge variant="accent" style={{ fontSize: 10, fontWeight: 700 }}>ERC-8004 COMPLIANT</Badge>
+              </div>
+              <button className="btn btn-ghost btn-sm" style={{ color: 'var(--color-primary)' }}>Full Rankings</button>
             </div>
 
             <table className="data-table">
               <thead>
                 <tr>
                   <th>Rank</th>
-                  <th>Agent</th>
+                  <th>Agent Interface</th>
                   <th>Reputation</th>
                   <th>Accuracy</th>
-                  <th>Predictions</th>
+                  <th>Total Claims</th>
                   <th>Staked</th>
-                  <th>Status</th>
+                  <th style={{ textAlign: 'right' }}>Status</th>
                 </tr>
               </thead>
               <tbody>
                 {agents.map((agent, i) => (
-                  <tr key={agent.name}>
+                  <tr key={agent.name} style={{ cursor: 'pointer' }}>
                     <td>
                       <div
                         style={{
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          width: 24,
-                          height: 24,
-                          borderRadius: 'var(--radius-full)',
+                          width: 28,
+                          height: 28,
+                          borderRadius: '50%',
                           background:
                             i === 0
                               ? 'var(--color-warning-muted)'
                               : i === 1
                               ? 'var(--color-border)'
                               : 'transparent',
-                          fontSize: 12,
-                          fontWeight: 600,
+                          fontSize: 13,
+                          fontWeight: 710,
                           color:
                             i === 0
                               ? 'var(--color-warning)'
                               : 'var(--color-text-secondary)',
+                          border: i < 3 ? '1px solid currentColor' : 'none'
                         }}
                       >
                         {i + 1}
                       </div>
                     </td>
                     <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                         <div
                           style={{
-                            width: 28,
-                            height: 28,
-                            borderRadius: 'var(--radius-md)',
-                            background: 'var(--color-accent-muted)',
+                            width: 36,
+                            height: 36,
+                            borderRadius: 10,
+                            background: 'var(--color-surface-raised)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            color: 'var(--color-accent)',
+                            color: 'var(--color-primary)',
+                            boxShadow: 'inset 0 0 10px rgba(0,0,0,0.05)'
                           }}
                         >
-                          <Bot size={14} />
+                          <Bot size={18} />
                         </div>
                         <div>
-                          <p style={{ fontWeight: 500, margin: 0, fontSize: 13 }}>
+                          <p style={{ fontWeight: 700, margin: '0 0 2px', fontSize: 14 }}>
                             {agent.name}
                           </p>
-                          <p className="text-caption" style={{ margin: 0, fontSize: 11 }}>
+                          <p className="text-caption" style={{ margin: 0, fontSize: 11, fontWeight: 600 }}>
                             {agent.specialty}
                           </p>
                         </div>
                       </div>
                     </td>
                     <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                        <Star
-                          size={12}
-                          fill={getReputationColor(agent.reputation)}
-                          style={{ color: getReputationColor(agent.reputation) }}
-                        />
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <div style={{ width: 40, height: 4, background: 'var(--color-bg)', borderRadius: 2, overflow: 'hidden' }}>
+                           <div style={{ width: `${agent.reputation}%`, height: '100%', background: getReputationColor(agent.reputation) }} />
+                        </div>
                         <span
                           style={{
-                            fontWeight: 600,
+                            fontWeight: 700,
+                            fontSize: 13,
                             color: getReputationColor(agent.reputation),
                           }}
                         >
@@ -287,19 +280,18 @@ export default function AgentsPage() {
                         </span>
                       </div>
                     </td>
-                    <td style={{ fontWeight: 500 }}>{agent.accuracy}</td>
-                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 13 }}>
+                    <td style={{ fontWeight: 700, fontSize: 13, color: 'var(--color-text-primary)' }}>{agent.accuracy}</td>
+                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 600 }}>
                       {agent.totalPredictions.toLocaleString()}
                     </td>
-                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 13 }}>
+                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 700, color: 'var(--color-primary)' }}>
                       {agent.staked}
                     </td>
-                    <td>
+                    <td style={{ textAlign: 'right' }}>
                       <Badge
                         variant={
                           agent.status === 'active' ? 'success' : 'warning'
                         }
-                        dot
                       >
                         {agent.status}
                       </Badge>
@@ -308,30 +300,36 @@ export default function AgentsPage() {
                 ))}
               </tbody>
             </table>
-          </div>
+          </motion.div>
 
-          {/* x402 Payment Feed */}
-          <div className="card-flat">
+          {/* x402 Payment Feed (Premium) */}
+          <motion.div 
+            variants={{ hidden: { opacity: 0, x: 20 }, visible: { opacity: 1, x: 0 } }}
+            className="card-flat"
+            style={{ padding: '32px' }}
+          >
             <div
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: 8,
-                marginBottom: 16,
+                gap: 12,
+                marginBottom: 32,
               }}
             >
-              <Zap size={16} style={{ color: 'var(--color-warning)' }} />
-              <h3 style={{ fontSize: 16, fontWeight: 600, margin: 0 }}>
-                x402 Payments
+               <div style={{ width: 36, height: 36, borderRadius: 10, background: 'var(--color-warning-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-warning)' }}>
+                 <Zap size={20} />
+              </div>
+              <h3 style={{ fontSize: 18, fontWeight: 700, margin: 0 }}>
+                x402 Micropayments
               </h3>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
               {paymentHistory.map((payment, i) => (
                 <div
                   key={i}
                   style={{
-                    padding: '12px 0',
+                    padding: '16px 0',
                     borderBottom:
                       i < paymentHistory.length - 1
                         ? '1px solid var(--color-border)'
@@ -341,33 +339,36 @@ export default function AgentsPage() {
                     alignItems: 'center',
                   }}
                 >
-                  <div>
-                    <p
-                      style={{
-                        fontSize: 13,
-                        fontWeight: 500,
-                        margin: '0 0 2px',
-                        color: 'var(--color-text-primary)',
-                      }}
-                    >
-                      {payment.agent}
-                    </p>
-                    <p className="text-caption" style={{ margin: 0, fontSize: 11 }}>
-                      {payment.type}
-                    </p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--color-primary)', boxShadow: '0 0 8px var(--color-primary)' }} />
+                    <div>
+                      <p
+                        style={{
+                          fontSize: 14,
+                          fontWeight: 700,
+                          margin: '0 0 4px',
+                          color: 'var(--color-text-primary)',
+                        }}
+                      >
+                        {payment.agent}
+                      </p>
+                      <p className="text-caption" style={{ margin: 0, fontSize: 11, fontWeight: 600 }}>
+                        {payment.type}
+                      </p>
+                    </div>
                   </div>
                   <div style={{ textAlign: 'right' }}>
                     <p
                       style={{
-                        fontSize: 13,
-                        fontWeight: 600,
-                        margin: '0 0 2px',
+                        fontSize: 14,
+                        fontWeight: 700,
+                        margin: '0 0 4px',
                         color: 'var(--color-success)',
                       }}
                     >
                       {payment.amount}
                     </p>
-                    <p className="text-caption" style={{ margin: 0, fontSize: 11 }}>
+                    <p className="text-caption" style={{ margin: 0, fontSize: 11, fontWeight: 600, color: 'var(--color-text-tertiary)' }}>
                       {payment.time}
                     </p>
                   </div>
@@ -375,24 +376,29 @@ export default function AgentsPage() {
               ))}
             </div>
 
-            <a
-              href="#"
+            <button
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: 4,
-                marginTop: 16,
+                width: '100%',
+                gap: 8,
+                marginTop: 24,
+                padding: '12px',
                 fontSize: 13,
-                color: 'var(--color-primary-light)',
-                textDecoration: 'none',
+                fontWeight: 700,
+                color: 'var(--color-primary)',
+                background: 'var(--color-primary-muted)',
+                borderRadius: 10,
+                border: 'none',
+                cursor: 'pointer'
               }}
             >
-              View all payments <ExternalLink size={12} />
-            </a>
-          </div>
+              Real-time Inference Logs <ExternalLink size={14} />
+            </button>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
 
       <style jsx global>{`
         @media (max-width: 1024px) {
