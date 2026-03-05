@@ -25,16 +25,15 @@
 - [x] Implement Collateral management
 - [x] Implement Liquidation Engine
 - [x] Implement Health Factor calculations
-- [x] Add protocol fees module
-- [ ] Add governance-controlled parameters
+- [x] Add governance-controlled parameters
 
 ## 📊 Chainlink Integration
 - [x] Integrate Chainlink Data Feeds for asset pricing
 - [x] Add price oracle adapter layer
 - [ ] Implement fallback oracle logic
 - [x] Integrate Chainlink Automation for liquidations
-- [ ] Integrate Chainlink Functions consumer contract
-- [ ] Implement CRE-compatible execution hooks
+- [x] Integrate Chainlink Functions consumer contract
+- [x] Implement CRE-compatible execution hooks
 - [x] CCIP liquidity bridge adapter (mock for MVP)
 
 ## 🤖 AI Agent Registry (ERC-8004 Inspired)
@@ -42,7 +41,7 @@
 - [x] Agent Reputation Scoring contract
 - [x] Agent Staking & Slashing logic
 - [x] Agent Selection Algorithm (top-N ranking)
-- [ ] Governance-controlled agent whitelist
+- [x] Governance-controlled agent whitelist
 
 ## 💸 x402 Payment Integration (On-chain Hooks)
 - [x] AI Payment Escrow contract
