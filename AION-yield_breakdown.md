@@ -186,6 +186,13 @@ ERC-8004 Agent Registry & Reputation System
 - AI agents provide yield signals
 - Paid via x402
 - Ranked via ERC-8004 reputation
+- **Strategy Marketplace**: Multiple AI agents competing for best risk-adjusted yield.
+
+## 5️⃣ Portfolio Intelligence Layer
+- **Live Strategy Feed**: Real-time AI activity timeline.
+- **Portfolio Intelligence**: Net worth tracking with AI performance projections.
+- **AI Yield Simulator**: Interactive strategy simulation tool for users.
+- **Risk Intelligence**: Detailed protocol health and volatility metrics.
 
 ---
 
@@ -212,6 +219,12 @@ ERC-8004 Agent Registry & Reputation System
 - On-chain agent identity contract
 - Reputation tracking
 - Agent staking mechanism
+
+## Phase 6 – Advanced Intelligence (Innovation Phase)
+- **Portfolio Intelligence**: Animated charts & AI prediction forecasting.
+- **AI Activity Feed**: Live protocol rebalancing and risk monitoring timeline.
+- **AI Yield Simulator**: User-facing strategy ROI simulator.
+- **Strategy Marketplace**: Competiton-based AI agent selection.
 
 ---
 

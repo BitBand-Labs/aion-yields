@@ -78,6 +78,12 @@
 - [x] AI risk score display
 - [x] Yield optimization visualizations
 - [x] AI agent leaderboard (ERC-8004 reputation)
+- [ ] Portfolio Intelligence (Net Worth + Performance charts)
+- [ ] AI Prediction Line in performance graphs
+- [ ] Projected Value calculation (12 months)
+- [ ] Live Strategy Feed (AI Activity Timeline)
+- [ ] Detailed Risk Intelligence Panel (TVL, SC Risk, Volatility)
+- [ ] AI Yield Simulator (Interactive strategy projections)
 
 ## 💸 AI Marketplace UI (x402)
 - [x] AI agent marketplace listing page
@@ -154,7 +160,8 @@
 ## Phase 2 – Enhanced Protocol
 - [ ] Cross-chain lending via CCIP
 - [ ] AI-driven liquidation prevention
-- [ ] Multi-agent AI competition
+- [ ] Multi-agent AI competition (Strategy Marketplace)
+- [ ] AI Yield Simulator (Interactive user tool)
 - [ ] DAO governance module
 - [ ] Insurance fund
 
