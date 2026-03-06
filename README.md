@@ -8,8 +8,6 @@
 [![Identity](https://img.shields.io/badge/Standard-ERC--8004-green)](https://github.com/ethereum/ERCs)
 [![Payments](https://img.shields.io/badge/Protocol-x402-orange)](https://x402.org/)
 
-**AION Yield** is a next-generation decentralized money market protocol that merges **Chainlink CRE orchestration**, **AI-driven yield optimization**, and **autonomous agent payments**. Designed with a **$100M Studio-Grade UI**, it represents the pinnacle of autonomous on-chain finance.
-
 ---
 
 ## 📌 The "AION" Differentiator
