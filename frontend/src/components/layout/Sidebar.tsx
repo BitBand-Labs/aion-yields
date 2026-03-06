@@ -17,7 +17,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion'
 
 const navItems = [
-  { href: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/markets', label: 'Markets', icon: TrendingUp },
   { href: '/borrow', label: 'Borrowing', icon: Wallet },
   { href: '/ai-yield', label: 'AI Yield', icon: Cpu },
@@ -43,7 +43,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         left: 0,
         bottom: 0,
         width: collapsed ? 'var(--sidebar-collapsed)' : 'var(--sidebar-width)',
-        background: 'var(--color-surface)',
+        background: 'var(--color-bg)',
         borderRight: '1px solid var(--color-border)',
         display: 'flex',
         flexDirection: 'column',
@@ -52,70 +52,50 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         overflow: 'hidden',
       }}
     >
-      {/* Logo */}
-      <div
+      {/* Search / Status Area (Premium) */}
+      <Link
+        href="/"
         style={{
           height: 'var(--header-height)',
           display: 'flex',
           alignItems: 'center',
-          padding: collapsed ? '0 16px' : '0 24px',
+          padding: '0 var(--space-2)',
           borderBottom: '1px solid var(--color-border)',
           gap: '12px',
           flexShrink: 0,
+          textDecoration: 'none',
+          color: 'inherit'
         }}
       >
-        <div
-          style={{
-            width: 36,
-            height: 36,
-            borderRadius: 'var(--radius-md)',
-            background: 'linear-gradient(135deg, var(--color-primary), var(--color-primary-light))',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontWeight: 700,
-            fontSize: 14,
-            letterSpacing: '0.05em',
-            color: 'var(--color-text-primary)',
-            flexShrink: 0,
-          }}
-        >
-          AI
+        <div style={{ 
+          width: 32, 
+          height: 32, 
+          borderRadius: 8, 
+          background: 'var(--color-primary)', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          color: '#fff',
+          fontWeight: 800,
+          fontSize: 12
+        }}>
+          A
         </div>
         {!collapsed && (
-          <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-            <span
-              style={{
-                fontSize: 16,
-                fontWeight: 700,
-                color: 'var(--color-primary)',
-                letterSpacing: '-0.01em',
-              }}
-            >
-              AION
-            </span>
-            <span
-              style={{
-                fontSize: 11,
-                color: 'var(--color-text-tertiary)',
-                letterSpacing: '0.04em',
-                textTransform: 'uppercase',
-              }}
-            >
-              Yield Protocol
-            </span>
-          </div>
+          <span style={{ fontWeight: 700, fontSize: 14, letterSpacing: '-0.02em' }}>
+            AION <span style={{ color: 'var(--color-text-tertiary)', fontWeight: 400 }}>Yield</span>
+          </span>
         )}
-      </div>
+      </Link>
 
       {/* Navigation */}
       <nav
         style={{
           flex: 1,
-          padding: '12px 8px',
+          padding: 'var(--space-2) var(--space-1)',
           display: 'flex',
           flexDirection: 'column',
-          gap: '2px',
+          gap: '4px',
         }}
       >
         {navItems.map((item, i) => {
@@ -124,9 +104,9 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           return (
             <motion.div
               key={item.href}
-              initial={{ x: -20, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: i * 0.05, duration: 0.3 }}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.03 }}
             >
               <Link
                 href={item.href}
@@ -134,56 +114,43 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '12px',
-                  padding: collapsed ? '12px 16px' : '10px 16px',
-                  borderRadius: 'var(--radius-md)',
+                  padding: '8px 12px',
+                  borderRadius: '8px',
                   textDecoration: 'none',
-                  fontSize: 14,
-                  fontWeight: isActive ? 600 : 400,
+                  fontSize: 13,
+                  fontWeight: isActive ? 600 : 500,
                   color: isActive
                     ? 'var(--color-text-primary)'
                     : 'var(--color-text-secondary)',
                   background: isActive
-                    ? 'var(--color-primary-muted)'
+                    ? 'var(--color-bg-elevated)'
                     : 'transparent',
-                  transition: 'background var(--transition-fast), color var(--transition-fast)',
-                  position: 'relative',
-                  overflow: 'hidden',
+                  border: isActive 
+                    ? '1px solid var(--color-border)' 
+                    : '1px solid transparent',
+                  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                 }}
                 onMouseEnter={(e) => {
                   if (!isActive) {
-                    e.currentTarget.style.background = 'var(--color-surface-raised)'
+                    e.currentTarget.style.background = 'var(--color-bg-elevated)'
+                    e.currentTarget.style.borderColor = 'var(--color-border)'
                     e.currentTarget.style.color = 'var(--color-text-primary)'
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (!isActive) {
                     e.currentTarget.style.background = 'transparent'
+                    e.currentTarget.style.borderColor = 'transparent'
                     e.currentTarget.style.color = 'var(--color-text-secondary)'
                   }
                 }}
               >
-                {isActive && (
-                  <motion.div
-                    layoutId="active-indicator"
-                    style={{
-                      position: 'absolute',
-                      left: 0,
-                      top: '50%',
-                      transform: 'translateY(-50%)',
-                      width: 3,
-                      height: 20,
-                      borderRadius: '0 4px 4px 0',
-                      background: 'var(--color-primary)',
-                      boxShadow: '0 0 10px var(--color-primary)',
-                    }}
-                  />
-                )}
                 <Icon
-                  size={20}
+                  size={16}
+                  strokeWidth={isActive ? 2.5 : 2}
                   style={{
                     flexShrink: 0,
                     color: isActive ? 'var(--color-primary)' : 'inherit',
-                    transition: 'color 0.2s',
                   }}
                 />
                 {!collapsed && <span>{item.label}</span>}
@@ -193,41 +160,42 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         })}
       </nav>
 
-      {/* Collapse Toggle */}
+      {/* Footer / Toggle */}
       <div
         style={{
-          padding: '12px 8px',
+          padding: 'var(--space-2)',
           borderTop: '1px solid var(--color-border)',
         }}
       >
         <button
           onClick={onToggle}
-          className="btn-ghost"
           style={{
             width: '100%',
             display: 'flex',
             alignItems: 'center',
             justifyContent: collapsed ? 'center' : 'flex-start',
             gap: '12px',
-            padding: '10px 16px',
-            borderRadius: 'var(--radius-md)',
-            border: 'none',
+            padding: '8px 12px',
+            borderRadius: '8px',
+            border: '1px solid transparent',
             cursor: 'pointer',
-            fontSize: 13,
+            fontSize: 12,
+            fontWeight: 500,
             color: 'var(--color-text-tertiary)',
             background: 'transparent',
-            fontFamily: 'var(--font-sans)',
-            transition: 'all var(--transition-fast)',
+            transition: 'all 0.2s',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'var(--color-surface-raised)'
+            e.currentTarget.style.background = 'var(--color-bg-elevated)'
+            e.currentTarget.style.borderColor = 'var(--color-border)'
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.background = 'transparent'
+            e.currentTarget.style.borderColor = 'transparent'
           }}
         >
-          {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
-          {!collapsed && <span>Collapse</span>}
+          {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+          {!collapsed && <span>Collapse Sidebar</span>}
         </button>
       </div>
     </aside>

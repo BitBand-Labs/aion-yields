@@ -56,65 +56,86 @@ export function StatCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -4, transition: { duration: 0.2 } }}
       className="card"
       style={{
-        minHeight: 120,
+        minHeight: 100,
         position: 'relative',
-        overflow: 'hidden',
-        transition: 'border-color 0.2s, box-shadow 0.2s',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        background: 'var(--color-bg-elevated)',
+        border: '1px solid var(--color-border)',
+        padding: 'var(--space-2)',
+        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = 'var(--color-border-hover)'
+        e.currentTarget.style.transform = 'translateY(-2px)'
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = 'var(--color-border)'
+        e.currentTarget.style.transform = 'translateY(0)'
       }}
     >
-      {/* Background icon (subtle) */}
       {icon && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 0.08, scale: 1 }}
+        <div
           style={{
             position: 'absolute',
-            top: 16,
-            right: 16,
-            color: 'var(--color-primary)',
+            top: '12px',
+            right: '12px',
+            color: 'var(--color-text-tertiary)',
+            opacity: 0.6
           }}
         >
-          {icon}
-        </motion.div>
+          {React.isValidElement(icon) 
+            ? React.cloneElement(icon as React.ReactElement<any>, { size: 16 }) 
+            : icon}
+        </div>
       )}
 
-      <p className="text-label" style={{ marginBottom: 12, margin: 0 }}>
+      <p style={{ 
+        fontSize: 11, 
+        fontWeight: 600, 
+        color: 'var(--color-text-tertiary)', 
+        textTransform: 'uppercase', 
+        letterSpacing: '0.05em', 
+        margin: '0 0 8px' 
+      }}>
         {label}
       </p>
 
-      <p
-        style={{
-          fontSize: 28,
-          fontWeight: 700,
-          letterSpacing: '-0.02em',
-          color: 'var(--color-text-primary)',
-          margin: '12px 0 8px',
-          lineHeight: 1.1,
-        }}
-      >
-        {value}
-      </p>
-
-      {change && (
-        <div
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+        <p
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 4,
-            color: changeColorMap[changeType],
-            fontSize: 13,
-            fontWeight: 500,
+            fontSize: 22,
+            fontWeight: 700,
+            letterSpacing: '-0.03em',
+            color: 'var(--color-text-primary)',
+            margin: 0,
+            lineHeight: 1,
           }}
         >
-          <ChangeIcon size={14} />
-          <span>{change}</span>
-        </div>
-      )}
+          {value}
+        </p>
+
+        {change && (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 2,
+              color: changeColorMap[changeType],
+              fontSize: 11,
+              fontWeight: 600,
+            }}
+          >
+            <ChangeIcon size={10} strokeWidth={3} />
+            <span>{change}</span>
+          </div>
+        )}
+      </div>
     </motion.div>
   )
 }

@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { Bell, Sun, Moon } from 'lucide-react'
+import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'
@@ -26,30 +27,48 @@ export function Header({ title, subtitle }: HeaderProps) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 24px',
+        padding: '0 var(--space-2)',
         height: 'var(--header-height)',
         background: 'var(--color-bg)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
         borderBottom: '1px solid var(--color-border)',
+        zIndex: 30,
       }}
     >
-      {/* Page title */}
-      <div style={{ overflow: 'hidden' }}>
+      {/* Left section: Logo + Title */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', overflow: 'hidden' }}>
+        <Link 
+          href="/" 
+          style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            width: 28, 
+            height: 28, 
+            background: 'var(--color-primary)', 
+            borderRadius: 6,
+            color: '#fff',
+            fontSize: 10,
+            fontWeight: 800,
+            textDecoration: 'none'
+          }}
+        >
+          A
+        </Link>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
         <AnimatePresence mode="wait">
           <motion.div
             key={title}
-            initial={{ y: 10, opacity: 0 }}
+            initial={{ y: 5, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -10, opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            exit={{ y: -5, opacity: 0 }}
+            transition={{ duration: 0.15 }}
           >
             <h1
               style={{
-                fontSize: 18,
+                fontSize: 14,
                 fontWeight: 600,
                 color: 'var(--color-text-primary)',
-                letterSpacing: '-0.02em',
+                letterSpacing: '-0.025em',
                 margin: 0,
               }}
             >
@@ -58,9 +77,10 @@ export function Header({ title, subtitle }: HeaderProps) {
             {subtitle && (
               <p
                 style={{
-                  fontSize: 12,
-                  color: 'var(--color-text-secondary)',
-                  margin: 0,
+                  fontSize: 11,
+                  fontWeight: 500,
+                  color: 'var(--color-text-tertiary)',
+                  margin: '2px 0 0',
                 }}
               >
                 {subtitle}
@@ -68,83 +88,106 @@ export function Header({ title, subtitle }: HeaderProps) {
             )}
           </motion.div>
         </AnimatePresence>
+        </div>
       </div>
 
       {/* Right actions */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        {/* Network badge */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        {/* Network indicator */}
         <div
-          className="badge badge-primary"
-          style={{ fontSize: 12, padding: '4px 12px' }}
+          style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 8, 
+            padding: '4px 10px', 
+            borderRadius: 6, 
+            background: 'var(--color-bg-elevated)', 
+            border: '1px solid var(--color-border)',
+            fontSize: 11, 
+            fontWeight: 600,
+            color: 'var(--color-text-secondary)'
+          }}
         >
           <span
             style={{
               width: 6,
               height: 6,
               borderRadius: '50%',
-              background: 'var(--color-success)',
+              background: '#10b981',
               display: 'inline-block',
             }}
           />
-          Base
+          Base Mainnet
         </div>
 
-        {/* Notification bell */}
-        <button
-          className="btn-ghost btn-icon"
-          style={{
-            width: 36,
-            height: 36,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: 'var(--radius-md)',
-            border: 'none',
-            cursor: 'pointer',
-            position: 'relative',
-            background: 'transparent',
-            color: 'var(--color-text-secondary)',
-          }}
-        >
-          <Bell size={18} />
-          <span
-            style={{
-              position: 'absolute',
-              top: 6,
-              right: 6,
-              width: 7,
-              height: 7,
-              borderRadius: '50%',
-              background: 'var(--color-primary)',
-              border: '2px solid var(--color-bg)',
-            }}
-          />
-        </button>
-
-        {/* Theme toggle */}
-        {mounted && (
+        {/* Action icons spacer */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4, margin: '0 4px' }}>
+          {/* Notification bell */}
           <button
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="btn-ghost btn-icon"
             style={{
-              width: 36,
-              height: 36,
+              width: 32,
+              height: 32,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              borderRadius: 'var(--radius-md)',
-              border: 'none',
+              borderRadius: 6,
+              border: '1px solid transparent',
               cursor: 'pointer',
               background: 'transparent',
-              color: 'var(--color-text-secondary)',
+              color: 'var(--color-text-tertiary)',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'var(--color-bg-elevated)'
+              e.currentTarget.style.borderColor = 'var(--color-border)'
+              e.currentTarget.style.color = 'var(--color-text-primary)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent'
+              e.currentTarget.style.borderColor = 'transparent'
+              e.currentTarget.style.color = 'var(--color-text-tertiary)'
             }}
           >
-            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            <Bell size={14} />
           </button>
-        )}
 
-        {/* Wallet connect (Reown AppKit Web Component) */}
-        <appkit-button size="sm" />
+          {/* Theme toggle */}
+          {mounted && (
+            <button
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              style={{
+                width: 32,
+                height: 32,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 6,
+                border: '1px solid transparent',
+                cursor: 'pointer',
+                background: 'transparent',
+                color: 'var(--color-text-tertiary)',
+                transition: 'all 0.2s',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'var(--color-bg-elevated)'
+                e.currentTarget.style.borderColor = 'var(--color-border)'
+                e.currentTarget.style.color = 'var(--color-text-primary)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'transparent'
+                e.currentTarget.style.borderColor = 'transparent'
+                e.currentTarget.style.color = 'var(--color-text-tertiary)'
+              }}
+            >
+              {theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
+            </button>
+          )}
+        </div>
+
+        {/* Wallet connect */}
+        <div style={{ transform: 'scale(0.9)', transformOrigin: 'right' }}>
+          <appkit-button size="sm" />
+        </div>
       </div>
     </header>
   )

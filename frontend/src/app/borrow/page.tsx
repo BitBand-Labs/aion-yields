@@ -5,6 +5,7 @@ import { AppShell } from '@/components/layout/AppShell'
 import { StatCard } from '@/components/ui/StatCard'
 import { Badge } from '@/components/ui/Badge'
 import { HealthGauge } from '@/components/ui/HealthGauge'
+import { MagicCard } from '@/components/ui/MagicCard'
 import { ArrowUpRight, Shield, RefreshCw, AlertTriangle, Wallet } from 'lucide-react'
 import { motion } from 'framer-motion'
 
@@ -228,18 +229,16 @@ export default function BorrowPage() {
 
           {/* Sidebar Column */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-8)' }}>
-            <motion.div 
-              variants={{ hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1 } }}
-              className="card" 
-              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '40px 24px' }}
+            <MagicCard 
+              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: 'var(--space-2)' }}
             >
-              <p style={{ margin: '0 0 24px', fontSize: 12, fontWeight: 700, color: 'var(--color-text-tertiary)', textTransform: 'uppercase', letterSpacing: 1 }}>Account Health</p>
-              <HealthGauge healthFactor={2.1} size={180} />
-              <p style={{ marginTop: '32px', fontSize: 13, color: 'var(--color-text-secondary)', lineHeight: 1.6 }}>
+              <p style={{ margin: 'var(--space-2) 0', fontSize: 11, fontWeight: 700, color: 'var(--color-text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Account Health Factor</p>
+              <HealthGauge value={2.1} size={160} />
+              <p style={{ marginTop: '24px', fontSize: 13, color: 'var(--color-text-secondary)', lineHeight: 1.6, padding: '0 16px' }}>
                 Your positions are well collateralized. <br/> <span style={{ color: 'var(--color-success)', fontWeight: 600 }}>Health is verified by Chainlink CCIP.</span>
               </p>
-              <button className="btn btn-ghost btn-sm" style={{ marginTop: 12, color: 'var(--color-primary)' }}>Risk Sensitivity Settings</button>
-            </motion.div>
+              <button className="btn btn-ghost btn-sm" style={{ marginTop: 12, color: 'var(--color-primary)', fontSize: 11 }}>Risk Sensitivity Settings</button>
+            </MagicCard>
 
             {/* Faint info card */}
             <motion.div 

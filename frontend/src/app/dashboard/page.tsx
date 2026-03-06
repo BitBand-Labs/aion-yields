@@ -6,6 +6,7 @@ import { StatCard } from '@/components/ui/StatCard'
 import { HealthGauge } from '@/components/ui/HealthGauge'
 import {
   Wallet,
+  Bot,
   TrendingDown,
   Percent,
   Activity,
@@ -34,206 +35,139 @@ const positions = [
   },
 ]
 
+import { MagicCard } from '@/components/ui/MagicCard'
+import { DataFlow } from '@/components/ui/DataFlow'
+
 export default function DashboardPage() {
   return (
     <AppShell>
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={{
-          hidden: { opacity: 0 },
-          visible: {
-            opacity: 1,
-            transition: { staggerChildren: 0.1 }
-          }
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4, 1fr)',
+          gridAutoRows: 'minmax(120px, auto)',
+          gap: 'var(--space-2)',
+          paddingBottom: 'var(--space-4)',
         }}
       >
-        {/* Welcome Hero Section (Asymmetrical) */}
-        <motion.div 
-          variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-          style={{
-            position: 'relative',
-            padding: '32px 40px',
-            borderRadius: 'var(--radius-lg)',
-            background: 'linear-gradient(135deg, var(--color-primary), var(--color-primary-light))',
-            color: 'var(--color-text-primary)',
-            marginBottom: 'var(--space-8)',
-            overflow: 'hidden',
-          }}
+        {/* Row 1: Quick Stats + Highlight */}
+        <div style={{ gridColumn: 'span 1' }}>
+          <StatCard label="Protocol TVL" value="$42.8M" icon={<Activity />} />
+        </div>
+
+        <MagicCard
+          style={{ gridColumn: 'span 2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          gradientColor="rgba(16, 185, 129, 0.05)"
         >
-          <div style={{ position: 'absolute', top: '-20%', right: '-5%', width: '300px', height: '300px', background: 'var(--overlay-medium)', borderRadius: '50%', filter: 'blur(60px)' }} />
-          <div style={{ position: 'relative', zIndex: 1, maxWidth: '600px' }}>
-            <h2 style={{ fontSize: 24, fontWeight: 700, margin: '0 0 12px', letterSpacing: '-0.02em' }}>
-              Welcome back, Alpha Optimizer
-            </h2>
-            <p style={{ fontSize: 15, opacity: 0.9, lineHeight: 1.5, marginBottom: 24 }}>
-              Your AI agents have successfully prevented 2 liquidation risks in the last 24 hours. Net portfolio yield updated to 4.20% APY.
-            </p>
-            <div style={{ display: 'flex', gap: 12 }}>
-              <button className="btn btn-secondary btn-sm" style={{ border: 'none', background: 'var(--overlay-strong)', color: 'var(--color-text-primary)', backdropFilter: 'blur(10px)' }}>
-                View Agent Logs
-              </button>
-              <button className="btn btn-ghost btn-sm" style={{ color: 'var(--color-text-primary)' }}>
-                Strategy Settings <ChevronRight size={14} />
-              </button>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-success)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+              <motion.span 
+                animate={{ scale: [1, 1.4, 1], opacity: [0.5, 1, 0.5] }} 
+                transition={{ duration: 2, repeat: Infinity }}
+                style={{ width: 8, height: 8, background: 'var(--color-success)', borderRadius: '50%' }} 
+              />
+              AI-Orchestrated Net APY
+            </div>
+            <div style={{ fontSize: 48, fontWeight: 800, letterSpacing: '-0.04em', color: 'var(--color-text-primary)', lineHeight: 1 }}>
+              12.45<span style={{ fontSize: 24, fontWeight: 500, color: 'var(--color-text-tertiary)' }}>%</span>
             </div>
           </div>
-        </motion.div>
+        </MagicCard>
 
-        <motion.h2 
-          variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
-          className="heading-md" style={{ marginBottom: 'var(--space-6)', fontWeight: 700, letterSpacing: '-0.02em' }}
-        >
-          Portfolio Summary
-        </motion.h2>
-
-        {/* Stats row */}
-        <div className="grid-stats" style={{ marginBottom: 'var(--space-8)' }}>
-          <StatCard
-            label="Total Deposits"
-            value="$12,450.00"
-            icon={<ArrowDownLeft size={40} />}
-          />
-          <StatCard
-            label="Total Borrowed"
-            value="$4,200.00"
-            icon={<ArrowUpRight size={40} />}
-          />
-          <StatCard
-            label="Net APY"
-            value="4.20%"
-            change="+0.5% this week"
-            changeType="positive"
-            icon={<Percent size={40} />}
-          />
-          <StatCard
-            label="Health Factor"
-            value="2.10"
-            change="Moderate Risk"
-            changeType="warning"
-            icon={<Activity size={40} />}
-          />
+        <div style={{ gridColumn: 'span 1' }}>
+          <StatCard label="My Balance" value="$24.5k" icon={<Wallet />} change="+2.4%" changeType="positive" />
         </div>
 
-        {/* Two-column layout for Table and Risk Widget */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 340px',
-            gap: 'var(--space-6)',
-          }}
-          className="dashboard-grid"
-        >
-          {/* Position Overview Table */}
-          <motion.div 
-            variants={{ hidden: { opacity: 0, x: -20 }, visible: { opacity: 1, x: 0 } }}
-            className="card-flat"
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-6)' }}>
-              <h3 className="heading-sm" style={{ margin: 0, fontWeight: 700 }}>
-                Position Overview
-              </h3>
-              <button className="btn btn-ghost btn-sm" style={{ color: 'var(--color-primary)' }}>Export CSV</button>
-            </div>
-            <div style={{ overflowX: 'auto' }}>
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Asset</th>
-                    <th>Deposited</th>
-                    <th>Borrowed</th>
-                    <th>Interest Rate</th>
-                    <th><div style={{ textAlign: 'center' }}>Health Factor</div></th>
-                    <th><div style={{ textAlign: 'right' }}>Actions</div></th>
+        {/* Row 2: Main Positions + Risk */}
+        <MagicCard style={{ gridColumn: 'span 3', gridRow: 'span 2' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-3)' }}>
+            <h3 className="heading-sm" style={{ margin: 0, fontSize: 16 }}>Your Positions</h3>
+            <button style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-primary)', background: 'none', border: 'none', cursor: 'pointer' }}>View All Markets</button>
+          </div>
+          <div style={{ overflowX: 'auto' }}>
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Asset</th>
+                  <th>Balance</th>
+                  <th>Yield / APR</th>
+                  <th>Risk Level</th>
+                  <th style={{ textAlign: 'right' }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {positions.map((pos, i) => (
+                  <tr key={i}>
+                    <td>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 600, fontSize: 13 }}>
+                        <span style={{ fontSize: 16 }}>{pos.icon}</span>
+                        {pos.asset}
+                      </div>
+                    </td>
+                    <td style={{ fontSize: 13, fontWeight: 500 }}>{pos.deposited}</td>
+                    <td style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-success)' }}>{pos.interestRate}</td>
+                    <td>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <div style={{ width: 40, height: 4, background: 'var(--color-border)', borderRadius: 2, overflow: 'hidden' }}>
+                          <div style={{ width: pos.asset === 'USDC' ? '20%' : '60%', height: '100%', background: pos.asset === 'USDC' ? 'var(--color-success)' : 'var(--color-warning)' }} />
+                        </div>
+                        <span style={{ fontSize: 11, color: 'var(--color-text-tertiary)' }}>
+                          {pos.asset === 'USDC' ? 'Low' : 'Med'}
+                        </span>
+                      </div>
+                    </td>
+                    <td style={{ textAlign: 'right' }}>
+                      <button style={{ padding: '4px 10px', borderRadius: 6, background: 'var(--color-bg)', border: '1px solid var(--color-border)', fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>Manage</button>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {positions.map((pos, i) => (
-                    <tr key={i}>
-                      <td>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontWeight: 600 }}>
-                          <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--color-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>
-                            {pos.icon}
-                          </div>
-                          {pos.asset}
-                        </div>
-                      </td>
-                      <td style={{ fontWeight: 600 }}>{pos.deposited}</td>
-                      <td style={{ fontWeight: 600 }}>{pos.borrowed}</td>
-                      <td style={{ color: pos.interestRate.startsWith('-') ? 'var(--color-error)' : 'var(--color-success)', fontWeight: 600 }}>
-                        {pos.interestRate}
-                      </td>
-                      <td>
-                        <div style={{ textAlign: 'center' }}>
-                          <span
-                            className={
-                              pos.healthFactor === '—'
-                                ? 'badge'
-                                : Number(pos.healthFactor) < 1.5
-                                ? 'badge badge-error'
-                                : Number(pos.healthFactor) < 2.5
-                                ? 'badge badge-warning'
-                                : 'badge badge-success'
-                            }
-                            style={{ background: pos.healthFactor === '—' ? 'transparent' : undefined }}
-                          >
-                            {pos.healthFactor}
-                          </span>
-                        </div>
-                      </td>
-                      <td>
-                        <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-                          <button className="btn btn-secondary btn-sm" style={{ borderRadius: 8 }}>Manage</button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </motion.div>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </MagicCard>
 
-          {/* Liquidation Risk Widget */}
-          <motion.div 
-            variants={{ hidden: { opacity: 0, x: 20 }, visible: { opacity: 1, x: 0 } }}
-            className="card" 
-            style={{ display: 'flex', flexDirection: 'column', height: 'fit-content' }}
-          >
-            <h3 className="heading-sm" style={{ marginBottom: 'var(--space-6)', fontWeight: 700 }}>
-              Liquidation Risk
-            </h3>
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: 'var(--space-4) 0',
-              }}
-            >
-              <HealthGauge healthFactor={2.1} size={180} />
-              
-              <div style={{ textAlign: 'center', marginTop: 'var(--space-8)' }}>
-                <p style={{ margin: '0 0 var(--space-4)', fontSize: 13, color: 'var(--color-text-secondary)', lineHeight: 1.5 }}>
-                  Your assets are currently secure. A health factor below <strong style={{color: 'var(--color-error)'}}>1.0</strong> will result in liquidation.
-                </p>
-                <div style={{ padding: '16px', borderRadius: 12, background: 'var(--color-bg)', border: '1px solid var(--color-border)', marginBottom: 24, textAlign: 'left' }}>
-                   <p style={{ margin: '0 0 8px', fontSize: 12, fontWeight: 700, color: 'var(--color-text-tertiary)', textTransform: 'uppercase' }}>AI Prediction</p>
-                   <p style={{ margin: 0, fontSize: 14, color: 'var(--color-text-secondary)' }}>Low volatility expected in next 4h. No rebalance needed.</p>
-                </div>
-                <button className="btn btn-primary btn-sm" style={{ width: '100%', borderRadius: 8 }}>
-                  View Detailed Risk Params
-                </button>
-              </div>
-            </div>
-          </motion.div>
+        <MagicCard style={{ gridColumn: 'span 1', gridRow: 'span 2', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+          <HealthGauge value={2.1} size={160} />
+          <div style={{ marginTop: 24, padding: 12, borderRadius: 8, background: 'rgba(0,0,0,0.02)', border: '1px solid var(--color-border)', width: '100%' }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--color-text-tertiary)', textTransform: 'uppercase', marginBottom: 4 }}>AI Risk Guardian</div>
+            <div style={{ fontSize: 12, color: 'var(--color-text-secondary)', lineHeight: 1.4 }}>Liquidation probability <span style={{ color: 'var(--color-success)', fontWeight: 600 }}>0.01%</span> over next 24h.</div>
+          </div>
+        </MagicCard>
+
+        {/* Row 3: Live Flows */}
+        <div style={{ gridColumn: 'span 3' }}>
+          <DataFlow />
         </div>
-      </motion.div>
+
+        <MagicCard style={{ gridColumn: 'span 1', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--color-text-tertiary)', textTransform: 'uppercase', marginBottom: 8 }}>Top Performer</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--color-accent-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Bot size={16} color="var(--color-accent)" />
+            </div>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 700 }}>Sigma-7</div>
+              <div style={{ fontSize: 11, color: 'var(--color-success)' }}>+18.4% APY</div>
+            </div>
+          </div>
+        </MagicCard>
+      </div>
 
       <style jsx global>{`
-        @media (max-width: 1024px) {
-          .dashboard-grid {
+        @media (max-width: 1200px) {
+          .app-shell > div > div {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+          div[style*="span 3"], div[style*="span 2"] {
+            grid-column: span 2 !important;
+          }
+        }
+        @media (max-width: 768px) {
+          .app-shell > div > div {
             grid-template-columns: 1fr !important;
+          }
+          div[style*="span 3"], div[style*="span 2"], div[style*="span 1"] {
+            grid-column: span 1 !important;
           }
         }
       `}</style>
