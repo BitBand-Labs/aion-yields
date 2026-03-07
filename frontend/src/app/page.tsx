@@ -295,7 +295,7 @@ export default function LandingPage() {
       {/* Metrics Section (Scroll animate) */}
       <motion.section 
         initial={{ y: 50, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} viewport={{ once: true, margin: '-100px' }} transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-        style={{ maxWidth: 1200, margin: '0 auto 160px', padding: '0 24px', position: 'relative', zIndex: 10 }}
+        style={{ maxWidth: 1200, margin: '80px auto 160px', padding: '0 24px', position: 'relative', zIndex: 10 }}
       >
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 24, background: 'var(--overlay-ultralight)', backdropFilter: 'blur(32px)', WebkitBackdropFilter: 'blur(32px)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 32, padding: 48, boxShadow: '0 40px 80px rgba(0,0,0,0.3)' }}>
           {[
