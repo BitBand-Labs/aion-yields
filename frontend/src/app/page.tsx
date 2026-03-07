@@ -87,18 +87,76 @@ export default function LandingPage() {
       </motion.nav>
 
       {/* Hero */}
-      <section style={{ position: 'relative', zIndex: 10, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 80px', overflow: 'hidden' }}>
-        {/* Background Visual Asset */}
-        <div style={{ position: 'absolute', top: '10%', left: '5%', width: '100%', height: '100%', opacity: 0.06, filter: 'blur(10px)', pointerEvents: 'none', zIndex: -1 }}>
-          <img src="/assets/illustrations/HERO-ILLUSTRATION.png" alt="Background Network" style={{ width: '100%', height: 'auto', objectFit: 'contain' }} />
+      <section style={{ position: 'relative', zIndex: 10, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 48px', overflow: 'hidden' }}>
+
+        {/* ═══ LAYER 1: Background ═══ */}
+        {/* Animated Grid Pattern */}
+        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0 }}>
+          <div style={{
+            position: 'absolute', inset: 0,
+            backgroundImage: 'linear-gradient(rgba(138,166,249,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(138,166,249,0.06) 1px, transparent 1px)',
+            backgroundSize: '48px 48px',
+            maskImage: 'radial-gradient(ellipse at 70% 50%, black 20%, transparent 70%)',
+          }} />
         </div>
 
+        {/* Animated Gradient Glow */}
+        <motion.div
+          animate={{
+            x: [0, 30, -20, 0],
+            y: [0, -20, 15, 0],
+            scale: [1, 1.1, 0.95, 1],
+          }}
+          transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
+          style={{
+            position: 'absolute', top: '20%', right: '10%',
+            width: '50vw', height: '50vw',
+            background: 'radial-gradient(circle, rgba(8,71,247,0.15) 0%, rgba(138,166,249,0.08) 40%, transparent 70%)',
+            filter: 'blur(80px)', pointerEvents: 'none', zIndex: 0,
+          }}
+        />
+
         {/* Video Background Asset */}
-        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '80%', height: '80%', opacity: 0.06, filter: 'blur(10px)', pointerEvents: 'none', zIndex: -2 }}>
+        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '80%', height: '80%', opacity: 0.05, filter: 'blur(12px)', pointerEvents: 'none', zIndex: 0 }}>
           <video src="/assets/logo/logo-animation.mp4" autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 48, alignItems: 'center', maxWidth: 1400, width: '100%', margin: '0 auto' }} className="hero-container">
+        {/* Floating Particles */}
+        {Array.from({ length: 20 }).map((_, i) => (
+          <motion.div
+            key={`particle-${i}`}
+            animate={{
+              x: [0, Math.random() * 60 - 30, Math.random() * -40 + 20, 0],
+              y: [0, Math.random() * -50 + 25, Math.random() * 40 - 20, 0],
+              opacity: [0.15, 0.3, 0.1, 0.15],
+            }}
+            transition={{
+              duration: 12 + Math.random() * 8,
+              repeat: Infinity,
+              ease: 'easeInOut',
+              delay: Math.random() * 5,
+            }}
+            style={{
+              position: 'absolute',
+              top: `${10 + Math.random() * 80}%`,
+              left: `${40 + Math.random() * 55}%`,
+              width: 3 + Math.random() * 4,
+              height: 3 + Math.random() * 4,
+              borderRadius: '50%',
+              background: `radial-gradient(circle, ${Math.random() > 0.5 ? '#8AA6F9' : '#0847F7'}, transparent)`,
+              boxShadow: `0 0 ${6 + Math.random() * 8}px ${Math.random() > 0.5 ? '#8AA6F9' : '#0847F7'}`,
+              pointerEvents: 'none',
+              zIndex: 1,
+            }}
+          />
+        ))}
+
+        {/* ═══ CONTENT GRID ═══ */}
+        <motion.div
+          style={{ y: yHero, opacity: opacityHero, display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 48, alignItems: 'center', maxWidth: 1400, width: '100%', position: 'relative', zIndex: 2 }}
+          className="hero-container"
+        >
+          {/* ═══ LEFT: Headlines + CTA (untouched) ═══ */}
           <motion.div style={{ opacity: 1, textAlign: 'left', position: 'relative' }}>
             
             <motion.div 
@@ -140,15 +198,72 @@ export default function LandingPage() {
             </motion.div>
           </motion.div>
 
-          <motion.div 
+          {/* ═══ RIGHT: Layer 2 — Cycling Hero Illustrations ═══ */}
+          <motion.div
             initial={{ opacity: 0, x: 50, filter: 'blur(10px)' }}
             animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
             transition={{ duration: 1.2, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            style={{ position: 'relative', width: '100%', height: 'auto', display: 'flex', justifyContent: 'center' }}
+            style={{ position: 'relative', width: '100%', height: 500, display: 'flex', justifyContent: 'center', alignItems: 'center' }}
           >
-            <img src="/assets/illustrations/HERO-ILLUSTRATION-alt.png" alt="AION Yield AI Orchestration" style={{ width: '100%', height: 'auto', maxWidth: 640 }} />
+            {/* Gradient glow behind images */}
+            <motion.div
+              animate={{ scale: [1, 1.15, 1], opacity: [0.12, 0.2, 0.12] }}
+              transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+              style={{
+                position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+                width: '120%', height: '120%',
+                background: 'radial-gradient(circle, rgba(8,71,247,0.2) 0%, rgba(138,166,249,0.1) 40%, transparent 65%)',
+                filter: 'blur(40px)', pointerEvents: 'none', zIndex: 0,
+              }}
+            />
+
+            {/* Crossfading images with floating motion */}
+            {[
+              '/assets/illustrations/HERO-ILLUSTRATION-alt.png',
+              '/assets/illustrations/HERO-ILLUSTRATION.png',
+              '/assets/illustrations/3D-ABSTRACT-GRAPHICS.png',
+            ].map((src, i) => (
+              <motion.div
+                key={src}
+                animate={{
+                  opacity: [
+                    i === 0 ? 1 : 0, i === 0 ? 1 : 0, // 0-6s
+                    i === 1 ? 1 : 0, i === 1 ? 1 : 0, // 6-12s
+                    i === 2 ? 1 : 0, i === 2 ? 1 : 0, // 12-18s
+                  ],
+                  y: [0, -10, 0, 10, 0],
+                }}
+                transition={{
+                  opacity: {
+                    duration: 18,
+                    repeat: Infinity,
+                    times: [0, 0.3, 0.33, 0.63, 0.66, 1],
+                    ease: 'easeInOut',
+                  },
+                  y: {
+                    duration: 8,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                  },
+                }}
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  zIndex: 1,
+                }}
+              >
+                <img
+                  src={src}
+                  alt="AION Yield"
+                  style={{ width: '100%', height: 'auto', maxWidth: 580, objectFit: 'contain' }}
+                />
+              </motion.div>
+            ))}
           </motion.div>
-        </div>
+        </motion.div>
       </section>
 
       {/* Metrics Section (Scroll animate) */}
