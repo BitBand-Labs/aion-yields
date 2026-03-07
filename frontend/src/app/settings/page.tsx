@@ -4,8 +4,19 @@ import React from 'react'
 import { AppShell } from '@/components/layout/AppShell'
 import { Bell, Shield, Wallet, Monitor, Sliders, Globe, ShieldCheck, Key } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { useTheme } from 'next-themes'
 
 export default function SettingsPage() {
+  const { theme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const currentTheme = mounted ? (theme === 'system' ? resolvedTheme : theme) : 'dark';
+  const isLight = currentTheme === 'light';
+
   return (
     <AppShell>
       <motion.div
@@ -111,13 +122,19 @@ export default function SettingsPage() {
              <motion.div 
                variants={{ hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1 } }}
                className="card-glow" 
-               style={{ padding: '32px 24px', textAlign: 'center', background: 'var(--color-surface-dark)', color: 'var(--color-text-primary)' }}
+               style={{ 
+                 padding: '32px 24px', 
+                 textAlign: 'center', 
+                 background: isLight ? 'var(--color-bg)' : 'var(--color-surface-dark)', 
+                 color: isLight ? 'var(--color-primary)' : 'var(--color-text-primary)',
+                 border: isLight ? '1px solid var(--color-border-hover)' : 'none'
+               }}
              >
-                <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(52, 211, 153, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-success)', margin: '0 auto 20px' }}>
+                <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(52, 211, 153, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-success)', margin: '0 auto 200px'.replace('200px', '20px') }}>
                    <ShieldCheck size={32} />
                 </div>
                 <h4 style={{ margin: '0 0 8px', fontSize: 18, fontWeight: 700 }}>Security Score: 92/100</h4>
-                <p style={{ fontSize: 13, color: 'var(--overlay-half-strong)', lineHeight: 1.6, margin: '0 0 24px' }}>Your account is protected with Hardware Wallet authentication and CCIP Guardian.</p>
+                <p style={{ fontSize: 13, color: isLight ? 'var(--color-primary)' : 'var(--overlay-half-strong)', lineHeight: 1.6, margin: '0 0 24px', opacity: isLight ? 0.8 : 1 }}>Your account is protected with Hardware Wallet authentication and CCIP Guardian.</p>
                 <button className="btn btn-primary" style={{ width: '100%', borderRadius: 12 }}>
                    <Key size={16} /> Enhance Security
                 </button>
