@@ -87,7 +87,7 @@ export default function LandingPage() {
       </motion.nav>
 
       {/* Hero */}
-      <section style={{ position: 'relative', zIndex: 10, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 48px', overflow: 'hidden' }}>
+      <section style={{ position: 'relative', zIndex: 10, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 80px', overflow: 'hidden' }}>
         {/* Background Visual Asset */}
         <div style={{ position: 'absolute', top: '10%', left: '5%', width: '100%', height: '100%', opacity: 0.06, filter: 'blur(10px)', pointerEvents: 'none', zIndex: -1 }}>
           <img src="/assets/illustrations/HERO-ILLUSTRATION.png" alt="Background Network" style={{ width: '100%', height: 'auto', objectFit: 'contain' }} />
@@ -98,7 +98,7 @@ export default function LandingPage() {
           <video src="/assets/logo/logo-animation.mp4" autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 48, alignItems: 'center', maxWidth: 1400, width: '100%' }} className="hero-container">
+        <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 48, alignItems: 'center', maxWidth: 1400, width: '100%', margin: '0 auto' }} className="hero-container">
           <motion.div style={{ opacity: 1, textAlign: 'left', position: 'relative' }}>
             
             <motion.div 
