@@ -36,9 +36,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         className="desktop-sidebar"
         style={{
           position: 'fixed',
-          top: '16px',
+          top: '12px',
           left: 0,
-          bottom: '16px',
+          bottom: '12px',
           zIndex: 40,
           transition: 'all var(--transition-slow)',
         }}
@@ -53,12 +53,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <div
         style={{
           position: 'fixed',
-          top: '16px',
-          right: '16px',
+          top: '12px',
+          right: '12px',
           left: sidebarCollapsed 
-            ? 'calc(var(--sidebar-collapsed) + 32px)' 
-            : 'calc(var(--sidebar-width) + 32px)',
-          zIndex: 40,
+            ? 'calc(var(--sidebar-collapsed) + 12px)' 
+            : 'calc(var(--sidebar-width) + 12px)',
+          zIndex: 30,
           transition: 'all var(--transition-slow)',
         }}
         className="header-wrapper"
@@ -70,10 +70,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <main
         style={{
           marginLeft: sidebarCollapsed 
-            ? 'calc(var(--sidebar-collapsed) + 32px)' 
-            : 'calc(var(--sidebar-width) + 32px)',
-          marginRight: '32px',
-          paddingTop: 'calc(var(--header-height) + 32px)',
+            ? 'calc(var(--sidebar-collapsed) + 12px)' 
+            : 'calc(var(--sidebar-width) + 12px)',
+          marginRight: '12px',
+          paddingTop: 'calc(var(--header-height) + 24px)',
           transition: 'margin var(--transition-slow)',
           minHeight: '100vh',
           display: 'flex',
@@ -81,14 +81,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         }}
         className="main-content"
       >
-        <div style={{ flex: 1, paddingBottom: '16px', position: 'relative' }}>
+        <div style={{ flex: 1, paddingBottom: '12px', position: 'relative' }}>
           <div style={{ 
             background: 'var(--color-bg)', 
             border: '1px solid var(--color-border)', 
             borderRadius: '24px', 
-            minHeight: 'calc(100vh - var(--header-height) - 48px)',
-            padding: 'var(--space-4)',
-            overflow: 'auto'
+            minHeight: 'calc(100vh - var(--header-height) - 36px)',
+            padding: 'var(--space-2)',
+            overflow: 'hidden'
           }}>
             <AnimatePresence mode="wait">
               <motion.div
