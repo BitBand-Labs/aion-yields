@@ -7,7 +7,7 @@ import { useAppKit } from '@reown/appkit/react'
 import toast, { Toaster } from 'react-hot-toast'
 import { motion, useScroll, useTransform, Variants, AnimatePresence } from 'framer-motion'
 import {
-  ArrowRight, Shield, Zap, Network, Cpu, Database, Activity, Layers, ExternalLink, Wallet, ChevronUp
+  ArrowRight, Shield, Zap, Network, Cpu, Database, Activity, Layers, ExternalLink, Wallet, ChevronUp, Twitter, Github
 } from 'lucide-react'
 
 const containerVariants: Variants = {
@@ -486,29 +486,56 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer style={{ background: '#02050A', paddingTop: 100, paddingBottom: 60, borderTop: '1px solid var(--overlay-medium-light)', position: 'relative', zIndex: 10 }}>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '0 24px' }}>
-          <div style={{ marginBottom: 32 }}>
-            <img src="/assets/logo/AIONYIELD-logo-nobg.png" alt="AION Yield Logo" style={{ height: 48, width: 'auto' }} />
+      <footer style={{ background: '#02050A', borderTop: '1px solid var(--overlay-medium-light)', position: 'relative', zIndex: 10 }}>
+        <div style={{ maxWidth: 1400, margin: '0 auto', padding: '40px 48px 30px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 32, marginBottom: 32 }}>
+            {/* Left: Brand + Desc */}
+            <div style={{ flex: '1 1 300px' }}>
+              <div style={{ marginBottom: 16 }}>
+                <img src="/assets/logo/AIONYIELD-logo-nobg.png" alt="AION Yield Logo" style={{ height: 40, width: 'auto' }} />
+              </div>
+              <p style={{ color: 'var(--overlay-half)', fontSize: 16, lineHeight: 1.6, maxWidth: 400 }}>
+                Autonomous AI agents optimizing cross-chain capital allocation. Built for the future of decentralized money markets.
+              </p>
+            </div>
+
+            {/* Right: Socials */}
+            <div style={{ display: 'flex', gap: 24 }}>
+              <motion.a 
+                whileHover={{ y: -4, color: 'var(--color-text-primary)' }} 
+                href="https://twitter.com/AIONYield" target="_blank" rel="noopener noreferrer" 
+                style={{ color: 'var(--overlay-half)', transition: 'color 0.2s' }}
+              >
+                <Twitter size={24} />
+              </motion.a>
+              <motion.a 
+                whileHover={{ y: -4, color: 'var(--color-text-primary)' }} 
+                href="https://github.com/ChainNomads/AION-Yield" target="_blank" rel="noopener noreferrer" 
+                style={{ color: 'var(--overlay-half)', transition: 'color 0.2s' }}
+              >
+                <Github size={24} />
+              </motion.a>
+              <motion.a 
+                whileHover={{ y: -4, color: 'var(--color-text-primary)' }} 
+                href="#" 
+                style={{ color: 'var(--overlay-half)', transition: 'color 0.2s' }}
+              >
+                <ExternalLink size={24} />
+              </motion.a>
+            </div>
           </div>
-          <p style={{ color: 'var(--overlay-half)', fontSize: 18, maxWidth: 500, marginBottom: 48, lineHeight: 1.6 }}>
-            Built for the Chainlink Convergence Hackathon. Setting the standard for AI-driven DeFi.
-          </p>
-          <div style={{ display: 'flex', gap: 40, marginBottom: 80 }}>
-            <motion.a whileHover={{ color: 'var(--color-text-primary)' }} href="#" style={{ color: 'var(--overlay-half)', textDecoration: 'none', fontSize: 16, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8, transition: 'color 0.2s' }}>
-              Documentation <ExternalLink size={16} />
-            </motion.a>
-            <motion.a whileHover={{ color: 'var(--color-text-primary)' }} href="https://github.com/ChainNomads/AION-Yield" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--overlay-half)', textDecoration: 'none', fontSize: 16, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8, transition: 'color 0.2s' }}>
-              GitHub <ExternalLink size={16} />
-            </motion.a>
-            <motion.a whileHover={{ color: 'var(--color-text-primary)' }} href="#" style={{ color: 'var(--overlay-half)', textDecoration: 'none', fontSize: 16, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8, transition: 'color 0.2s' }}>
-              Base Explorer <ExternalLink size={16} />
-            </motion.a>
+
+          <div style={{ width: '100%', height: 1, background: 'var(--overlay-light)', marginBottom: 24 }} />
+          
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
+            <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 14, margin: 0 }}>
+              © {new Date().getFullYear()} AION Yield Protocol. Built for Chainlink Convergence.
+            </p>
+            <div style={{ display: 'flex', gap: 32 }}>
+              <Link href="/terms" style={{ color: 'rgba(255,255,255,0.3)', textDecoration: 'none', fontSize: 14 }}>Terms</Link>
+              <Link href="/privacy" style={{ color: 'rgba(255,255,255,0.3)', textDecoration: 'none', fontSize: 14 }}>Privacy</Link>
+            </div>
           </div>
-          <div style={{ width: '100%', height: 1, background: 'var(--overlay-light)', marginBottom: 40 }} />
-          <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 15, margin: 0 }}>
-            © {new Date().getFullYear()} AION Yield Protocol. All rights reserved.
-          </p>
         </div>
       </footer>
       <AnimatePresence>
