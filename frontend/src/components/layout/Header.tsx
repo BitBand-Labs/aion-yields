@@ -34,54 +34,8 @@ export function Header({ title, subtitle }: HeaderProps) {
         zIndex: 30,
       }}
     >
-      {/* Left section: Logo + Title */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', overflow: 'hidden' }}>
-        <Link 
-          href="/" 
-          style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            textDecoration: 'none'
-          }}
-        >
-          <img src="/assets/logo/AIONYIELD-logo-nobg.png" alt="AION Yield Logo" style={{ height: 24, width: 'auto' }} />
-        </Link>
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={title}
-            initial={{ y: 5, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -5, opacity: 0 }}
-            transition={{ duration: 0.15 }}
-          >
-            <h1
-              style={{
-                fontSize: 14,
-                fontWeight: 600,
-                color: 'var(--color-text-primary)',
-                letterSpacing: '-0.025em',
-                margin: 0,
-              }}
-            >
-              {title}
-            </h1>
-            {subtitle && (
-              <p
-                style={{
-                  fontSize: 11,
-                  fontWeight: 500,
-                  color: 'var(--color-text-tertiary)',
-                  margin: '2px 0 0',
-                }}
-              >
-                {subtitle}
-              </p>
-            )}
-          </motion.div>
-        </AnimatePresence>
-        </div>
+      {/* Left section: Empty or Spacer */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
       </div>
 
       {/* Right actions */}
@@ -103,14 +57,14 @@ export function Header({ title, subtitle }: HeaderProps) {
         >
           <span
             style={{
-              width: 6,
-              height: 6,
+              width: 8,
+              height: 8,
               borderRadius: '50%',
               background: '#10b981',
               display: 'inline-block',
+              boxShadow: '0 0 12px #10b981'
             }}
           />
-          Base Mainnet
         </div>
 
         {/* Action icons spacer */}

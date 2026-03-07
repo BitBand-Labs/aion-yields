@@ -41,6 +41,23 @@ import { DataFlow } from '@/components/ui/DataFlow'
 export default function DashboardPage() {
   return (
     <AppShell>
+      {/* Dashboard Branding Header */}
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        style={{ 
+          marginBottom: 'var(--space-4)', 
+          padding: 'var(--space-2)',
+          display: 'flex', 
+          flexDirection: 'column', 
+          gap: 8 
+        }}
+      >
+        <h1 style={{ fontSize: 32, fontWeight: 800, color: 'var(--color-text-primary)', margin: 0, letterSpacing: '-0.04em' }}>
+          Protocol overview & real-time analytics
+        </h1>
+      </motion.div>
       <div
         style={{
           display: 'grid',

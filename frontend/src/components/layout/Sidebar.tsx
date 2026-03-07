@@ -70,11 +70,12 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: collapsed ? '100%' : 'auto' }}>
           <img 
             src="/assets/logo/AIONYIELD-logo-nobg.png" 
-            alt="A" 
+            alt="AION Yield" 
             style={{ 
-              height: 24, 
+              height: 42, 
               width: 'auto',
-              filter: collapsed ? 'brightness(1.2)' : 'none'
+              filter: collapsed ? 'brightness(1.2)' : 'none',
+              transition: 'height var(--transition-slow)'
             }} 
           />
         </div>
