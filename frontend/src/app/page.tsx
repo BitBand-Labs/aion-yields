@@ -2,9 +2,12 @@
 
 import React from 'react'
 import Link from 'next/link'
+import { useAccount } from 'wagmi'
+import { useAppKit } from '@reown/appkit/react'
+import toast, { Toaster } from 'react-hot-toast'
 import { motion, useScroll, useTransform, Variants } from 'framer-motion'
 import {
-  ArrowRight, Shield, Zap, Network, Cpu, Database, Activity, Layers, ExternalLink
+  ArrowRight, Shield, Zap, Network, Cpu, Database, Activity, Layers, ExternalLink, Wallet
 } from 'lucide-react'
 
 const containerVariants: Variants = {
@@ -25,8 +28,28 @@ export default function LandingPage() {
   const yHero = useTransform(scrollYProgress, [0, 1], [0, 300]);
   const opacityHero = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
 
+  // Wallet Connection logic
+  const { isConnected } = useAccount();
+  const { open } = useAppKit();
+
+  const handleLaunchApp = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!isConnected) {
+      e.preventDefault();
+      toast('Please connect your wallet before launching the app.', {
+        icon: '⚠️',
+        style: {
+          borderRadius: '10px',
+          background: 'var(--overlay-light)',
+          color: 'var(--color-text-primary)',
+          border: '1px solid var(--overlay-medium)',
+        },
+      });
+    }
+  };
+
   return (
     <div style={{ background: 'var(--color-bg)', minHeight: '100vh', overflow: 'hidden', color: 'var(--color-text-primary)', fontFamily: 'var(--font-inter, sans-serif)' }}>
+      <Toaster position="top-center" reverseOrder={false} />
       {/* Background Gradients & Noise */}
       <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', pointerEvents: 'none', zIndex: 0 }}>
         <div style={{ position: 'absolute', top: '-30%', left: '-10%', width: '60vw', height: '60vw', background: 'radial-gradient(circle, rgba(8,71,247,0.15) 0%, transparent 60%)', filter: 'blur(80px)' }} />
@@ -51,14 +74,14 @@ export default function LandingPage() {
         </Link>
         <div style={{ display: 'flex', gap: 16 }}>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-             <Link href="/dashboard" style={{ padding: '10px 20px', borderRadius: 8, border: '1px solid var(--overlay-medium)', background: 'var(--overlay-light)', color: 'var(--color-text-primary)', textDecoration: 'none', fontWeight: 500, fontSize: 14, transition: 'background 0.2s' }}>
-                Connect Wallet
-             </Link>
+            <button onClick={() => open()} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 20px', borderRadius: 8, border: '1px solid var(--overlay-medium)', background: 'var(--overlay-light)', color: 'var(--color-text-primary)', cursor: 'pointer', fontWeight: 500, fontSize: 14, transition: 'background 0.2s' }}>
+              <Wallet size={16} /> Connect Wallet
+            </button>
           </motion.div>
           <motion.div whileHover={{ scale: 1.05, boxShadow: '0 8px 20px rgba(8,71,247,0.4)' }} whileTap={{ scale: 0.98 }}>
-             <Link href="/dashboard" style={{ padding: '10px 20px', borderRadius: 8, background: '#0847F7', color: 'var(--color-text-primary)', textDecoration: 'none', fontWeight: 500, fontSize: 14 }}>
-                Launch App
-             </Link>
+            <Link href="/dashboard" onClick={handleLaunchApp} style={{ padding: '10px 20px', borderRadius: 8, background: '#0847F7', color: 'var(--color-text-primary)', textDecoration: 'none', fontWeight: 500, fontSize: 14 }}>
+              Launch App
+            </Link>
           </motion.div>
         </div>
       </motion.nav>
@@ -105,7 +128,7 @@ export default function LandingPage() {
               style={{ display: 'flex', gap: 20 }}
             >
               <motion.div whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(8,71,247,0.5)' }} whileTap={{ scale: 0.98 }}>
-                <Link href="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 32px', borderRadius: 12, background: '#0847F7', color: 'var(--color-text-primary)', fontSize: 16, fontWeight: 600, textDecoration: 'none' }}>
+                <Link href="/dashboard" onClick={handleLaunchApp} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 32px', borderRadius: 12, background: '#0847F7', color: 'var(--color-text-primary)', fontSize: 16, fontWeight: 600, textDecoration: 'none' }}>
                   Start Optimizing <ArrowRight size={18} />
                 </Link>
               </motion.div>
