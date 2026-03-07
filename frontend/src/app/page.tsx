@@ -221,7 +221,7 @@ export default function LandingPage() {
             {[
               '/assets/illustrations/HERO-ILLUSTRATION-alt.png',
               '/assets/illustrations/HERO-ILLUSTRATION.png',
-              '/assets/illustrations/3D-ABSTRACT-GRAPHICS.png',
+              '/assets/illustrations/3D-ABSTRACT-GRAPHIC-nobg.png',
             ].map((src, i) => (
               <motion.div
                 key={src}
