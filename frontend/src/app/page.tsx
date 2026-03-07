@@ -72,14 +72,14 @@ export default function LandingPage() {
         <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 12, textDecoration: 'none', color: 'inherit' }}>
           <img src="/assets/logo/AIONYIELD-logo-nobg.png" alt="AION Yield Logo" style={{ height: 32, width: 'auto' }} />
         </Link>
-        <div style={{ display: 'flex', gap: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-            <button onClick={() => open()} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 20px', borderRadius: 8, border: '1px solid var(--overlay-medium)', background: 'var(--overlay-light)', color: 'var(--color-text-primary)', cursor: 'pointer', fontWeight: 500, fontSize: 14, transition: 'background 0.2s' }}>
-              <Wallet size={16} /> Connect Wallet
+            <button onClick={() => open()} style={{ padding: '10px 20px', borderRadius: 8, border: '1px solid var(--overlay-medium)', background: 'var(--overlay-light)', color: 'var(--color-text-primary)', cursor: 'pointer', fontWeight: 500, fontSize: 14, transition: 'background 0.2s', whiteSpace: 'nowrap' }}>
+              Connect Wallet
             </button>
           </motion.div>
           <motion.div whileHover={{ scale: 1.05, boxShadow: '0 8px 20px rgba(8,71,247,0.4)' }} whileTap={{ scale: 0.98 }}>
-            <Link href="/dashboard" onClick={handleLaunchApp} style={{ padding: '10px 20px', borderRadius: 8, background: '#0847F7', color: 'var(--color-text-primary)', textDecoration: 'none', fontWeight: 500, fontSize: 14 }}>
+            <Link href="/dashboard" onClick={handleLaunchApp} style={{ display: 'inline-block', padding: '10px 20px', borderRadius: 8, background: '#0847F7', color: 'var(--color-text-primary)', textDecoration: 'none', fontWeight: 500, fontSize: 14, whiteSpace: 'nowrap' }}>
               Launch App
             </Link>
           </motion.div>
