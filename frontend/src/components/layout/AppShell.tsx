@@ -70,8 +70,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <main
         style={{
           marginLeft: sidebarCollapsed 
-            ? 'calc(var(--sidebar-collapsed) + 16px)' 
-            : 'calc(var(--sidebar-width) + 16px)',
+            ? 'calc(var(--sidebar-collapsed) + 32px)' 
+            : 'calc(var(--sidebar-width) + 32px)',
+          marginRight: '16px',
           paddingTop: 'calc(var(--header-height) + 32px)',
           transition: 'margin var(--transition-slow)',
           minHeight: '100vh',
@@ -80,7 +81,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         }}
         className="main-content"
       >
-        <div style={{ flex: 1, padding: 'var(--space-2)', position: 'relative' }}>
+        <div style={{ flex: 1, paddingBottom: '16px', position: 'relative' }}>
           <div style={{ 
             background: 'var(--color-bg)', 
             border: '1px solid var(--color-border)', 
