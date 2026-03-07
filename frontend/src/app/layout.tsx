@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/aion-logo.png",
+        url: "/assets/logo/AIONYIELD-logo-nobg.png",
         width: 1200,
         height: 630,
         alt: "AION Yield Logo",
