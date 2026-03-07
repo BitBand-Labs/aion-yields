@@ -157,7 +157,7 @@ export default function LandingPage() {
           className="hero-container"
         >
           {/* ═══ LEFT: Headlines + CTA (untouched) ═══ */}
-          <motion.div style={{ opacity: 1, textAlign: 'left', position: 'relative' }}>
+          <motion.div style={{ opacity: 1, textAlign: 'left', position: 'relative', marginLeft: '60px' }}>
             
             <motion.div 
               initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.1 }}
