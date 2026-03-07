@@ -8,6 +8,7 @@ import { HealthGauge } from '@/components/ui/HealthGauge'
 import { MagicCard } from '@/components/ui/MagicCard'
 import { ArrowUpRight, Shield, RefreshCw, AlertTriangle, Wallet } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { TokenIcon } from '@/components/ui/TokenIcon'
 
 const collateralAssets = [
   { asset: 'USDC', amount: '5,000.00', value: '$5,000.00', ltv: '85%' },

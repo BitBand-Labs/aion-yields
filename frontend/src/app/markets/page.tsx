@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/Badge'
 import { ActionModal } from '@/components/ui/ActionModal'
 import { ArrowDownLeft, ArrowUpRight, ExternalLink, Globe } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { TokenIcon } from '@/components/ui/TokenIcon'
 
 const markets = [
   {
@@ -166,23 +167,7 @@ export default function MarketsPage() {
                           gap: 12,
                         }}
                       >
-                        <div
-                          style={{
-                            width: 36,
-                            height: 36,
-                            borderRadius: 10,
-                            background: assetColors[market.symbol] || 'var(--color-primary)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: 13,
-                            fontWeight: 700,
-                            color: 'var(--color-text-primary)',
-                            boxShadow: `0 4px 12px ${assetColors[market.symbol]}33`,
-                          }}
-                        >
-                          {market.symbol.slice(0, 2)}
-                        </div>
+                        <TokenIcon symbol={market.symbol} size={36} />
                         <div>
                           <p style={{ fontWeight: 600, margin: '0 0 2px', fontSize: 14 }}>
                             {market.asset}
@@ -277,22 +262,7 @@ export default function MarketsPage() {
                 gap: 12,
               }}
             >
-              <div
-                style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: 'var(--radius-full)',
-                  background: assetColors[selectedAsset.symbol] || 'var(--color-primary)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 16,
-                  fontWeight: 700,
-                  color: 'var(--color-text-primary)',
-                }}
-              >
-                {selectedAsset.symbol.slice(0, 2)}
-              </div>
+              <TokenIcon symbol={selectedAsset.symbol} size={44} />
               <div>
                 <h3 style={{ margin: 0, fontSize: 18, fontWeight: 600 }}>
                   {selectedAsset.asset}

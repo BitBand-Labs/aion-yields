@@ -15,11 +15,11 @@ import {
   ChevronRight,
 } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { TokenIcon } from '@/components/ui/TokenIcon'
 
 const positions = [
   {
     asset: 'USDC',
-    icon: '🔵',
     deposited: '$10,000.00',
     borrowed: '$0.00',
     interestRate: '4.50%',
@@ -27,7 +27,6 @@ const positions = [
   },
   {
     asset: 'ETH',
-    icon: '⟠',
     deposited: '$2,450.00',
     borrowed: '$4,200.00',
     interestRate: '-2.10%',
@@ -116,8 +115,8 @@ export default function DashboardPage() {
                 {positions.map((pos, i) => (
                   <tr key={i}>
                     <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 600, fontSize: 13 }}>
-                        <span style={{ fontSize: 16 }}>{pos.icon}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontWeight: 600, fontSize: 13 }}>
+                        <TokenIcon symbol={pos.asset} size={20} />
                         {pos.asset}
                       </div>
                     </td>

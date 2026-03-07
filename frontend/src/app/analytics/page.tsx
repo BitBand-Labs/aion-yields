@@ -112,7 +112,7 @@ export default function AnalyticsPage() {
         <motion.div 
           variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
           className="card-glow" 
-          style={{ marginBottom: 'var(--space-8)', padding: '32px' }}
+          style={{ marginBottom: 'var(--space-8)', padding: '32px', border: '1px solid var(--color-border-hover)' }}
         >
           <div
             style={{
@@ -186,7 +186,7 @@ export default function AnalyticsPage() {
                   style={{
                     fontSize: 12,
                     fontWeight: 600,
-                    color: i === tvlHistory.length - 1 ? 'var(--color-primary)' : 'var(--color-text-tertiary)',
+                    color: i === tvlHistory.length - 1 ? 'var(--color-primary)' : 'var(--color-text-secondary)',
                   }}
                 >
                   ${data.value}M
@@ -204,10 +204,11 @@ export default function AnalyticsPage() {
                           : 'var(--color-surface-raised)',
                       borderRadius: '8px 8px 4px 4px',
                       boxShadow: i === tvlHistory.length - 1 ? '0 0 20px rgba(14, 167, 203, 0.2)' : 'none',
+                      border: '1px solid var(--color-border)'
                     }}
                    />
                 </div>
-                <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--color-text-tertiary)' }}>
+                <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--color-text-secondary)' }}>
                   {data.date}
                 </span>
               </div>

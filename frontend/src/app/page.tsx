@@ -454,8 +454,8 @@ export default function LandingPage() {
               justifyContent: 'center' 
             }}
           >
-            {/* Dark background inside card */}
-            <div style={{ position: 'absolute', inset: 0, background: '#080C14' }} />
+            {/* Theme-aware background inside card */}
+            <div style={{ position: 'absolute', inset: 0, background: isLight ? 'var(--color-bg)' : '#080C14' }} />
             
             {/* SVG Grid lines */}
             <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(var(--overlay-ultralight-2) 1px, transparent 1px), linear-gradient(90deg, var(--overlay-ultralight-2) 1px, transparent 1px)', backgroundSize: '80px 80px', opacity: 1 }} />
@@ -470,7 +470,7 @@ export default function LandingPage() {
                  <Network size={40} color="#fff" />
               </div>
               <div style={{ textAlign: 'center' }}>
-                <p style={{ margin: 0, fontSize: 13, color: 'var(--overlay-half)', textTransform: 'uppercase', letterSpacing: 1, fontWeight: 600 }}>Decentralized Inference</p>
+                <p style={{ margin: 0, fontSize: 13, color: isLight ? 'var(--color-primary)' : 'var(--overlay-half)', textTransform: 'uppercase', letterSpacing: 1, fontWeight: 600 }}>Decentralized Inference</p>
                 <p style={{ margin: '6px 0 0', fontSize: 24, fontWeight: 700, color: 'var(--color-text-primary)', letterSpacing: '-0.02em' }}>CRE Verified</p>
               </div>
             </motion.div>
@@ -527,7 +527,7 @@ export default function LandingPage() {
               <div style={{ marginBottom: 16 }}>
                 <img src="/assets/logo/AIONYIELD-logo-nobg.png" alt="AION Yield Logo" style={{ height: 40, width: 'auto' }} />
               </div>
-              <p style={{ color: 'var(--overlay-half)', fontSize: 16, lineHeight: 1.6, maxWidth: 400 }}>
+              <p style={{ color: isLight ? 'var(--color-primary)' : 'var(--overlay-half)', fontSize: 16, lineHeight: 1.6, maxWidth: 400 }}>
                 Autonomous AI agents optimizing cross-chain capital allocation. Built for the future of decentralized money markets.
               </p>
             </div>
@@ -561,12 +561,12 @@ export default function LandingPage() {
           <div style={{ width: '100%', height: 1, background: 'var(--overlay-light)', marginBottom: 24 }} />
           
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
-            <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 14, margin: 0 }}>
+            <p style={{ color: isLight ? 'rgba(14, 167, 203, 0.6)' : 'rgba(255,255,255,0.3)', fontSize: 14, margin: 0 }}>
               © {new Date().getFullYear()} AION Yield Protocol. Built for Chainlink Convergence.
             </p>
             <div style={{ display: 'flex', gap: 32 }}>
-              <Link href="/terms" style={{ color: 'rgba(255,255,255,0.3)', textDecoration: 'none', fontSize: 14 }}>Terms</Link>
-              <Link href="/privacy" style={{ color: 'rgba(255,255,255,0.3)', textDecoration: 'none', fontSize: 14 }}>Privacy</Link>
+              <Link href="/terms" style={{ color: isLight ? 'var(--color-primary)' : 'rgba(255,255,255,0.3)', textDecoration: 'none', fontSize: 14 }}>Terms</Link>
+              <Link href="/privacy" style={{ color: isLight ? 'var(--color-primary)' : 'rgba(255,255,255,0.3)', textDecoration: 'none', fontSize: 14 }}>Privacy</Link>
             </div>
           </div>
         </div>

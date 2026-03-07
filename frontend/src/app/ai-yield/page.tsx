@@ -6,6 +6,7 @@ import { StatCard } from '@/components/ui/StatCard'
 import { Badge } from '@/components/ui/Badge'
 import { Cpu, TrendingUp, Zap, Clock, Shield, ArrowRight, Activity } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { TokenIcon } from '@/components/ui/TokenIcon'
 
 const activeStrategies = [
   { name: 'Stablecoin Alpha', asset: 'USDC', apy: '6.24%', staticApy: '4.10%', status: 'active', risk: 'Low' },
@@ -111,8 +112,8 @@ export default function AIYieldPage() {
                     <tr key={i}>
                       <td style={{ fontWeight: 600 }}>{strat.name}</td>
                       <td>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                           <span style={{ fontSize: 14 }}>{strat.asset === 'USDC' ? '🔵' : '⟠'}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                           <TokenIcon symbol={strat.asset} size={20} />
                            {strat.asset}
                         </div>
                       </td>
