@@ -318,7 +318,7 @@ export default function LandingPage() {
         
         {/* 1️⃣ AI Yield Optimization */}
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(400px, 1.2fr) 1fr', gap: 80, alignItems: 'center', marginBottom: 160 }}>
-          <motion.div initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} style={{ position: 'relative' }}>
+          <motion.div initial={{ opacity: 0, scale: 0.8, x: -50 }} whileInView={{ opacity: 1, scale: 1, x: 0 }} viewport={{ amount: 0.3 }} transition={{ duration: 0.8 }} style={{ position: 'relative' }}>
             {isLight && (
               <div style={{ position: 'absolute', inset: -40, background: 'radial-gradient(circle, rgba(8,71,247,0.08) 0%, transparent 70%)', filter: 'blur(40px)', zIndex: -1 }} />
             )}
@@ -364,7 +364,7 @@ export default function LandingPage() {
               ))}
             </ul>
           </motion.div>
-          <motion.div initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} style={{ position: 'relative' }}>
+          <motion.div initial={{ opacity: 0, scale: 0.8, x: 50 }} whileInView={{ opacity: 1, scale: 1, x: 0 }} viewport={{ amount: 0.3 }} transition={{ duration: 0.8 }} style={{ position: 'relative' }}>
             {isLight && (
               <div style={{ position: 'absolute', inset: -40, background: 'radial-gradient(circle, rgba(138,166,249,0.08) 0%, transparent 70%)', filter: 'blur(40px)', zIndex: -1 }} />
             )}
@@ -374,7 +374,7 @@ export default function LandingPage() {
 
         {/* 3️⃣ Autonomous Payments */}
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(400px, 1.2fr) 1fr', gap: 80, alignItems: 'center' }}>
-          <motion.div initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} style={{ position: 'relative' }}>
+          <motion.div initial={{ opacity: 0, scale: 0.8, x: -50 }} whileInView={{ opacity: 1, scale: 1, x: 0 }} viewport={{ amount: 0.3 }} transition={{ duration: 0.8 }} style={{ position: 'relative' }}>
             {isLight && (
               <div style={{ position: 'absolute', inset: -40, background: 'radial-gradient(circle, rgba(33,123,113,0.08) 0%, transparent 70%)', filter: 'blur(40px)', zIndex: -1 }} />
             )}
@@ -577,7 +577,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, scale: 0.5, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.5, y: 20 }}
-            whileHover={{ scale: 1.1, backgroundColor: '#0847F7' }}
+            whileHover={{ scale: 1.1, backgroundColor: '#0639C6' }}
             whileTap={{ scale: 0.9 }}
             onClick={scrollToTop}
             style={{
@@ -587,7 +587,7 @@ export default function LandingPage() {
               width: '50px',
               height: '50px',
               borderRadius: '50%',
-              background: 'rgba(8,71,247,0.8)',
+              background: '#0847F7',
               color: 'white',
               border: 'none',
               cursor: 'pointer',
