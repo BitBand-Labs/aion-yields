@@ -188,7 +188,7 @@ export default function LandingPage() {
             
             <motion.div 
               initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.1 }}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 100, background: 'rgba(8,71,247,0.1)', border: '1px solid rgba(8,71,247,0.2)', color: '#8AA6F9', fontSize: 14, fontWeight: 500, marginBottom: 32 }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 100, background: 'rgba(8,71,247,0.1)', border: '1px solid rgba(8,71,247,0.2)', color: '#0847F7', fontSize: 14, fontWeight: 700, marginBottom: 32 }}
             >
               <Zap size={16} /> Multi-Chain Infrastructure • Chainlink CRE
             </motion.div>
@@ -198,7 +198,7 @@ export default function LandingPage() {
               style={{ fontSize: 'clamp(48px, 6vw, 84px)', fontWeight: 800, lineHeight: 1.05, letterSpacing: '-0.04em', marginBottom: 32 }}
             >
               <span style={{ color: 'var(--overlay-high)' }}>AI-Orchestrated</span> <br />
-              <span style={{ background: 'linear-gradient(90deg, #8AA6F9, #0847F7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Money Market Protocol</span>
+              <span style={{ background: 'linear-gradient(90deg, #396CF9, #0847F7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Money Market Protocol</span>
             </motion.h1>
             
             <motion.p
@@ -358,7 +358,7 @@ export default function LandingPage() {
                 "Liquidity routing: Automated arbitrage and yield chasing across protocols."
               ].map((text, i) => (
                 <li key={i} style={{ display: 'flex', alignItems: 'center', gap: 16, fontSize: 18, color: 'var(--overlay-half)', fontWeight: 500 }}>
-                  <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'rgba(138,166,249,0.1)', color: '#8AA6F9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12 }}>✓</div>
+                  <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'rgba(8,71,247,0.1)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12 }}>✓</div>
                   {text}
                 </li>
               ))}
@@ -366,7 +366,7 @@ export default function LandingPage() {
           </motion.div>
           <motion.div initial={{ opacity: 0, scale: 0.8, x: 50 }} whileInView={{ opacity: 1, scale: 1, x: 0 }} viewport={{ amount: 0.3 }} transition={{ duration: 0.8 }} style={{ position: 'relative' }}>
             {isLight && (
-              <div style={{ position: 'absolute', inset: -40, background: 'radial-gradient(circle, rgba(138,166,249,0.08) 0%, transparent 70%)', filter: 'blur(40px)', zIndex: -1 }} />
+              <div style={{ position: 'absolute', inset: -40, background: 'radial-gradient(circle, rgba(8,71,247,0.08) 0%, transparent 70%)', filter: 'blur(40px)', zIndex: -1 }} />
             )}
             <img src="/assets/illustrations/CROSS-CHAIN.png" alt="Cross-Chain Liquidity" style={{ width: '100%', height: 'auto', borderRadius: 32, /* boxShadow: '0 40px 80px rgba(0,0,0,0.5)' */ }} />
           </motion.div>
@@ -496,8 +496,8 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} whileHover={{ y: -16, transition: { duration: 0.3 } }}
             style={{ position: 'relative', padding: 40, borderRadius: 40, background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)', border: '1px solid var(--overlay-medium-light)', overflow: 'hidden', boxShadow: '0 40px 80px rgba(0,0,0,0.3)' }}
           >
-            <div style={{ position: 'absolute', top: -150, right: -150, width: 400, height: 400, background: 'radial-gradient(circle, rgba(138,166,249,0.2) 0%, transparent 60%)', filter: 'blur(60px)' }} />
-            <div style={{ display: 'inline-flex', alignItems: 'center', padding: '8px 20px', borderRadius: 100, background: 'rgba(138,166,249,0.1)', color: '#8AA6F9', fontSize: 13, fontWeight: 700, letterSpacing: '0.05em', marginBottom: 24 }}>HTTP 402 STANDARD</div>
+            <div style={{ position: 'absolute', top: -150, right: -150, width: 400, height: 400, background: 'radial-gradient(circle, rgba(8,71,247,0.2) 0%, transparent 60%)', filter: 'blur(60px)' }} />
+            <div style={{ display: 'inline-flex', alignItems: 'center', padding: '8px 20px', borderRadius: 100, background: 'rgba(8,71,247,0.1)', color: '#0847F7', fontSize: 13, fontWeight: 700, letterSpacing: '0.05em', marginBottom: 24 }}>HTTP 402 STANDARD</div>
             <h3 style={{ fontSize: 36, fontWeight: 800, color: 'var(--color-text-primary)', marginBottom: 24, letterSpacing: '-0.02em' }}>x402 Inference Payments</h3>
             <p style={{ color: 'var(--overlay-half)', fontSize: 18, lineHeight: 1.7 }}>
               A crypto-native HTTP payment standard resurrecting the HTTP 402 "Payment Required" code. When our protocol queries an AI model, it natively settles the microtransaction instantly via USDC.
@@ -577,7 +577,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, scale: 0.5, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.5, y: 20 }}
-            whileHover={{ scale: 1.1, backgroundColor: '#0639C6' }}
+            whileHover={{ scale: 1.1, backgroundColor: '#073BCC' }}
             whileTap={{ scale: 0.9 }}
             onClick={scrollToTop}
             style={{
