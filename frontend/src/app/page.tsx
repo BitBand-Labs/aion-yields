@@ -221,7 +221,7 @@ export default function LandingPage() {
             {[
               '/assets/illustrations/HERO-ILLUSTRATION-alt.png',
               '/assets/illustrations/HERO-ILLUSTRATION.png',
-              '/assets/illustrations/3D-ABSTRACT-GRAPHICS-nobg.png',
+              // '/assets/illustrations/3D-ABSTRACT-GRAPHICS-nobg.png',
             ].map((src, i) => (
               <motion.div
                 key={src}
@@ -229,15 +229,14 @@ export default function LandingPage() {
                   opacity: [
                     i === 0 ? 1 : 0, i === 0 ? 1 : 0, // 0-6s
                     i === 1 ? 1 : 0, i === 1 ? 1 : 0, // 6-12s
-                    i === 2 ? 1 : 0, i === 2 ? 1 : 0, // 12-18s
                   ],
                   y: [0, -10, 0, 10, 0],
                 }}
                 transition={{
                   opacity: {
-                    duration: 18,
+                    duration: 12, // 2 images * 6s
                     repeat: Infinity,
-                    times: [0, 0.3, 0.33, 0.63, 0.66, 1],
+                    times: [0, 0.4, 0.5, 0.9, 1], // Crossfade timings for 2 items
                     ease: 'easeInOut',
                   },
                   y: {
