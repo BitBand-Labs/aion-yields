@@ -81,18 +81,27 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         className="main-content"
       >
         <div style={{ flex: 1, padding: 'var(--space-2)', position: 'relative' }}>
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={pathname}
-              initial={{ opacity: 0, y: 10, filter: 'blur(4px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, y: -10, filter: 'blur(4px)' }}
-              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              style={{ height: '100%' }}
-            >
-              {children}
-            </motion.div>
-          </AnimatePresence>
+          <div style={{ 
+            background: 'var(--color-bg)', 
+            border: '1px solid var(--color-border)', 
+            borderRadius: '24px', 
+            minHeight: 'calc(100vh - var(--header-height) - 48px)',
+            padding: 'var(--space-2)',
+            overflow: 'hidden'
+          }}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={pathname}
+                initial={{ opacity: 0, y: 10, filter: 'blur(4px)' }}
+                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, y: -10, filter: 'blur(4px)' }}
+                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                style={{ height: '100%' }}
+              >
+                {children}
+              </motion.div>
+            </AnimatePresence>
+          </div>
         </div>
       </main>
 
