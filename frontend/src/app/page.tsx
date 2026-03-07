@@ -105,7 +105,7 @@ export default function LandingPage() {
               initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.1 }}
               style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 100, background: 'rgba(8,71,247,0.1)', border: '1px solid rgba(8,71,247,0.2)', color: '#8AA6F9', fontSize: 14, fontWeight: 500, marginBottom: 32 }}
             >
-              <Zap size={16} /> Base Network • Chainlink CRE
+              <Zap size={16} /> Multi-Chain Infrastructure • Chainlink CRE
             </motion.div>
             
             <motion.h1
