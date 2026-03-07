@@ -45,7 +45,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         width: collapsed ? 'var(--sidebar-collapsed)' : 'var(--sidebar-width)',
         background: 'var(--color-bg)',
         border: '1px solid var(--color-border)',
-        borderRadius: '24px',
+        borderRadius: '0 24px 24px 0',
         display: 'flex',
         flexDirection: 'column',
         zIndex: 40,

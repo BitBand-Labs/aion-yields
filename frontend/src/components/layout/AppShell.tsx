@@ -37,7 +37,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         style={{
           position: 'fixed',
           top: '16px',
-          left: '16px',
+          left: 0,
           bottom: '16px',
           zIndex: 40,
           transition: 'all var(--transition-slow)',
@@ -56,8 +56,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           top: '16px',
           right: '16px',
           left: sidebarCollapsed 
-            ? 'calc(var(--sidebar-collapsed) + 32px)' 
-            : 'calc(var(--sidebar-width) + 32px)',
+            ? 'calc(var(--sidebar-collapsed) + 16px)' 
+            : 'calc(var(--sidebar-width) + 16px)',
           zIndex: 30,
           transition: 'all var(--transition-slow)',
         }}
@@ -70,8 +70,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <main
         style={{
           marginLeft: sidebarCollapsed 
-            ? 'calc(var(--sidebar-collapsed) + 32px)' 
-            : 'calc(var(--sidebar-width) + 32px)',
+            ? 'calc(var(--sidebar-collapsed) + 16px)' 
+            : 'calc(var(--sidebar-width) + 16px)',
           marginRight: '16px',
           paddingTop: 'calc(var(--header-height) + 32px)',
           transition: 'margin var(--transition-slow)',
