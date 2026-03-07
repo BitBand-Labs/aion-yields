@@ -142,8 +142,8 @@ export default function DashboardPage() {
         <MagicCard style={{ gridColumn: 'span 1', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--color-text-tertiary)', textTransform: 'uppercase', marginBottom: 8 }}>Top Performer</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--color-accent-muted)', border: '1px solid var(--color-accent)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <img src="/assets/icons/CUSTOM-ICON-SET.png" alt="Sigma-7" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--color-accent-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Bot size={16} color="var(--color-accent)" />
             </div>
             <div>
               <div style={{ fontSize: 13, fontWeight: 700 }}>Sigma-7</div>
