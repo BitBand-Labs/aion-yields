@@ -38,10 +38,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     <aside
       className="sidebar"
       style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        bottom: 0,
+        position: 'relative',
+        height: '100%',
         width: collapsed ? 'var(--sidebar-collapsed)' : 'var(--sidebar-width)',
         background: 'var(--color-bg)',
         border: '1px solid var(--color-border)',
