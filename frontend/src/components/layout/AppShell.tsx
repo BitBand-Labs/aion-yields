@@ -49,62 +49,77 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         />
       </div>
 
-      {/* Header */}
-      <div
-        style={{
-          position: 'fixed',
-          top: '12px',
-          right: '12px',
-          left: sidebarCollapsed 
-            ? 'calc(var(--sidebar-collapsed) + 12px)' 
-            : 'calc(var(--sidebar-width) + 12px)',
-          zIndex: 30,
-          transition: 'all var(--transition-slow)',
-        }}
-        className="header-wrapper"
-      >
-        <Header title={pageInfo.title} subtitle={pageInfo.subtitle} />
-      </div>
-
-      {/* Main content wrapper */}
-      <main
+      {/* Dashboard Content Area */}
+      <div 
+        className="dashboard-content-area"
         style={{
           marginLeft: sidebarCollapsed 
-            ? 'calc(var(--sidebar-collapsed) + 12px)' 
-            : 'calc(var(--sidebar-width) + 12px)',
-          marginRight: '12px',
-          paddingTop: 'calc(var(--header-height) + 24px)',
-          transition: 'margin var(--transition-slow)',
+            ? 'var(--sidebar-collapsed)' 
+            : 'var(--sidebar-width)',
+          width: '100%',
           minHeight: '100vh',
           display: 'flex',
-          flexDirection: 'column'
+          justifyContent: 'center',
+          transition: 'margin var(--transition-slow)',
+          overflowX: 'hidden'
         }}
-        className="main-content"
       >
-        <div style={{ flex: 1, paddingBottom: '12px', position: 'relative' }}>
-          <div style={{ 
-            background: 'var(--color-bg)', 
-            border: '1px solid var(--color-border)', 
-            borderRadius: '24px', 
-            minHeight: 'calc(100vh - var(--header-height) - 36px)',
-            padding: 'var(--space-2)',
-            overflow: 'hidden'
-          }}>
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={pathname}
-                initial={{ opacity: 0, y: 10, filter: 'blur(4px)' }}
-                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                exit={{ opacity: 0, y: -10, filter: 'blur(4px)' }}
-                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                style={{ height: '100%' }}
-              >
-                {children}
-              </motion.div>
-            </AnimatePresence>
+        <div style={{
+          width: '100%',
+          maxWidth: 'var(--content-max-width)',
+          padding: '0 12px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '12px'
+        }}>
+          {/* Header Island */}
+          <div
+            style={{
+              position: 'sticky',
+              top: '12px',
+              zIndex: 30,
+              marginTop: '12px'
+            }}
+            className="header-island"
+          >
+            <Header title={pageInfo.title} subtitle={pageInfo.subtitle} />
           </div>
+
+          {/* Main Content Island */}
+          <main
+            style={{
+              flex: 1,
+              paddingBottom: '12px',
+              display: 'flex',
+              flexDirection: 'column'
+            }}
+            className="main-island"
+          >
+            <div style={{ 
+              flex: 1,
+              background: 'var(--color-bg)', 
+              border: '1px solid var(--color-border)', 
+              borderRadius: '24px', 
+              minHeight: 'calc(100vh - var(--header-height) - 48px)',
+              padding: 'var(--space-2)',
+              overflow: 'hidden'
+            }}>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={pathname}
+                  initial={{ opacity: 0, y: 10, filter: 'blur(4px)' }}
+                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                  exit={{ opacity: 0, y: -10, filter: 'blur(4px)' }}
+                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                  style={{ height: '100%' }}
+                >
+                  {children}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </main>
         </div>
-      </main>
+      </div>
 
       {/* Mobile bottom nav */}
       <MobileNav />
