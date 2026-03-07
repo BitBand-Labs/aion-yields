@@ -404,7 +404,7 @@ export default function LandingPage() {
       {/* Asymmetrical Layout - Chainlink Integration */}
       <motion.section 
         initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 1 }}
-        style={{ position: 'relative', padding: '160px 0', borderTop: '1px solid var(--overlay-light)', borderBottom: '1px solid var(--overlay-light)', overflow: 'hidden' }}
+        style={{ position: 'relative', padding: '100px 0', borderTop: '1px solid var(--overlay-light)', borderBottom: '1px solid var(--overlay-light)', overflow: 'hidden' }}
       >
         <div style={{ position: 'absolute', top: 0, bottom: 0, left: '50%', right: 0, background: 'radial-gradient(ellipse at right, rgba(8,71,247,0.15) 0%, transparent 70%)', zIndex: 0 }} />
         
@@ -413,19 +413,19 @@ export default function LandingPage() {
             <div style={{ display: 'inline-flex', alignItems: 'center', padding: '8px 20px', borderRadius: 100, background: 'var(--overlay-light)', color: 'var(--color-text-primary)', fontSize: 13, fontWeight: 600, letterSpacing: '0.05em', marginBottom: 32, border: '1px solid var(--overlay-medium)' }}>
               POWERED BY CHAINLINK
             </div>
-            <h2 style={{ fontSize: 56, fontWeight: 800, color: 'var(--color-text-primary)', marginBottom: 24, lineHeight: 1.05, letterSpacing: '-0.04em' }}>
+            <h2 style={{ fontSize: 56, fontWeight: 800, color: 'var(--color-text-primary)', marginBottom: 20, lineHeight: 1.05, letterSpacing: '-0.04em' }}>
               The ultimate oracle <br/>& interoperability.
             </h2>
-            <p style={{ fontSize: 20, color: 'var(--overlay-half-strong)', lineHeight: 1.7, marginBottom: 48 }}>
+            <p style={{ fontSize: 20, color: 'var(--overlay-half-strong)', lineHeight: 1.7, marginBottom: 32 }}>
               AION leverages the full suite of Chainlink services to ensure institutional-grade security, cross-chain composability, and verifiable AI workflows without compromising decentralization.
             </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 40 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
               {[
                 { icon: <Layers size={28} />, title: "Chainlink CRE (Runtime)", desc: "Orchestrating multi-step workflows securely across chains." },
                 { icon: <Network size={28} />, title: "Cross-Chain Composability", desc: "Sourcing liquidity via CCIP to chase highest global yields." },
                 { icon: <Cpu size={28} />, title: "Functions & Automation", desc: "Fetching off-chain AI ML inferences with zero-downtime execution." }
               ].map((item, i) => (
-                <div key={i} style={{ display: 'flex', gap: 24, alignItems: 'flex-start' }}>
+                <div key={i} style={{ display: 'flex', gap: 20, alignItems: 'flex-start' }}>
                   <div style={{ width: 56, height: 56, borderRadius: 16, background: 'rgba(8,71,247,0.15)', color: '#8AA6F9', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: '1px solid rgba(8,71,247,0.3)' }}>
                     {item.icon}
                   </div>
@@ -442,7 +442,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 1 }}
             style={{ 
               position: 'relative', 
-              height: 720, 
+              height: 600, 
               borderRadius: 40, 
               background: isLight 
                 ? 'linear-gradient(135deg, rgba(8,71,247,0.02) 0%, rgba(255,255,255,0.01) 100%)' 
