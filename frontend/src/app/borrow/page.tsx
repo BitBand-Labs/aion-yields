@@ -146,9 +146,7 @@ export default function BorrowPage() {
                       <tr key={pos.asset}>
                         <td>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                            <div style={{ width: 32, height: 32, borderRadius: 10, background: assetColors[pos.asset] || 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: 'var(--color-text-primary)' }}>
-                              {pos.asset.slice(0, 2)}
-                            </div>
+                            <TokenIcon symbol={pos.asset} size={32} />
                             <span style={{ fontWeight: 700, fontSize: 14 }}>{pos.asset}</span>
                           </div>
                         </td>
