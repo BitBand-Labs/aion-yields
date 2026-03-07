@@ -46,12 +46,9 @@ export default function LandingPage() {
           position: 'sticky', top: 0, zIndex: 50,
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ width: 32, height: 32, borderRadius: 8, background: 'linear-gradient(135deg, #0847F7, #396CF9)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 14 }}>
-            AI
-          </div>
-          <span style={{ fontSize: 18, fontWeight: 700, letterSpacing: '-0.02em' }}>AION Yield</span>
-        </div>
+        <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 12, textDecoration: 'none', color: 'inherit' }}>
+          <img src="/assets/logo/AIONYIELD-logo-nobg.png" alt="AION Yield Logo" style={{ height: 32, width: 'auto' }} />
+        </Link>
         <div style={{ display: 'flex', gap: 16 }}>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
              <Link href="/dashboard" style={{ padding: '10px 20px', borderRadius: 8, border: '1px solid var(--overlay-medium)', background: 'var(--overlay-light)', color: 'var(--color-text-primary)', textDecoration: 'none', fontWeight: 500, fontSize: 14, transition: 'background 0.2s' }}>
@@ -67,50 +64,68 @@ export default function LandingPage() {
       </motion.nav>
 
       {/* Hero */}
-      <section style={{ position: 'relative', zIndex: 10, minHeight: '90vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 24px' }}>
-        <motion.div style={{ y: yHero, opacity: opacityHero, textAlign: 'center', maxWidth: 1000, position: 'relative' }}>
-          
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.1 }}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 100, background: 'rgba(8,71,247,0.1)', border: '1px solid rgba(8,71,247,0.2)', color: '#8AA6F9', fontSize: 14, fontWeight: 500, marginBottom: 32 }}
-          >
-            <Zap size={16} /> Base Network • Chainlink CRE
-          </motion.div>
-          
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            style={{ fontSize: 'clamp(56px, 7vw, 96px)', fontWeight: 800, lineHeight: 1.05, letterSpacing: '-0.04em', marginBottom: 32 }}
-          >
-            <span style={{ color: 'var(--overlay-high)' }}>AI-Orchestrated</span> <br />
-            <span style={{ background: 'linear-gradient(90deg, #8AA6F9, #0847F7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Money Market Protocol</span>
-          </motion.h1>
-          
-          <motion.p
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            style={{ fontSize: 22, color: 'var(--overlay-half-strong)', maxWidth: 700, margin: '0 auto 48px', lineHeight: 1.6 }}
-          >
-            Next-generation decentralized finance. Deposit assets, earn yield, and let autonomous AI agents optimize your capital and manage liquidation risks across chains.
-          </motion.p>
-          
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4 }}
-            style={{ display: 'flex', gap: 20, justifyContent: 'center' }}
-          >
-            <motion.div whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(8,71,247,0.5)' }} whileTap={{ scale: 0.98 }}>
-              <Link href="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '18px 36px', borderRadius: 12, background: '#0847F7', color: 'var(--color-text-primary)', fontSize: 16, fontWeight: 600, textDecoration: 'none' }}>
-                Start Optimizing <ArrowRight size={18} />
-              </Link>
+      <section style={{ position: 'relative', zIndex: 10, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 48px', overflow: 'hidden' }}>
+        {/* Background Visual Asset */}
+        <div style={{ position: 'absolute', top: '10%', left: '5%', width: '100%', height: '100%', opacity: 0.06, filter: 'blur(10px)', pointerEvents: 'none', zIndex: -1 }}>
+          <img src="/assets/illustrations/HERO-ILLUSTRATION.png" alt="Background Network" style={{ width: '100%', height: 'auto', objectFit: 'contain' }} />
+        </div>
+
+        {/* Video Background Asset */}
+        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '80%', height: '80%', opacity: 0.06, filter: 'blur(10px)', pointerEvents: 'none', zIndex: -2 }}>
+          <video src="/assets/logo/logo-animation.mp4" autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 48, alignItems: 'center', maxWidth: 1400, width: '100%' }} className="hero-container">
+          <motion.div style={{ opacity: 1, textAlign: 'left', position: 'relative' }}>
+            
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.1 }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 100, background: 'rgba(8,71,247,0.1)', border: '1px solid rgba(8,71,247,0.2)', color: '#8AA6F9', fontSize: 14, fontWeight: 500, marginBottom: 32 }}
+            >
+              <Zap size={16} /> Base Network • Chainlink CRE
             </motion.div>
-            <motion.div whileHover={{ scale: 1.05, backgroundColor: 'var(--overlay-medium-light)' }} whileTap={{ scale: 0.98 }}>
-              <a href="#architecture" style={{ display: 'flex', alignItems: 'center', padding: '18px 36px', borderRadius: 12, border: '1px solid var(--overlay-medium-strong)', background: 'var(--overlay-ultralight-2)', color: 'var(--color-text-primary)', fontSize: 16, fontWeight: 600, textDecoration: 'none', backdropFilter: 'blur(10px)' }}>
-                View Architecture
-              </a>
+            
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+              style={{ fontSize: 'clamp(48px, 6vw, 84px)', fontWeight: 800, lineHeight: 1.05, letterSpacing: '-0.04em', marginBottom: 32 }}
+            >
+              <span style={{ color: 'var(--overlay-high)' }}>AI-Orchestrated</span> <br />
+              <span style={{ background: 'linear-gradient(90deg, #8AA6F9, #0847F7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Money Market Protocol</span>
+            </motion.h1>
+            
+            <motion.p
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              style={{ fontSize: 20, color: 'var(--overlay-half-strong)', maxWidth: 600, margin: '0 0 48px', lineHeight: 1.6 }}
+            >
+              Next-generation decentralized finance. Deposit assets, earn yield, and let autonomous AI agents optimize your capital and manage liquidation risks across chains.
+            </motion.p>
+            
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4 }}
+              style={{ display: 'flex', gap: 20 }}
+            >
+              <motion.div whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(8,71,247,0.5)' }} whileTap={{ scale: 0.98 }}>
+                <Link href="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 32px', borderRadius: 12, background: '#0847F7', color: 'var(--color-text-primary)', fontSize: 16, fontWeight: 600, textDecoration: 'none' }}>
+                  Start Optimizing <ArrowRight size={18} />
+                </Link>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.05, backgroundColor: 'var(--overlay-medium-light)' }} whileTap={{ scale: 0.98 }}>
+                <a href="#architecture" style={{ display: 'flex', alignItems: 'center', padding: '16px 32px', borderRadius: 12, border: '1px solid var(--overlay-medium-strong)', background: 'var(--overlay-ultralight-2)', color: 'var(--color-text-primary)', fontSize: 16, fontWeight: 600, textDecoration: 'none', backdropFilter: 'blur(10px)' }}>
+                  View Architecture
+                </a>
+              </motion.div>
             </motion.div>
           </motion.div>
 
-        </motion.div>
-
-        {/* Floating UI Morph Animations */}
+          <motion.div 
+            initial={{ opacity: 0, x: 50, filter: 'blur(10px)' }}
+            animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+            transition={{ duration: 1.2, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            style={{ position: 'relative', width: '100%', height: 'auto', display: 'flex', justifyContent: 'center' }}
+          >
+            <img src="/assets/illustrations/HERO-ILLUSTRATION-alt.png" alt="AION Yield AI Orchestration" style={{ width: '100%', height: 'auto', maxWidth: 640 }} />
+          </motion.div>
+        </div>
       </section>
 
       {/* Metrics Section (Scroll animate) */}
@@ -134,34 +149,83 @@ export default function LandingPage() {
         </div>
       </motion.section>
 
-      {/* Product Architecture */}
+      {/* Feature Sections */}
       <section id="architecture" style={{ maxWidth: 1200, margin: '0 auto 160px', padding: '0 24px', position: 'relative', zIndex: 10 }}>
-        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} style={{ textAlign: 'center', marginBottom: 80 }}>
-          <h2 style={{ fontSize: 56, fontWeight: 800, color: 'var(--color-text-primary)', marginBottom: 24, letterSpacing: '-0.04em' }}>Autonomous Capital</h2>
-          <p style={{ fontSize: 22, color: 'var(--overlay-half-strong)', maxWidth: 700, margin: '0 auto', lineHeight: 1.6 }}>
-            A machine-to-machine DeFi economy powered entirely by verifiable smart contracts and AI agents doing the heavy lifting.
-          </p>
-        </motion.div>
+        
+        {/* 1️⃣ AI Yield Optimization */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(400px, 1.2fr) 1fr', gap: 80, alignItems: 'center', marginBottom: 160 }}>
+          <motion.div initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
+            <img src="/assets/illustrations/AI-FEATURE.png" alt="AI Yield Optimization" style={{ width: '100%', height: 'auto', borderRadius: 32, boxShadow: '0 40px 80px rgba(0,0,0,0.5)' }} />
+          </motion.div>
+          <motion.div initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
+            <h2 style={{ fontSize: 48, fontWeight: 800, color: 'var(--color-text-primary)', marginBottom: 24, letterSpacing: '-0.04em' }}>AI Yield Optimization</h2>
+            <p style={{ fontSize: 20, color: 'var(--overlay-half-strong)', lineHeight: 1.7, marginBottom: 32 }}>
+              AION is the first protocol to use verifiably autonomous AI agents to optimize your capital across diverse money markets. No more manual searching or static allocations.
+            </p>
+            <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: 20 }}>
+              {[
+                "AI vault optimization: Instant routing to highest risk-adjusted yields.",
+                "Automatic rebalancing: Agents move capital proactively before you even blink.",
+                "Yield prediction: Advanced ML models forecasting APY trends and liquidity depth."
+              ].map((text, i) => (
+                <li key={i} style={{ display: 'flex', alignItems: 'center', gap: 16, fontSize: 18, color: 'var(--overlay-half)', fontWeight: 500 }}>
+                  <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'rgba(8,71,247,0.1)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12 }}>✓</div>
+                  {text}
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        </div>
 
-        <motion.div variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-100px' }} style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 32 }}>
-          {[
-            { icon: <Database size={32} />, title: "Smart Deposits", desc: "Interact with gasless, abstracted accounts. Capital is instantly routed to the safest base layer yields.", color: "#8AA6F9", bg: 'rgba(138,166,249,0.05)' },
-            { icon: <Activity size={32} />, title: "AI Assessment", desc: "Machine learning models analyze on-chain liquidity depth and external risk signals 24/7.", color: "#4A21C2", bg: 'rgba(74,33,194,0.1)' },
-            { icon: <Zap size={32} />, title: "Auto Rebalancing", desc: "Agents preemptively rebalance portfolios via Chainlink CCIP before market cascades occur.", color: "#217B71", bg: 'rgba(33,123,113,0.1)' }
-          ].map((item, i) => (
-            <motion.div 
-              key={i} variants={itemVariants}
-              whileHover={{ y: -16, scale: 1.02, boxShadow: '0 40px 80px rgba(0,0,0,0.4)', backgroundColor: 'var(--overlay-light)' }}
-              style={{ padding: 48, borderRadius: 32, background: 'linear-gradient(180deg, var(--overlay-ultralight) 0%, rgba(255,255,255,0.01) 100%)', border: '1px solid var(--overlay-light)', backdropFilter: 'blur(20px)', transition: 'background-color 0.4s ease' }}
-            >
-              <div style={{ width: 80, height: 80, borderRadius: 24, background: item.bg, color: item.color, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 36, border: `1px solid ${item.color}40`, boxShadow: `inset 0 0 20px ${item.color}20, 0 8px 16px rgba(0,0,0,0.2)` }}>
-                {item.icon}
-              </div>
-              <h3 style={{ fontSize: 28, fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: 16, letterSpacing: '-0.02em' }}>{item.title}</h3>
-              <p style={{ color: 'var(--overlay-half)', lineHeight: 1.7, fontSize: 17 }}>{item.desc}</p>
-            </motion.div>
-          ))}
-        </motion.div>
+        {/* 2️⃣ Cross-Chain Liquidity */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr minmax(400px, 1.2fr)', gap: 80, alignItems: 'center', marginBottom: 160 }}>
+          <motion.div initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
+            <h2 style={{ fontSize: 48, fontWeight: 800, color: 'var(--color-text-primary)', marginBottom: 24, letterSpacing: '-0.04em' }}>Cross-Chain Liquidity</h2>
+            <p style={{ fontSize: 20, color: 'var(--overlay-half-strong)', lineHeight: 1.7, marginBottom: 32 }}>
+              Liquidity should never be silos. AION uses Chainlink CCIP to bridge assets and orchestrate capital efficiency across the entire EVM landscape effortlessly.
+            </p>
+            <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: 20 }}>
+              {[
+                "CCIP transfers: Secure, decentralized cross-chain asset movement.",
+                "Multi-chain vaults: Unified account abstraction for all your liquidity.",
+                "Liquidity routing: Automated arbitrage and yield chasing across protocols."
+              ].map((text, i) => (
+                <li key={i} style={{ display: 'flex', alignItems: 'center', gap: 16, fontSize: 18, color: 'var(--overlay-half)', fontWeight: 500 }}>
+                  <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'rgba(138,166,249,0.1)', color: '#8AA6F9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12 }}>✓</div>
+                  {text}
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+          <motion.div initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
+            <img src="/assets/illustrations/CROSS-CHAIN.png" alt="Cross-Chain Liquidity" style={{ width: '100%', height: 'auto', borderRadius: 32, boxShadow: '0 40px 80px rgba(0,0,0,0.5)' }} />
+          </motion.div>
+        </div>
+
+        {/* 3️⃣ Autonomous Payments */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(400px, 1.2fr) 1fr', gap: 80, alignItems: 'center' }}>
+          <motion.div initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
+            <img src="/assets/illustrations/MACHINE-PAYMENTS.png" alt="Autonomous Payments" style={{ width: '100%', height: 'auto', borderRadius: 32, boxShadow: '0 40px 80px rgba(0,0,0,0.5)' }} />
+          </motion.div>
+          <motion.div initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
+            <h2 style={{ fontSize: 48, fontWeight: 800, color: 'var(--color-text-primary)', marginBottom: 24, letterSpacing: '-0.04em' }}>Autonomous Payments</h2>
+            <p style={{ fontSize: 20, color: 'var(--overlay-half-strong)', lineHeight: 1.7, marginBottom: 32 }}>
+              A new machine-to-machine economy is here. Set on-chain triggers and let AI agents handle settlements, payouts, and rebalancing tasks in real-time.
+            </p>
+            <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: 20 }}>
+              {[
+                "Automated yield payouts: Native yield streaming for your positions.",
+                "AI-driven rebalancing: Smart execution of capital movement workflows.",
+                "Programmable payments: x402-ready machine-to-machine microtransactions."
+              ].map((text, i) => (
+                <li key={i} style={{ display: 'flex', alignItems: 'center', gap: 16, fontSize: 18, color: 'var(--overlay-half)', fontWeight: 500 }}>
+                  <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'rgba(33,123,113,0.1)', color: '#217B71', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12 }}>✓</div>
+                  {text}
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        </div>
       </section>
 
       {/* Asymmetrical Layout - Chainlink Integration */}
@@ -271,10 +335,9 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer style={{ background: '#02050A', paddingTop: 100, paddingBottom: 60, borderTop: '1px solid var(--overlay-medium-light)', position: 'relative', zIndex: 10 }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '0 24px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 32 }}>
-            <div style={{ width: 40, height: 40, borderRadius: 10, background: 'linear-gradient(135deg, #0847F7, #396CF9)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 16 }}>AI</div>
-            <span style={{ fontSize: 28, fontWeight: 800, color: 'var(--color-text-primary)', letterSpacing: '-0.02em' }}>AION Yield</span>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '0 24px' }}>
+          <div style={{ marginBottom: 32 }}>
+            <img src="/assets/logo/AIONYIELD-logo-nobg.png" alt="AION Yield Logo" style={{ height: 48, width: 'auto' }} />
           </div>
           <p style={{ color: 'var(--overlay-half)', fontSize: 18, maxWidth: 500, marginBottom: 48, lineHeight: 1.6 }}>
             Built for the Chainlink Convergence Hackathon. Setting the standard for AI-driven DeFi.

@@ -42,17 +42,10 @@ export function Header({ title, subtitle }: HeaderProps) {
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'center',
-            width: 28, 
-            height: 28, 
-            background: 'var(--color-primary)', 
-            borderRadius: 6,
-            color: '#fff',
-            fontSize: 10,
-            fontWeight: 800,
             textDecoration: 'none'
           }}
         >
-          A
+          <img src="/assets/logo/AIONYIELD-logo-nobg.png" alt="AION Yield Logo" style={{ height: 24, width: 'auto' }} />
         </Link>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
         <AnimatePresence mode="wait">

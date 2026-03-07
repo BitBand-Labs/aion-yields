@@ -23,7 +23,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pageInfo = pageTitles[pathname] || pageTitles['/']
 
   return (
-    <div className="app-shell" style={{ background: 'var(--color-bg)', minHeight: '100vh', color: 'var(--color-text-primary)' }}>
+    <div className="app-shell" style={{ background: 'var(--color-bg)', minHeight: '100vh', color: 'var(--color-text-primary)', position: 'relative', overflow: 'hidden' }}>
+      {/* Global Background Assets */}
+      <div style={{ position: 'fixed', top: '10%', left: '-5%', width: '50vw', height: '50vw', opacity: 0.03, filter: 'blur(12px)', pointerEvents: 'none', zIndex: 0 }}>
+        <img src="/assets/illustrations/HERO-ILLUSTRATION.png" alt="" style={{ width: '100%', height: 'auto' }} />
+      </div>
+      <div style={{ position: 'fixed', bottom: '5%', right: '-5%', width: '45vw', height: '45vw', opacity: 0.03, filter: 'blur(10px)', pointerEvents: 'none', zIndex: 0 }}>
+        <img src="/assets/illustrations/CROSS-CHAIN.png" alt="" style={{ width: '100%', height: 'auto' }} />
+      </div>
       {/* Desktop sidebar */}
       <div className="desktop-sidebar">
         <Sidebar

@@ -248,11 +248,11 @@ export default function AgentsPage() {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            color: 'var(--color-primary)',
-                            boxShadow: 'inset 0 0 10px rgba(0,0,0,0.05)'
+                            overflow: 'hidden',
+                            border: '1px solid var(--color-border)'
                           }}
                         >
-                          <Bot size={18} />
+                          <img src="/assets/icons/CUSTOM-ICON-SET.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         </div>
                         <div>
                           <p style={{ fontWeight: 700, margin: '0 0 2px', fontSize: 14 }}>

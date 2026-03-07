@@ -67,22 +67,19 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           color: 'inherit'
         }}
       >
-        <div style={{ 
-          width: 32, 
-          height: 32, 
-          borderRadius: 8, 
-          background: 'var(--color-primary)', 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center',
-          color: '#fff',
-          fontWeight: 800,
-          fontSize: 12
-        }}>
-          A
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: collapsed ? '100%' : 'auto' }}>
+          <img 
+            src="/assets/logo/AIONYIELD-logo-nobg.png" 
+            alt="A" 
+            style={{ 
+              height: 24, 
+              width: 'auto',
+              filter: collapsed ? 'brightness(1.2)' : 'none'
+            }} 
+          />
         </div>
         {!collapsed && (
-          <span style={{ fontWeight: 700, fontSize: 14, letterSpacing: '-0.02em' }}>
+          <span style={{ fontWeight: 700, fontSize: 14, letterSpacing: '-0.02em', display: 'none' }}>
             AION <span style={{ color: 'var(--color-text-tertiary)', fontWeight: 400 }}>Yield</span>
           </span>
         )}

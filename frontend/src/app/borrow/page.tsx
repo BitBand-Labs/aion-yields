@@ -164,8 +164,14 @@ export default function BorrowPage() {
                     ))}
                     {borrowedPositions.length === 0 && (
                       <tr>
-                        <td colSpan={6} style={{ textAlign: 'center', padding: '48px' }}>
-                          <p className="text-secondary">No active borrowings found</p>
+                        <td colSpan={6} style={{ textAlign: 'center', padding: '64px 24px' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
+                            <img src="/assets/illustrations/AI-FEATURE.png" alt="No active vaults" style={{ width: 120, height: 'auto', opacity: 0.6 }} />
+                            <div>
+                              <p style={{ margin: '0 0 4px', fontSize: 16, fontWeight: 700, color: 'var(--color-text-primary)' }}>No active borrowings yet</p>
+                              <p style={{ margin: 0, fontSize: 13, color: 'var(--color-text-secondary)' }}>Deposit assets to start earning and unlock your borrow capacity.</p>
+                            </div>
+                          </div>
                         </td>
                       </tr>
                     )}

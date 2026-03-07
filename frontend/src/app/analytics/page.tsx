@@ -80,7 +80,12 @@ export default function AnalyticsPage() {
             transition: { staggerChildren: 0.1 }
           }
         }}
+        style={{ position: 'relative' }}
       >
+        {/* Background Visual */}
+        <div style={{ position: 'fixed', top: '15%', right: '-5%', width: '50vw', height: '50vw', opacity: 0.05, filter: 'blur(8px)', pointerEvents: 'none', zIndex: -1 }}>
+          <img src="/assets/illustrations/CROSS-CHAIN.png" alt="" style={{ width: '100%', height: 'auto' }} />
+        </div>
         <motion.div 
           variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}
           style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-8)' }}
