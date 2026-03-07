@@ -70,7 +70,7 @@ export default function LandingPage() {
         }}
       >
         <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 12, textDecoration: 'none', color: 'inherit' }}>
-          <img src="/assets/logo/AIONYIELD-logo-nobg.png" alt="AION Yield Logo" style={{ height: 32, width: 'auto' }} />
+          <img src="/assets/logo/AIONYIELD-logo-nobg.png" alt="AION Yield Logo" style={{ height: 42, width: 'auto' }} />
         </Link>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
