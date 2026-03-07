@@ -32,7 +32,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <img src="/assets/illustrations/CROSS-CHAIN.png" alt="" style={{ width: '100%', height: 'auto' }} />
       </div>
       {/* Desktop sidebar */}
-      <div className="desktop-sidebar">
+      <div 
+        className="desktop-sidebar"
+        style={{
+          position: 'fixed',
+          top: '16px',
+          left: '16px',
+          bottom: '16px',
+          zIndex: 40,
+          transition: 'all var(--transition-slow)',
+        }}
+      >
         <Sidebar
           collapsed={sidebarCollapsed}
           onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
@@ -43,9 +53,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <div
         style={{
           position: 'fixed',
-          top: 0,
-          right: 0,
-          left: sidebarCollapsed ? 'var(--sidebar-collapsed)' : 'var(--sidebar-width)',
+          top: '16px',
+          right: '16px',
+          left: sidebarCollapsed 
+            ? 'calc(var(--sidebar-collapsed) + 32px)' 
+            : 'calc(var(--sidebar-width) + 32px)',
           zIndex: 30,
           transition: 'all var(--transition-slow)',
         }}
@@ -57,8 +69,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Main content wrapper */}
       <main
         style={{
-          marginLeft: sidebarCollapsed ? 'var(--sidebar-collapsed)' : 'var(--sidebar-width)',
-          paddingTop: 'var(--header-height)',
+          marginLeft: sidebarCollapsed 
+            ? 'calc(var(--sidebar-collapsed) + 16px)' 
+            : 'calc(var(--sidebar-width) + 16px)',
+          paddingTop: 'calc(var(--header-height) + 32px)',
           transition: 'margin var(--transition-slow)',
           minHeight: '100vh',
           display: 'flex',

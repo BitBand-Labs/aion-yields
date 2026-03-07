@@ -44,11 +44,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         bottom: 0,
         width: collapsed ? 'var(--sidebar-collapsed)' : 'var(--sidebar-width)',
         background: 'var(--color-bg)',
-        borderRight: '1px solid var(--color-border)',
+        borderRadius: '24px',
         display: 'flex',
         flexDirection: 'column',
         zIndex: 40,
-        transition: 'width var(--transition-slow)',
+        transition: 'width var(--transition-slow), left var(--transition-slow)',
         overflow: 'hidden',
       }}
     >
@@ -60,7 +60,6 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           display: 'flex',
           alignItems: 'center',
           padding: '0 var(--space-2)',
-          borderBottom: '1px solid var(--color-border)',
           gap: '12px',
           flexShrink: 0,
           textDecoration: 'none',
@@ -162,7 +161,6 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       <div
         style={{
           padding: 'var(--space-2)',
-          borderTop: '1px solid var(--color-border)',
         }}
       >
         <button
