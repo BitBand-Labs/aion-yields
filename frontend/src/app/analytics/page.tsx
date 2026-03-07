@@ -203,7 +203,7 @@ export default function AnalyticsPage() {
                           ? 'linear-gradient(180deg, var(--color-primary), var(--color-primary-light))'
                           : 'var(--color-surface-raised)',
                       borderRadius: '8px 8px 4px 4px',
-                      boxShadow: i === tvlHistory.length - 1 ? '0 0 20px rgba(8, 71, 247, 0.2)' : 'none',
+                      boxShadow: i === tvlHistory.length - 1 ? '0 0 20px rgba(14, 167, 203, 0.2)' : 'none',
                     }}
                    />
                 </div>
@@ -388,7 +388,7 @@ export default function AnalyticsPage() {
               style={{
                 marginTop: 32,
                 padding: '24px',
-                background: 'linear-gradient(135deg, rgba(8, 71, 247, 0.05), transparent)',
+                background: 'linear-gradient(135deg, rgba(14, 167, 203, 0.05), transparent)',
                 borderRadius: 'var(--radius-lg)',
                 border: '1px solid var(--color-primary-muted)',
                 display: 'flex',

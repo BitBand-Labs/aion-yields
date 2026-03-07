@@ -94,7 +94,7 @@ export default function BorrowPage() {
               style={{
                 height: '100%',
                 background: 'linear-gradient(90deg, var(--color-primary), var(--color-primary-light))',
-                boxShadow: '0 0 15px rgba(8, 71, 247, 0.4)',
+                boxShadow: '0 0 15px rgba(14, 167, 203, 0.4)',
                 borderRadius: 6,
               }}
             />
@@ -249,7 +249,7 @@ export default function BorrowPage() {
             {/* Faint info card */}
             <motion.div 
                variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
-               style={{ padding: 24, borderRadius: 'var(--radius-lg)', background: 'rgba(8, 71, 247, 0.03)', border: '1px dashed var(--color-primary-muted)' }}
+               style={{ padding: 24, borderRadius: 'var(--radius-lg)', background: 'rgba(14, 167, 203, 0.03)', border: '1px dashed var(--color-primary-muted)' }}
             >
                <h4 style={{ fontSize: 14, fontWeight: 700, margin: '0 0 12px', color: 'var(--color-text-primary)' }}>Did you know?</h4>
                <p style={{ fontSize: 13, color: 'var(--color-text-secondary)', lineHeight: 1.6, margin: 0 }}>

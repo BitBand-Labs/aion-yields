@@ -8,13 +8,13 @@
 
 :root {
   /* --- Primary --- */
-  --color-primary: #0847F7;
-  --color-primary-hover: #073BCC;
-  --color-primary-light: #396CF9;
-  --color-primary-muted: rgba(8, 71, 247, 0.1);
+  --color-primary: #0EA7CB;
+  --color-primary-hover: #0C8EA9;
+  --color-primary-light: #3DC5E4;
+  --color-primary-muted: rgba(14, 167, 203, 0.1);
 
   /* --- Secondary --- */
-  --color-secondary: #8AA6F9;
+  --color-secondary: #0EA7CB;
 
   /* --- Backgrounds --- */
   --color-bg: #fafafa;
@@ -58,8 +58,8 @@
   --overlay-high: rgba(0, 0, 0, 0.95);
 
   /* --- Accent --- */
-  --color-accent: #4A21C2;
-  --color-accent-muted: rgba(74, 33, 194, 0.15);
+  --color-accent: #0EA7CB;
+  --color-accent-muted: rgba(14, 167, 203, 0.15);
 
   /* --- Typography --- */
   --font-sans: 'Inter',
@@ -93,8 +93,8 @@
   --shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
-  --shadow-glow: 0 0 20px rgba(8, 71, 247, 0.1);
-  --shadow-glow-hover: 0 0 30px rgba(8, 71, 247, 0.2);
+  --shadow-glow: 0 0 20px rgba(14, 167, 203, 0.1);
+  --shadow-glow-hover: 0 0 30px rgba(14, 167, 203, 0.2);
 
   /* --- Transitions --- */
   --transition-fast: 120ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -282,7 +282,7 @@ body::before {
 
 .card-glow:hover {
   transform: translateY(-4px) scale(1.01);
-  box-shadow: 0 20px 40px rgba(8, 71, 247, 0.1);
+  box-shadow: 0 20px 40px rgba(14, 167, 203, 0.1);
   border-color: var(--color-primary);
 }
 
@@ -404,7 +404,7 @@ body::before {
 
 .input:focus {
   border-color: var(--color-border-focus);
-  box-shadow: 0 0 0 3px rgba(8, 71, 247, 0.1);
+  box-shadow: 0 0 0 3px rgba(14, 167, 203, 0.1);
 }
 
 .input::placeholder {
@@ -553,11 +553,11 @@ body::before {
 
   0%,
   100% {
-    box-shadow: 0 0 12px rgba(55, 91, 210, 0.1);
+    box-shadow: 0 0 12px rgba(14, 167, 203, 0.1);
   }
 
   50% {
-    box-shadow: 0 0 24px rgba(55, 91, 210, 0.2);
+    box-shadow: 0 0 24px rgba(14, 167, 203, 0.2);
   }
 }
 
