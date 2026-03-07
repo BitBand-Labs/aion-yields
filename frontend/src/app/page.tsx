@@ -483,8 +483,8 @@ export default function LandingPage() {
       </motion.section>
 
       {/* AI Economy - Layered Cards */}
-      <section style={{ maxWidth: 1200, margin: '160px auto', padding: '0 24px', position: 'relative', zIndex: 10 }}>
-        <div style={{ textAlign: 'center', marginBottom: 100 }}>
+      <section style={{ maxWidth: 1200, margin: '120px auto', padding: '0 24px', position: 'relative', zIndex: 10 }}>
+        <div style={{ textAlign: 'center', marginBottom: 60 }}>
           <h2 style={{ fontSize: 56, fontWeight: 800, color: 'var(--color-text-primary)', marginBottom: 24, letterSpacing: '-0.04em' }}>The Agentic Economy</h2>
           <p style={{ fontSize: 22, color: 'var(--overlay-half-strong)', maxWidth: 700, margin: '0 auto', lineHeight: 1.6 }}>
             A new paradigm for machine-to-machine value exchange. Treat AI models as sophisticated economic agents.
@@ -494,10 +494,10 @@ export default function LandingPage() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 40 }}>
           <motion.div 
             initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} whileHover={{ y: -16, transition: { duration: 0.3 } }}
-            style={{ position: 'relative', padding: 56, borderRadius: 40, background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)', border: '1px solid var(--overlay-medium-light)', overflow: 'hidden', boxShadow: '0 40px 80px rgba(0,0,0,0.3)' }}
+            style={{ position: 'relative', padding: 40, borderRadius: 40, background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)', border: '1px solid var(--overlay-medium-light)', overflow: 'hidden', boxShadow: '0 40px 80px rgba(0,0,0,0.3)' }}
           >
             <div style={{ position: 'absolute', top: -150, right: -150, width: 400, height: 400, background: 'radial-gradient(circle, rgba(138,166,249,0.2) 0%, transparent 60%)', filter: 'blur(60px)' }} />
-            <div style={{ display: 'inline-flex', alignItems: 'center', padding: '8px 20px', borderRadius: 100, background: 'rgba(138,166,249,0.1)', color: '#8AA6F9', fontSize: 13, fontWeight: 700, letterSpacing: '0.05em', marginBottom: 32 }}>HTTP 402 STANDARD</div>
+            <div style={{ display: 'inline-flex', alignItems: 'center', padding: '8px 20px', borderRadius: 100, background: 'rgba(138,166,249,0.1)', color: '#8AA6F9', fontSize: 13, fontWeight: 700, letterSpacing: '0.05em', marginBottom: 24 }}>HTTP 402 STANDARD</div>
             <h3 style={{ fontSize: 36, fontWeight: 800, color: 'var(--color-text-primary)', marginBottom: 24, letterSpacing: '-0.02em' }}>x402 Inference Payments</h3>
             <p style={{ color: 'var(--overlay-half)', fontSize: 18, lineHeight: 1.7 }}>
               A crypto-native HTTP payment standard resurrecting the HTTP 402 "Payment Required" code. When our protocol queries an AI model, it natively settles the microtransaction instantly via USDC.
@@ -506,10 +506,10 @@ export default function LandingPage() {
 
           <motion.div 
             initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-50px' }} whileHover={{ y: -16, transition: { duration: 0.3 } }}
-            style={{ position: 'relative', padding: 56, borderRadius: 40, background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)', border: '1px solid var(--overlay-medium-light)', overflow: 'hidden', boxShadow: '0 40px 80px rgba(0,0,0,0.3)' }}
+            style={{ position: 'relative', padding: 40, borderRadius: 40, background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)', border: '1px solid var(--overlay-medium-light)', overflow: 'hidden', boxShadow: '0 40px 80px rgba(0,0,0,0.3)' }}
           >
             <div style={{ position: 'absolute', top: -150, left: -150, width: 400, height: 400, background: 'radial-gradient(circle, rgba(247,184,8,0.15) 0%, transparent 60%)', filter: 'blur(60px)' }} />
-            <div style={{ display: 'inline-flex', alignItems: 'center', padding: '8px 20px', borderRadius: 100, background: 'rgba(247,184,8,0.1)', color: '#F7B808', fontSize: 13, fontWeight: 700, letterSpacing: '0.05em', marginBottom: 32 }}>REPUTATION STANDARD</div>
+            <div style={{ display: 'inline-flex', alignItems: 'center', padding: '8px 20px', borderRadius: 100, background: 'rgba(247,184,8,0.1)', color: '#F7B808', fontSize: 13, fontWeight: 700, letterSpacing: '0.05em', marginBottom: 24 }}>REPUTATION STANDARD</div>
             <h3 style={{ fontSize: 36, fontWeight: 800, color: 'var(--color-text-primary)', marginBottom: 24, letterSpacing: '-0.02em' }}>ERC-8004 Agent Identity</h3>
             <p style={{ color: 'var(--overlay-half)', fontSize: 18, lineHeight: 1.7 }}>
               A transparent on-chain registry gives AI agents an immutable reputation. Models state collateral slashed upon malicious predictions, guaranteeing institutional-grade trust and scale.
