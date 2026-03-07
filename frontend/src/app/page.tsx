@@ -91,7 +91,7 @@ export default function LandingPage() {
         transition={{ duration: 0.8 }}
         style={{
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          padding: '20px 48px', borderBottom: '1px solid var(--overlay-light)',
+          padding: '20px 48px', borderBottom: `1px solid ${isLight ? 'rgba(14, 167, 203, 0.2)' : 'var(--overlay-light)'}`,
           background: isLight ? 'rgba(255,255,255, 0.8)' : 'rgba(11,16,28, 0.6)', 
           backdropFilter: isLight ? 'none' : 'blur(24px)',
           position: 'sticky', top: 0, zIndex: 50,

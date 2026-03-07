@@ -9,6 +9,7 @@ import { MagicCard } from '@/components/ui/MagicCard'
 import { ArrowUpRight, Shield, RefreshCw, AlertTriangle, Wallet } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { TokenIcon } from '@/components/ui/TokenIcon'
+import { useTheme } from 'next-themes'
 
 const collateralAssets = [
   { asset: 'USDC', amount: '5,000.00', value: '$5,000.00', ltv: '85%' },
@@ -27,6 +28,16 @@ const assetColors: Record<string, string> = {
 }
 
 export default function BorrowPage() {
+  const { theme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const currentTheme = mounted ? (theme === 'system' ? resolvedTheme : theme) : 'dark';
+  const isLight = currentTheme === 'light';
+
   const borrowLimit = 11093.00
   const totalBorrowed = 3200.00
   const utilization = (totalBorrowed / borrowLimit) * 100
@@ -71,7 +82,7 @@ export default function BorrowPage() {
             <div>
               <p style={{ margin: '0 0 12px', fontSize: 12, fontWeight: 700, color: 'var(--color-primary-light)', textTransform: 'uppercase', letterSpacing: 1 }}>Borrow Capacity</p>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '16px' }}>
-                <span style={{ fontSize: 40, fontWeight: 700, letterSpacing: '-0.02em' }}>
+                <span style={{ fontSize: 40, fontWeight: 700, letterSpacing: '-0.02em', color: isLight ? 'var(--color-primary)' : 'inherit' }}>
                   ${totalBorrowed.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                 </span>
                 <span style={{ fontSize: 18, color: 'var(--color-text-tertiary)', fontWeight: 500 }}>
