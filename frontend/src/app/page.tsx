@@ -1,13 +1,13 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useAccount } from 'wagmi'
 import { useAppKit } from '@reown/appkit/react'
 import toast, { Toaster } from 'react-hot-toast'
-import { motion, useScroll, useTransform, Variants } from 'framer-motion'
+import { motion, useScroll, useTransform, Variants, AnimatePresence } from 'framer-motion'
 import {
-  ArrowRight, Shield, Zap, Network, Cpu, Database, Activity, Layers, ExternalLink, Wallet
+  ArrowRight, Shield, Zap, Network, Cpu, Database, Activity, Layers, ExternalLink, Wallet, ChevronUp
 } from 'lucide-react'
 
 const containerVariants: Variants = {
@@ -31,6 +31,21 @@ export default function LandingPage() {
   // Wallet Connection logic
   const { isConnected } = useAccount();
   const { open } = useAppKit();
+
+  // Scroll to Top logic
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 400);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleLaunchApp = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (!isConnected) {
@@ -496,6 +511,41 @@ export default function LandingPage() {
           </p>
         </div>
       </footer>
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.5, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.5, y: 20 }}
+            whileHover={{ scale: 1.1, backgroundColor: '#0847F7' }}
+            whileTap={{ scale: 0.9 }}
+            onClick={scrollToTop}
+            style={{
+              position: 'fixed',
+              bottom: '40px',
+              right: '40px',
+              width: '50px',
+              height: '50px',
+              borderRadius: '50%',
+              background: 'rgba(8,71,247,0.8)',
+              color: 'white',
+              border: 'none',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 100,
+              boxShadow: '0 8px 32px rgba(8,71,247,0.3)',
+              backdropFilter: 'blur(8px)',
+              borderWidth: '1px',
+              borderStyle: 'solid',
+              borderColor: 'rgba(255,255,255,0.1)'
+            }}
+          >
+            <ChevronUp size={24} />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
