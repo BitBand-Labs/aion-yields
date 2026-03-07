@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useAccount } from 'wagmi'
 import { useAppKit } from '@reown/appkit/react'
+import { useTheme } from 'next-themes'
 import toast, { Toaster } from 'react-hot-toast'
 import { motion, useScroll, useTransform, Variants, AnimatePresence } from 'framer-motion'
 import {
@@ -27,6 +28,17 @@ export default function LandingPage() {
   const { scrollYProgress } = useScroll();
   const yHero = useTransform(scrollYProgress, [0, 1], [0, 300]);
   const opacityHero = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+
+  // Theme logic
+  const { theme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const currentTheme = mounted ? (theme === 'system' ? resolvedTheme : theme) : 'dark';
+  const isLight = currentTheme === 'light';
 
   // Wallet Connection logic
   const { isConnected } = useAccount();
@@ -306,7 +318,10 @@ export default function LandingPage() {
         
         {/* 1️⃣ AI Yield Optimization */}
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(400px, 1.2fr) 1fr', gap: 80, alignItems: 'center', marginBottom: 160 }}>
-          <motion.div initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
+          <motion.div initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} style={{ position: 'relative' }}>
+            {isLight && (
+              <div style={{ position: 'absolute', inset: -40, background: 'radial-gradient(circle, rgba(8,71,247,0.08) 0%, transparent 70%)', filter: 'blur(40px)', zIndex: -1 }} />
+            )}
             <img src="/assets/illustrations/AI-FEATURE.png" alt="AI Yield Optimization" style={{ width: '100%', height: 'auto', borderRadius: 32, /* boxShadow: '0 40px 80px rgba(0,0,0,0.5)' */ }} />
           </motion.div>
           <motion.div initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
@@ -349,14 +364,20 @@ export default function LandingPage() {
               ))}
             </ul>
           </motion.div>
-          <motion.div initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
+          <motion.div initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} style={{ position: 'relative' }}>
+            {isLight && (
+              <div style={{ position: 'absolute', inset: -40, background: 'radial-gradient(circle, rgba(138,166,249,0.08) 0%, transparent 70%)', filter: 'blur(40px)', zIndex: -1 }} />
+            )}
             <img src="/assets/illustrations/CROSS-CHAIN.png" alt="Cross-Chain Liquidity" style={{ width: '100%', height: 'auto', borderRadius: 32, /* boxShadow: '0 40px 80px rgba(0,0,0,0.5)' */ }} />
           </motion.div>
         </div>
 
         {/* 3️⃣ Autonomous Payments */}
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(400px, 1.2fr) 1fr', gap: 80, alignItems: 'center' }}>
-          <motion.div initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
+          <motion.div initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} style={{ position: 'relative' }}>
+            {isLight && (
+              <div style={{ position: 'absolute', inset: -40, background: 'radial-gradient(circle, rgba(33,123,113,0.08) 0%, transparent 70%)', filter: 'blur(40px)', zIndex: -1 }} />
+            )}
             <img src="/assets/illustrations/MACHINE-PAYMENTS.png" alt="Autonomous Payments" style={{ width: '100%', height: 'auto', borderRadius: 32, /* boxShadow: '0 40px 80px rgba(0,0,0,0.5)' */ }} />
           </motion.div>
           <motion.div initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
@@ -419,7 +440,19 @@ export default function LandingPage() {
 
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 1 }}
-            style={{ position: 'relative', height: 720, borderRadius: 40, /* background: 'linear-gradient(135deg, var(--overlay-ultralight-2) 0%, rgba(255,255,255,0.01) 100%)', border: '1px solid var(--overlay-medium-light)', */ overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            style={{ 
+              position: 'relative', 
+              height: 720, 
+              borderRadius: 40, 
+              background: isLight 
+                ? 'linear-gradient(135deg, rgba(8,71,247,0.02) 0%, rgba(255,255,255,0.01) 100%)' 
+                : 'transparent',
+              border: isLight ? '1px solid rgba(0,0,0,0.05)' : 'none',
+              overflow: 'hidden', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center' 
+            }}
           >
             {/* Dark background inside card */}
             <div style={{ position: 'absolute', inset: 0, background: '#080C14' }} />
