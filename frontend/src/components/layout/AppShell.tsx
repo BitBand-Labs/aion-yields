@@ -11,6 +11,7 @@ const pageTitles: Record<string, { title: string; subtitle: string }> = {
   '/dashboard': { title: 'Dashboard', subtitle: 'Protocol overview & real-time analytics' },
   '/markets': { title: 'Markets', subtitle: 'Explore lending & borrowing markets' },
   '/borrow': { title: 'Borrowing', subtitle: 'Manage your borrowing positions' },
+  '/portfolio': { title: 'Portfolio Intelligence', subtitle: 'AI-powered portfolio analytics, predictions & risk management' },
   '/ai-yield': { title: 'AI Yield', subtitle: 'AI-driven allocation & risk forecasting' },
   '/agents': { title: 'AI Marketplace', subtitle: 'ERC-8004 agent reputation & HTTP 402 inferences' },
   '/analytics': { title: 'Analytics', subtitle: 'Protocol metrics & data flows' },

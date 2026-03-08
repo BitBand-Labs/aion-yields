@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { useAccount } from 'wagmi'
 import { useAppKit } from '@reown/appkit/react'
@@ -53,6 +53,31 @@ export default function LandingPage() {
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Pre-generate particle data to avoid hydration mismatch from Math.random()
+  const particles = useMemo(() => {
+    function seededRandom(seed: number) {
+      const x = Math.sin(seed * 9301 + 49297) * 49297;
+      return x - Math.floor(x);
+    }
+    return Array.from({ length: 20 }).map((_, i) => {
+      const r = (offset: number) => seededRandom(i * 7 + offset);
+      const color1 = r(0) > 0.5 ? '#3DC5E4' : '#0EA7CB';
+      const color2 = r(1) > 0.5 ? '#3DC5E4' : '#0EA7CB';
+      return {
+        x: [0, r(2) * 60 - 30, r(3) * -40 + 20, 0],
+        y: [0, r(4) * -50 + 25, r(5) * 40 - 20, 0],
+        duration: 12 + r(6) * 8,
+        delay: r(7) * 5,
+        top: `${10 + r(8) * 80}%`,
+        left: `${40 + r(9) * 55}%`,
+        width: 3 + r(10) * 4,
+        height: 3 + r(11) * 4,
+        background: `radial-gradient(circle, ${color1}, transparent)`,
+        boxShadow: `0 0 ${6 + r(12) * 8}px ${color2}`,
+      };
+    });
   }, []);
 
   const scrollToTop = () => {
@@ -150,29 +175,29 @@ export default function LandingPage() {
         </div>
 
         {/* Floating Particles */}
-        {Array.from({ length: 20 }).map((_, i) => (
+        {particles.map((p, i) => (
           <motion.div
             key={`particle-${i}`}
             animate={{
-              x: [0, Math.random() * 60 - 30, Math.random() * -40 + 20, 0],
-              y: [0, Math.random() * -50 + 25, Math.random() * 40 - 20, 0],
+              x: p.x,
+              y: p.y,
               opacity: [0.15, 0.3, 0.1, 0.15],
             }}
             transition={{
-              duration: 12 + Math.random() * 8,
+              duration: p.duration,
               repeat: Infinity,
               ease: 'easeInOut',
-              delay: Math.random() * 5,
+              delay: p.delay,
             }}
             style={{
               position: 'absolute',
-              top: `${10 + Math.random() * 80}%`,
-              left: `${40 + Math.random() * 55}%`,
-              width: 3 + Math.random() * 4,
-              height: 3 + Math.random() * 4,
+              top: p.top,
+              left: p.left,
+              width: p.width,
+              height: p.height,
               borderRadius: '50%',
-              background: `radial-gradient(circle, ${Math.random() > 0.5 ? '#3DC5E4' : '#0EA7CB'}, transparent)`,
-              boxShadow: `0 0 ${6 + Math.random() * 8}px ${Math.random() > 0.5 ? '#3DC5E4' : '#0EA7CB'}`,
+              background: p.background,
+              boxShadow: p.boxShadow,
               pointerEvents: 'none',
               zIndex: 1,
             }}

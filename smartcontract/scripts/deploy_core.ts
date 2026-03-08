@@ -1,79 +1,177 @@
-import { ethers } from "hardhat";
+import { network } from "hardhat";
+import * as fs from "fs";
+
+interface ChainlinkConfig {
+    linkToken: string;
+    ccipRouter: string;
+    functionsRouter: string;
+    donId: string;
+}
+
+const CHAINLINK_CONFIG: Record<string, ChainlinkConfig> = {
+    sepolia: {
+        linkToken: process.env.SEPOLIA_LINK_TOKEN || "0x779877A7B0D9E8603169DdbD7836e478b4624789",
+        ccipRouter: process.env.SEPOLIA_CCIP_ROUTER || "0x0BF3dE8c5D3e8A2B34D2BEeB17ABfCeBaf363A59",
+        functionsRouter: process.env.SEPOLIA_FUNCTIONS_ROUTER || "0xb83E47C2bC239B3bf370bc41e1459A34b41238D0",
+        donId: process.env.SEPOLIA_DON_ID || "0x66756e2d657468657265756d2d7365706f6c69612d3100000000000000000000",
+    },
+    avalancheFuji: {
+        linkToken: process.env.FUJI_LINK_TOKEN || "0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846",
+        ccipRouter: process.env.FUJI_CCIP_ROUTER || "0xF694E193200268f9a4868e4Aa017A0118C9a8177",
+        functionsRouter: process.env.FUJI_FUNCTIONS_ROUTER || "0xA9d587a00A31A52Ed70D6026794a8FC5E2F5E6f0",
+        donId: process.env.FUJI_DON_ID || "0x66756e2d6176616c616e6368652d66756a692d31000000000000000000000000",
+    },
+};
 
 async function main() {
+    const connection = await network.connect();
+    const { ethers } = connection as any;
+    const networkName = (connection as any).networkName as string;
+
+    console.log(`\n========================================`);
+    console.log(`  AION Yield - Deploying to ${networkName}`);
+    console.log(`========================================\n`);
+
+    const rawCfg = CHAINLINK_CONFIG[networkName];
+    if (!rawCfg) {
+        throw new Error(`No Chainlink config for network: ${networkName}. Supported: ${Object.keys(CHAINLINK_CONFIG).join(", ")}`);
+    }
+    // Fix checksums by lowercasing addresses (ethers will auto-checksum)
+    const chainlinkCfg = {
+        linkToken: ethers.getAddress(rawCfg.linkToken.toLowerCase()),
+        ccipRouter: ethers.getAddress(rawCfg.ccipRouter.toLowerCase()),
+        functionsRouter: ethers.getAddress(rawCfg.functionsRouter.toLowerCase()),
+        donId: rawCfg.donId,
+    };
+
     const [deployer] = await ethers.getSigners();
-    console.log("Deploying contracts with the account:", deployer.address);
+    const balance = await ethers.provider.getBalance(deployer.address);
+    console.log(`Deployer: ${deployer.address}`);
+    console.log(`Balance:  ${ethers.formatEther(balance)} ETH/AVAX\n`);
 
-    const initialOwner = deployer.address;
-    const treasury = deployer.address; // In production, this should be a DAO or multisig
+    if (balance === 0n) {
+        throw new Error("Deployer has zero balance. Fund the wallet first.");
+    }
 
-    // 1. Deploy MathUtils and DataTypes (if they were contracts/libraries that need linking, 
-    // but looking at LendingPool.sol they seem to be internal or already handled)
-    
-    // 2. Deploy InterestRateModel
-    // constructor(uint256 baseRate, uint256 kink, uint256 multiplier, uint256 jumpMultiplier, address initialOwner)
+    const owner = deployer.address;
+    const treasury = deployer.address; // In production, use a multisig
+
+    const deployed: Record<string, string> = {};
+
+    // 1. InterestRateModel (no constructor args)
+    console.log("1/9  Deploying InterestRateModel...");
     const InterestRateModel = await ethers.getContractFactory("InterestRateModel");
-    const interestRateModel = await InterestRateModel.deploy(
-        "0",                  // 0% base rate
-        "800000000000000000000000000", // 80% kink (RAY)
-        "40000000000000000000000000",  // 4% multiplier
-        "2000000000000000000000000000", // 200% jump multiplier
-        initialOwner
-    );
-    await interestRateModel.waitForDeployment();
-    console.log("InterestRateModel deployed to:", await interestRateModel.getAddress());
+    const irModel = await InterestRateModel.deploy();
+    await irModel.waitForDeployment();
+    deployed.InterestRateModel = await irModel.getAddress();
+    console.log(`     -> ${deployed.InterestRateModel}`);
 
-    // 3. Deploy LendingPool
+    // 2. LendingPool
+    console.log("2/9  Deploying LendingPool...");
     const LendingPool = await ethers.getContractFactory("LendingPool");
-    const lendingPool = await LendingPool.deploy(
-        initialOwner,
-        await interestRateModel.getAddress(),
-        treasury
-    );
-    await lendingPool.waitForDeployment();
-    console.log("LendingPool deployed to:", await lendingPool.getAddress());
+    const pool = await LendingPool.deploy(owner, deployed.InterestRateModel, treasury);
+    await pool.waitForDeployment();
+    deployed.LendingPool = await pool.getAddress();
+    console.log(`     -> ${deployed.LendingPool}`);
 
-    // 4. Deploy ChainlinkPriceOracle
+    // 3. ChainlinkPriceOracle
+    console.log("3/9  Deploying ChainlinkPriceOracle...");
     const ChainlinkPriceOracle = await ethers.getContractFactory("ChainlinkPriceOracle");
-    const oracle = await ChainlinkPriceOracle.deploy(initialOwner);
+    const oracle = await ChainlinkPriceOracle.deploy(owner);
     await oracle.waitForDeployment();
-    console.log("ChainlinkPriceOracle deployed to:", await oracle.getAddress());
+    deployed.ChainlinkPriceOracle = await oracle.getAddress();
+    console.log(`     -> ${deployed.ChainlinkPriceOracle}`);
 
-    // 5. Deploy LiquidationAutomation
-    const LiquidationAutomation = await ethers.getContractFactory("LiquidationAutomation");
-    const automation = await LiquidationAutomation.deploy(
-        initialOwner,
-        await lendingPool.getAddress()
-    );
-    await automation.waitForDeployment();
-    console.log("LiquidationAutomation deployed to:", await automation.getAddress());
-
-    // 6. Deploy AIYieldEngine
+    // 4. AIYieldEngine
+    console.log("4/9  Deploying AIYieldEngine...");
     const AIYieldEngine = await ethers.getContractFactory("AIYieldEngine");
-    const aiEngine = await AIYieldEngine.deploy(
-        initialOwner,
-        await lendingPool.getAddress()
-    );
+    const aiEngine = await AIYieldEngine.deploy(owner, deployed.LendingPool);
     await aiEngine.waitForDeployment();
-    console.log("AIYieldEngine deployed to:", await aiEngine.getAddress());
+    deployed.AIYieldEngine = await aiEngine.getAddress();
+    console.log(`     -> ${deployed.AIYieldEngine}`);
 
-    // 7. Deploy CrossChainVault
-    // constructor(address router, address link, address lendingPool_, address initialOwner)
-    // Note: These addresses are chain-specific. Below are placeholders for Base Sepolia (example)
-    const routerAddress = "0xD327405835C91D50d5c218145020836163E28Cc8"; // Example router
-    const linkAddress = "0xE4aB69C613f3d603af3619b0343ef79577821b3E";   // Example link
-    
+    // 5. LiquidationAutomation
+    console.log("5/9  Deploying LiquidationAutomation...");
+    const LiquidationAutomation = await ethers.getContractFactory("LiquidationAutomation");
+    const automation = await LiquidationAutomation.deploy(owner, deployed.LendingPool);
+    await automation.waitForDeployment();
+    deployed.LiquidationAutomation = await automation.getAddress();
+    console.log(`     -> ${deployed.LiquidationAutomation}`);
+
+    // 6. ChainlinkFunctionsConsumer
+    console.log("6/9  Deploying ChainlinkFunctionsConsumer...");
+    const subscriptionId = 1n; // Placeholder — update after creating a Functions subscription
+    const ChainlinkFunctionsConsumer = await ethers.getContractFactory("ChainlinkFunctionsConsumer");
+    const functionsConsumer = await ChainlinkFunctionsConsumer.deploy(
+        owner, chainlinkCfg.functionsRouter, subscriptionId, chainlinkCfg.donId, deployed.AIYieldEngine
+    );
+    await functionsConsumer.waitForDeployment();
+    deployed.ChainlinkFunctionsConsumer = await functionsConsumer.getAddress();
+    console.log(`     -> ${deployed.ChainlinkFunctionsConsumer}`);
+
+    // 7. CrossChainVault
+    console.log("7/9  Deploying CrossChainVault...");
     const CrossChainVault = await ethers.getContractFactory("CrossChainVault");
     const ccVault = await CrossChainVault.deploy(
-        routerAddress,
-        linkAddress,
-        await lendingPool.getAddress(),
-        initialOwner
+        chainlinkCfg.ccipRouter, chainlinkCfg.linkToken, deployed.LendingPool, owner
     );
     await ccVault.waitForDeployment();
-    console.log("CrossChainVault deployed to:", await ccVault.getAddress());
+    deployed.CrossChainVault = await ccVault.getAddress();
+    console.log(`     -> ${deployed.CrossChainVault}`);
 
-    console.log("All core contracts deployed successfully!");
+    // 8. AutonomousAllocator
+    console.log("8/9  Deploying AutonomousAllocator...");
+    const AutonomousAllocator = await ethers.getContractFactory("AutonomousAllocator");
+    const allocator = await AutonomousAllocator.deploy(owner, deployed.LendingPool, deployed.AIYieldEngine);
+    await allocator.waitForDeployment();
+    deployed.AutonomousAllocator = await allocator.getAddress();
+    console.log(`     -> ${deployed.AutonomousAllocator}`);
+
+    // 9. CREExecutionHook
+    console.log("9/9  Deploying CREExecutionHook...");
+    const CREExecutionHook = await ethers.getContractFactory("CREExecutionHook");
+    const creHook = await CREExecutionHook.deploy(
+        owner, deployed.LendingPool, deployed.AIYieldEngine,
+        deployed.LiquidationAutomation, deployed.CrossChainVault, deployed.AutonomousAllocator
+    );
+    await creHook.waitForDeployment();
+    deployed.CREExecutionHook = await creHook.getAddress();
+    console.log(`     -> ${deployed.CREExecutionHook}`);
+
+    // --- Post-deploy wiring ---
+    console.log("\nWiring permissions...");
+
+    // Authorize the FunctionsConsumer to call AIYieldEngine
+    const tx1 = await aiEngine.setAuthorizedCaller(deployed.ChainlinkFunctionsConsumer, true);
+    await tx1.wait();
+    console.log("  - AIYieldEngine: authorized ChainlinkFunctionsConsumer");
+
+    // Authorize CREExecutionHook as executor on itself
+    const tx2 = await creHook.setAuthorizedExecutor(owner, true);
+    await tx2.wait();
+    console.log("  - CREExecutionHook: authorized deployer as executor");
+
+    console.log(`\n========================================`);
+    console.log(`  Deployment complete on ${networkName}!`);
+    console.log(`========================================\n`);
+
+    // Print summary
+    console.log("Deployed addresses:");
+    for (const [name, addr] of Object.entries(deployed)) {
+        console.log(`  ${name.padEnd(30)} ${addr}`);
+    }
+
+    // Save to file
+    const outputPath = `./deployments/${networkName}.json`;
+    fs.mkdirSync("./deployments", { recursive: true });
+    fs.writeFileSync(outputPath, JSON.stringify({
+        network: networkName,
+        chainlink: chainlinkCfg,
+        deployer: deployer.address,
+        timestamp: new Date().toISOString(),
+        contracts: deployed,
+    }, null, 2));
+    console.log(`\nAddresses saved to ${outputPath}`);
 }
 
 main()

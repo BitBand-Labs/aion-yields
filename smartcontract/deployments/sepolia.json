@@ -1,0 +1,31 @@
+{
+  "network": "sepolia",
+  "chainlink": {
+    "linkToken": "0x779877A7B0D9E8603169DdbD7836e478b4624789",
+    "ccipRouter": "0x0BF3dE8c5D3e8A2B34D2BEeB17ABfCeBaf363A59",
+    "functionsRouter": "0xb83E47C2bC239B3bf370bc41e1459A34b41238D0",
+    "donId": "0x66756e2d657468657265756d2d7365706f6c69612d3100000000000000000000"
+  },
+  "deployer": "0x564c1B82eDf628af1a464A28270a066D8Cb81838",
+  "timestamp": "2026-03-08T15:30:00.000Z",
+  "contracts": {
+    "InterestRateModel": "0x67e1a242dfa9160f558c18aE306722f5a360c77b",
+    "LendingPool": "0x87Ff17e9A8f23D02E87d6E87B5631A7eE08C0248",
+    "ChainlinkPriceOracle": "0xdBF02AeBf96D1C3E8B4E35f61C27A37cc6f601e4",
+    "AIYieldEngine": "0x4a8Ec2D9655600bc5d5D3460e8680251C839E61D",
+    "LiquidationAutomation": "0xcC1bd02c59888b64bdC7125a1999B8e87F8259FE",
+    "ChainlinkFunctionsConsumer": "0x39E1ae10B36E43Ee386d53E120B7b4B81dA99D40",
+    "CrossChainVault": "0x3547aD159ACAf2660bc5E26E682899D11826c068",
+    "AutonomousAllocator": "0x7C9eF492Cc14A795d8BAa6937b4cF23F258Ce6f1",
+    "CREExecutionHook": "0x17562500756BaB6757E13ce84C6D207A4D144948",
+    "MockUSDC": "0x331cB2F787b2DC57855Bb30B51bE09aEF53e84C0",
+    "AIAgentRegistry": "0xbE9963F0058837759C3Cedc5FA1Ac3991bB8A957",
+    "X402PaymentGateway": "0xb38A14851dEd07df71b66835fd4E4aF5055e1cC4",
+    "AIRevenueDistributor": "0xb33A20Fd3cC7DaDfF7aF0fcA372A1C6B968bbFCA",
+    "GovernanceController": "0xFC18eA21D5f558FaecFeF662947b32282eD556c0",
+    "ProtocolFeeController": "0xa35C19170526eB8764a995fb5298eD1156B1b379",
+    "PolicyEngine": "0x2CfD29a609F822f734e70950a02Db066566d2faA",
+    "CertifiedActionValidatorPolicy": "0x666e7bD0bFBE5B004855d67aE6271933b3Df6A54",
+    "VolumeRatePolicy": "0x2bfD8ef46699094c19F30153f46e12273242Df99"
+  }
+}

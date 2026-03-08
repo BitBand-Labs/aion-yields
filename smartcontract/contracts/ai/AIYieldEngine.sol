@@ -2,23 +2,22 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "../ace/PolicyProtected.sol";
 
 /**
  * @title AIYieldEngine
  * @author ChainNomads (AION Yield)
  * @notice AI-driven yield optimization engine integrated with Chainlink CRE and Functions.
  *
- * @dev This contract serves as the on-chain coordinator for AI-driven yield optimization:
+ * @dev This contract serves as the on-chain coordinator for AI-driven yield optimization.
+ *      It handles TWO modes of optimization:
  *
- *      1. Chainlink CRE (Runtime Environment) orchestrates the workflow:
- *         Smart Contract → CRE → Chainlink Functions → AI Model → CRE → Smart Contract
+ *      MODE 1 — RATE OPTIMIZATION (Internal):
+ *        Adjusts interest rate curves within the AION LendingPool.
  *
- *      2. Chainlink Functions calls the off-chain AI model (Python/FastAPI):
- *         - Fetches market data
- *         - Runs yield prediction model
- *         - Returns optimal rate parameters
- *
- *      3. This contract receives the AI recommendation and adjusts the protocol accordingly.
+ *      MODE 2 — ALLOCATION OPTIMIZATION (Cross-Protocol):
+ *        Routes AI allocation decisions to the AutonomousAllocator, which moves
+ *        liquidity across external protocols (Aave, Morpho) for maximum yield.
  *
  *      AI WORKFLOW:
  *      ┌─────────────┐     ┌──────────┐     ┌─────────────────┐     ┌────────────┐
@@ -26,19 +25,25 @@ import "@openzeppelin/contracts/access/Ownable.sol";
  *      │ (Automation) │     │ Workflow  │     │ Functions       │     │ (Off-chain)│
  *      └─────────────┘     └──────────┘     └─────────────────┘     └────────────┘
  *            ↑                                                              │
- *            │                                                              ↓
- *      ┌─────────────┐     ┌──────────┐     ┌─────────────────┐     ┌────────────┐
- *      │ LendingPool  │ ←── │ This     │ ←── │ x402 Payment    │ ←── │ AI Result  │
- *      │ Rate Update  │     │ Contract │     │ (optional)      │     │            │
- *      └─────────────┘     └──────────┘     └─────────────────┘     └────────────┘
+ *            │                          ┌─────────────────────────────────────┘
+ *            │                          ↓
+ *      ┌─────────────┐     ┌──────────────────────┐     ┌─────────────────────┐
+ *      │ LendingPool  │ ←── │ This Contract         │ ──→ │ Autonomous         │
+ *      │ Rate Update  │     │ (AI Yield Engine)     │     │ Allocator          │
+ *      └─────────────┘     └──────────────────────┘     │  → Aave V3          │
+ *                                                        │  → Morpho Blue     │
+ *                                                        └─────────────────────┘
  */
-contract AIYieldEngine is Ownable {
+contract AIYieldEngine is Ownable, PolicyProtected {
     // ============================================================
     //                      STORAGE
     // ============================================================
 
     /// @dev The lending pool to apply AI recommendations to
     address public lendingPool;
+
+    /// @dev The AutonomousAllocator for cross-protocol allocation
+    address public autonomousAllocator;
 
     /// @dev Authorized CRE workflow addresses (who can submit AI results)
     mapping(address => bool) public authorizedCallers;
@@ -52,8 +57,15 @@ contract AIYieldEngine is Ownable {
     /// @dev AI-recommended rate parameters per asset
     mapping(address => RecommendedRates) public aiRecommendedRates;
 
+    /// @dev AI-recommended allocation per asset
+    mapping(address => AllocationRecommendation)
+        public aiRecommendedAllocations;
+
     /// @dev Whether AI rate adjustments are enabled
     bool public aiAdjustmentsEnabled;
+
+    /// @dev Whether AI allocation adjustments are enabled
+    bool public aiAllocationEnabled;
 
     /// @dev Minimum confidence threshold for applying AI recommendations (0-10000 bps)
     uint256 public minConfidenceThreshold = 7000; // 70%
@@ -84,6 +96,16 @@ contract AIYieldEngine is Ownable {
         bool isApplied; // Whether this has been applied to the pool
     }
 
+    struct AllocationRecommendation {
+        address asset;
+        uint256[] protocolIndices;
+        uint256[] allocationBps;
+        uint256 confidence;
+        bytes32 proofHash;
+        uint256 timestamp;
+        bool isApplied;
+    }
+
     // ============================================================
     //                        EVENTS
     // ============================================================
@@ -106,7 +128,16 @@ contract AIYieldEngine is Ownable {
 
     event RatesApplied(address indexed asset, uint256 timestamp);
 
+    event AllocationRecommended(
+        address indexed asset,
+        uint256 confidence,
+        bytes32 proofHash
+    );
+
+    event AllocationApplied(address indexed asset, uint256 timestamp);
+
     event AIAdjustmentsToggled(bool enabled);
+    event AIAllocationToggled(bool enabled);
 
     // ============================================================
     //                    CONSTRUCTOR
@@ -162,7 +193,7 @@ contract AIYieldEngine is Ownable {
         uint256 confidence,
         address agentId,
         bytes32 proofHash
-    ) external onlyAuthorized {
+    ) external onlyAuthorized policyCheck(abi.encode(proofHash)) {
         YieldPrediction memory prediction = YieldPrediction({
             asset: asset,
             predictedAPY: predictedAPY,
@@ -202,7 +233,7 @@ contract AIYieldEngine is Ownable {
         uint256 rateSlope2,
         uint256 optimalUtilization,
         uint256 confidence
-    ) external onlyAuthorized {
+    ) external onlyAuthorized policyCheck(abi.encode(keccak256(abi.encode(asset, baseRate, rateSlope1, rateSlope2)))) {
         aiRecommendedRates[asset] = RecommendedRates({
             baseRate: baseRate,
             rateSlope1: rateSlope1,
@@ -257,6 +288,107 @@ contract AIYieldEngine is Ownable {
     }
 
     // ============================================================
+    //  ALLOCATION RECOMMENDATION (AI → Cross-Protocol Rebalance)
+    // ============================================================
+
+    /**
+     * @notice Submits AI-recommended allocation across protocols for an asset.
+     * @dev Called by the CRE workflow after the AI model scans Aave, Morpho, etc.
+     *      and determines the optimal percentage split.
+     *
+     *      Example: AI decides 50% AION Pool, 30% Aave, 20% Morpho
+     *      protocolIndices = [0, 1, 2]
+     *      allocationBps   = [5000, 3000, 2000]
+     *
+     * @param asset The asset to allocate
+     * @param protocolIndices Ordered list of protocol indices in the Allocator
+     * @param allocationBps Corresponding allocation percentages (must sum to 10000)
+     * @param confidence AI confidence in this allocation (0-10000)
+     * @param proofHash Verification hash from the AI model
+     */
+    function submitAllocationRecommendation(
+        address asset,
+        uint256[] calldata protocolIndices,
+        uint256[] calldata allocationBps,
+        uint256 confidence,
+        bytes32 proofHash
+    ) external onlyAuthorized policyCheck(abi.encode(proofHash)) {
+        require(
+            protocolIndices.length == allocationBps.length,
+            "Array length mismatch"
+        );
+
+        aiRecommendedAllocations[asset] = AllocationRecommendation({
+            asset: asset,
+            protocolIndices: protocolIndices,
+            allocationBps: allocationBps,
+            confidence: confidence,
+            proofHash: proofHash,
+            timestamp: block.timestamp,
+            isApplied: false
+        });
+
+        emit AllocationRecommended(asset, confidence, proofHash);
+
+        // Auto-apply if enabled and confidence threshold met.
+        // Wrapped in try/catch so the recommendation is always recorded,
+        // even if downstream execution fails (e.g. allocator cooldown, missing adapters).
+        if (aiAllocationEnabled && confidence >= minConfidenceThreshold) {
+            try this.executeAllocationInternal(asset) {} catch {}
+        }
+    }
+
+    /**
+     * @notice External entry point for try/catch self-call during auto-apply.
+     * @dev Only callable by this contract itself.
+     */
+    function executeAllocationInternal(address asset) external {
+        require(msg.sender == address(this), "Only self-call");
+        _applyRecommendedAllocation(asset);
+    }
+
+    /**
+     * @notice Manually apply the latest AI-recommended allocation.
+     */
+    function applyRecommendedAllocation(address asset) external onlyOwner {
+        _applyRecommendedAllocation(asset);
+    }
+
+    /**
+     * @notice Internal function to apply recommended allocation to the AutonomousAllocator.
+     */
+    function _applyRecommendedAllocation(address asset) internal {
+        AllocationRecommendation storage rec = aiRecommendedAllocations[asset];
+        require(rec.timestamp > 0, "No recommendation available");
+        require(!rec.isApplied, "Already applied");
+        require(autonomousAllocator != address(0), "Allocator not set");
+
+        // Build the allocation instruction array for the Allocator
+        IAutonomousAllocator.AllocationInstruction[]
+            memory instructions = new IAutonomousAllocator.AllocationInstruction[](
+                rec.protocolIndices.length
+            );
+
+        for (uint256 i = 0; i < rec.protocolIndices.length; i++) {
+            instructions[i] = IAutonomousAllocator.AllocationInstruction({
+                protocolIndex: rec.protocolIndices[i],
+                allocationBps: rec.allocationBps[i]
+            });
+        }
+
+        // Execute the allocation
+        IAutonomousAllocator(autonomousAllocator).executeAllocation(
+            asset,
+            instructions,
+            rec.confidence,
+            rec.proofHash
+        );
+
+        rec.isApplied = true;
+        emit AllocationApplied(asset, block.timestamp);
+    }
+
+    // ============================================================
     //                  ADMIN FUNCTIONS
     // ============================================================
 
@@ -272,6 +404,11 @@ contract AIYieldEngine is Ownable {
         emit AIAdjustmentsToggled(enabled);
     }
 
+    function setAIAllocationEnabled(bool enabled) external onlyOwner {
+        aiAllocationEnabled = enabled;
+        emit AIAllocationToggled(enabled);
+    }
+
     function setMinConfidenceThreshold(uint256 threshold) external onlyOwner {
         require(threshold <= 10000, "Invalid threshold");
         minConfidenceThreshold = threshold;
@@ -283,6 +420,18 @@ contract AIYieldEngine is Ownable {
 
     function setLendingPool(address pool) external onlyOwner {
         lendingPool = pool;
+    }
+
+    function setAutonomousAllocator(address allocator_) external onlyOwner {
+        autonomousAllocator = allocator_;
+    }
+
+    function setPolicyEngine(address engine) external onlyOwner {
+        _setPolicyEngine(engine);
+    }
+
+    function setPolicyEnforcement(bool enabled) external onlyOwner {
+        _setPolicyEnforcement(enabled);
     }
 
     // ============================================================
@@ -327,5 +476,23 @@ interface ILendingPoolForAI {
         uint256 rateSlope1,
         uint256 rateSlope2,
         uint256 optimalUtilization
+    ) external;
+}
+
+// ============================================================
+//         INTERFACE FOR AUTONOMOUS ALLOCATOR
+// ============================================================
+
+interface IAutonomousAllocator {
+    struct AllocationInstruction {
+        uint256 protocolIndex;
+        uint256 allocationBps;
+    }
+
+    function executeAllocation(
+        address asset,
+        AllocationInstruction[] memory instructions,
+        uint256 confidence,
+        bytes32 aiProofHash
     ) external;
 }

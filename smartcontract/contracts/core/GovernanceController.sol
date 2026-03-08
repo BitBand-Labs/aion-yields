@@ -2,6 +2,8 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "../ace/IPolicyEngine.sol";
+import "../ace/PolicyEngine.sol";
 
 /**
  * @title GovernanceController
@@ -60,6 +62,9 @@ contract GovernanceController is Ownable {
     /// @dev Governed parameter bounds (min, max per parameter hash)
     mapping(bytes32 => ParameterBounds) public parameterBounds;
 
+    /// @dev The ACE PolicyEngine for managing compliance policies
+    address public policyEngine;
+
     // ============================================================
     //                     DATA TYPES
     // ============================================================
@@ -115,6 +120,7 @@ contract GovernanceController is Ownable {
         uint256 max
     );
     event EmergencyActionExecuted(address indexed target, bytes callData);
+    event PolicyEngineUpdated(address indexed engine);
 
     // ============================================================
     //                      MODIFIERS
@@ -314,6 +320,70 @@ contract GovernanceController is Ownable {
         ParameterBounds memory bounds = parameterBounds[paramHash];
         if (!bounds.isSet) return true; // No bounds = no restriction
         return value >= bounds.minValue && value <= bounds.maxValue;
+    }
+
+    // ============================================================
+    //         ACE POLICY ENGINE MANAGEMENT
+    // ============================================================
+
+    /**
+     * @notice Set the ACE PolicyEngine address.
+     * @dev This is the central compliance engine that manages all policies.
+     */
+    function setPolicyEngine(address engine) external onlyOwner {
+        policyEngine = engine;
+        emit PolicyEngineUpdated(engine);
+    }
+
+    /**
+     * @notice Add a policy for a specific target+selector via the PolicyEngine.
+     * @dev Enables dynamic policy swapping without redeploying core contracts.
+     *      Example: Add VolumeRatePolicy to AutonomousAllocator.executeAllocation
+     */
+    function addPolicy(
+        address target,
+        bytes4 selector,
+        address policy
+    ) external onlyOwner {
+        require(policyEngine != address(0), "PolicyEngine not set");
+        PolicyEngine(policyEngine).addPolicy(target, selector, policy);
+    }
+
+    /**
+     * @notice Remove a policy from a specific target+selector.
+     */
+    function removePolicy(
+        address target,
+        bytes4 selector,
+        address policy
+    ) external onlyOwner {
+        require(policyEngine != address(0), "PolicyEngine not set");
+        PolicyEngine(policyEngine).removePolicy(target, selector, policy);
+    }
+
+    /**
+     * @notice Add a global policy that applies to all protected actions.
+     */
+    function addGlobalPolicy(address policy) external onlyOwner {
+        require(policyEngine != address(0), "PolicyEngine not set");
+        PolicyEngine(policyEngine).addGlobalPolicy(policy);
+    }
+
+    /**
+     * @notice Remove a global policy.
+     */
+    function removeGlobalPolicy(address policy) external onlyOwner {
+        require(policyEngine != address(0), "PolicyEngine not set");
+        PolicyEngine(policyEngine).removeGlobalPolicy(policy);
+    }
+
+    /**
+     * @notice Emergency: toggle the PolicyEngine on/off.
+     * @dev Guardian can disable policy enforcement in emergencies.
+     */
+    function togglePolicyEngine(bool active) external onlyOwnerOrGuardian {
+        require(policyEngine != address(0), "PolicyEngine not set");
+        PolicyEngine(policyEngine).setEngineActive(active);
     }
 
     // ============================================================

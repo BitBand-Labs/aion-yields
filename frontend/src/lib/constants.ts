@@ -1,0 +1,49 @@
+export const SUPPORTED_CHAINS = {
+  sepolia: 11155111,
+  avalancheFuji: 43113,
+} as const
+
+export const CONTRACT_ADDRESSES = {
+  [SUPPORTED_CHAINS.sepolia]: {
+    InterestRateModel: '0x67e1a242dfa9160f558c18aE306722f5a360c77b',
+    LendingPool: '0x87Ff17e9A8f23D02E87d6E87B5631A7eE08C0248',
+    ChainlinkPriceOracle: '0xdBF02AeBf96D1C3E8B4E35f61C27A37cc6f601e4',
+    AIYieldEngine: '0x4a8Ec2D9655600bc5d5D3460e8680251C839E61D',
+    LiquidationAutomation: '0xcC1bd02c59888b64bdC7125a1999B8e87F8259FE',
+    ChainlinkFunctionsConsumer: '0x39E1ae10B36E43Ee386d53E120B7b4B81dA99D40',
+    CrossChainVault: '0x3547aD159ACAf2660bc5E26E682899D11826c068',
+    AutonomousAllocator: '0x7C9eF492Cc14A795d8BAa6937b4cF23F258Ce6f1',
+    CREExecutionHook: '0x17562500756BaB6757E13ce84C6D207A4D144948',
+    MockUSDC: '0x331cB2F787b2DC57855Bb30B51bE09aEF53e84C0',
+    AIAgentRegistry: '0xbE9963F0058837759C3Cedc5FA1Ac3991bB8A957',
+    X402PaymentGateway: '0xb38A14851dEd07df71b66835fd4E4aF5055e1cC4',
+    AIRevenueDistributor: '0xb33A20Fd3cC7DaDfF7aF0fcA372A1C6B968bbFCA',
+    GovernanceController: '0xFC18eA21D5f558FaecFeF662947b32282eD556c0',
+    ProtocolFeeController: '0xa35C19170526eB8764a995fb5298eD1156B1b379',
+    PolicyEngine: '0x2CfD29a609F822f734e70950a02Db066566d2faA',
+    CertifiedActionValidatorPolicy: '0x666e7bD0bFBE5B004855d67aE6271933b3Df6A54',
+    VolumeRatePolicy: '0x2bfD8ef46699094c19F30153f46e12273242Df99',
+  },
+  [SUPPORTED_CHAINS.avalancheFuji]: {
+    InterestRateModel: '0x39E1ae10B36E43Ee386d53E120B7b4B81dA99D40',
+    LendingPool: '0x3547aD159ACAf2660bc5E26E682899D11826c068',
+    ChainlinkPriceOracle: '0xbf8528f513111b8352cdc649A5C9031a83dB3e20',
+    AIYieldEngine: '0x104895cc071Fb53ba9d4851c0fe1B896dCEB558A',
+    LiquidationAutomation: '0x4b40D1cFc427B1353e9E4896ac1b844eAB489dA1',
+    ChainlinkFunctionsConsumer: '0x15e4F3BB2664e55Be254f82b10d4A51900A1aBc1',
+    CrossChainVault: '0x331cB2F787b2DC57855Bb30B51bE09aEF53e84C0',
+    AutonomousAllocator: '0x5A6259254dA9d37081E2FAd716885ad8393a5408',
+    CREExecutionHook: '0xb38A14851dEd07df71b66835fd4E4aF5055e1cC4',
+    MockUSDC: '0xa35C19170526eB8764a995fb5298eD1156B1b379',
+    AIAgentRegistry: '0x514F088eBE73cfb7aeb39b87e6cC21cD869a8c29',
+    X402PaymentGateway: '0x5e9e10556D415652aDa8adF780Da26DeDeef507E',
+    AIRevenueDistributor: '0xe6F9a61112DC9b1D80bc3274292623cC19dc98bF',
+    GovernanceController: '0xa6C5E4bae6E168ef923e7611bc00D25F8E95cC20',
+    ProtocolFeeController: '0x552f1A08DfF1bd434178789e1D0C5Ff0f618F086',
+    PolicyEngine: '0x7f7787B37544675Ce556e40919Ba8B6Ca887a972',
+    CertifiedActionValidatorPolicy: '0x8DEA4bAd54d04adddC609e5BCe197757498e9b5b',
+    VolumeRatePolicy: '0x750c40739D69b5a5C59e311d7cc603bAc3137C46',
+  },
+} as const
+
+export type ContractName = keyof (typeof CONTRACT_ADDRESSES)[typeof SUPPORTED_CHAINS.sepolia]

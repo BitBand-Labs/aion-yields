@@ -1,13 +1,27 @@
 
 import * as dotenv from "dotenv";
 dotenv.config();
+import HardhatMocha from "@nomicfoundation/hardhat-mocha";
+import HardhatEthers from "@nomicfoundation/hardhat-ethers";
+import HardhatNetworkHelpers from "@nomicfoundation/hardhat-network-helpers";
 import { HardhatUserConfig } from "hardhat/config";
 
 const providerApiKey = process.env.ALCHEMY_API_KEY || "oKxs-03sij-U_N0iOlrSsZFr29-IqbuF";
 const deployerPrivateKey =
     process.env.ACCOUNT_PRIVATE_KEY ?? "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
+const avaxFujiRpc = process.env.AVAX_FUJI_RPC || "https://api.avax-test.network/ext/bc/C/rpc";
 
 const config: HardhatUserConfig = {
+    plugins: [
+        HardhatMocha,
+        HardhatEthers,
+        HardhatNetworkHelpers,
+    ],
+    paths: {
+        tests: {
+            mocha: "test",
+        },
+    },
     solidity: {
         compilers: [
             {
@@ -70,6 +84,12 @@ const config: HardhatUserConfig = {
         polygon: {
             type: "http",
             url: `https://polygon-mainnet.g.alchemy.com/v2/${providerApiKey}`,
+            accounts: [deployerPrivateKey],
+        },
+        avalancheFuji: {
+            type: "http",
+            url: avaxFujiRpc,
+            chainId: 43113,
             accounts: [deployerPrivateKey],
         },
     },
