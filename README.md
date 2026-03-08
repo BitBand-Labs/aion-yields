@@ -40,16 +40,15 @@ flowchart TD
 
 ---
 
-## 🧩 Chainlink Service Integration
+## 🔗 Chainlink Integration: File Reference
+As per the **Convergence Hackathon** requirements, here are the primary files implementing Chainlink services:
 
-| Service                  | Purpose in AION Yield                                                          |
-| :----------------------- | :----------------------------------------------------------------------------- |
-| **Chainlink CRE**        | The "OS" orchestrating AI agents, CCIP routes, and protocol state.             |
-| **Chainlink CCIP**       | Secure cross-chain liquidity and unified collateral management.                |
-| **Chainlink Functions**  | Securely fetching off-chain AI inference results and risk scores.              |
-| **Chainlink Automation** | Decentralized cron jobs for liquidations and auto-rebalancing.                 |
-| **Chainlink Data Feeds** | Real-time pricing with institutional-grade fallback oracle logic.               |
-| **Data Streams**         | Low-latency data for high-performance liquidation monitoring.                  |
+- **Chainlink CRE (Orchestration)**: [`CREExecutionHook.sol`](file:///home/babalola/Desktop/babalola/hacks/AION-Yield/smartcontract/contracts/chainlink/CREExecutionHook.sol)
+- **Chainlink CCIP (Cross-Chain)**: [`CrossChainVault.sol`](file:///home/babalola/Desktop/babalola/hacks/AION-Yield/smartcontract/contracts/chainlink/CrossChainVault.sol)
+- **Chainlink Functions (AI/API)**: [`ChainlinkFunctionsConsumer.sol`](file:///home/babalola/Desktop/babalola/hacks/AION-Yield/smartcontract/contracts/chainlink/ChainlinkFunctionsConsumer.sol)
+- **Chainlink Automation (Lending/Liquidations)**: [`LiquidationAutomation.sol`](file:///home/babalola/Desktop/babalola/hacks/AION-Yield/smartcontract/contracts/chainlink/LiquidationAutomation.sol)
+- **Chainlink Price Feeds (Oracle)**: [`ChainlinkPriceOracle.sol`](file:///home/babalola/Desktop/babalola/hacks/AION-Yield/smartcontract/contracts/chainlink/ChainlinkPriceOracle.sol)
+- **Chainlink Data Streams (High-Freq Monitoring)**: [`LendingPool.sol`](file:///home/babalola/Desktop/babalola/hacks/AION-Yield/smartcontract/contracts/core/LendingPool.sol) (Price interaction)
 
 ---
 
@@ -66,7 +65,7 @@ AION Yield features a bespoke UI inspired by the world's most premium FinTech pl
 
 - **`smartcontract/`**: Hardhat environment for LendingPool, AI registries (ERC-8004), and x402 Escrows.
 - **`frontend/`**: Next.js 15 App Router with Framer Motion and custom "Studio" components.
-- **`subgraph/`**: PENDING - The Graph indexing for protocol telemetry.
+- **`doc/`**: Comprehensive protocol technical documentation and architecture guides.
 - **`AION-yield_breakdown.md`**: Comprehensive project vision and implementation phases.
 - **`AION-yield_issues_n_task_tracker.md`**: Active development roadmap and detailed status audit.
 
@@ -97,8 +96,8 @@ AION Yield features a bespoke UI inspired by the world's most premium FinTech pl
 
 - [x] **Phase 1:** Core Money Market logic & Chainlink Price Feeds (Fallback enabled).
 - [x] **Phase 2:** Studio Grade UI Refactor & Advanced Portfolio Dashboards.
-- [ ] **Phase 3:** Chainlink CRE Integration & AI Inference Workflows.
-- [ ] **Phase 4:** x402 Payment middleware & ERC-8004 Reputation system.
+- [x] **Phase 3:** Chainlink CRE Integration & AI Inference Workflows.
+- [x] **Phase 4:** x402 Payment middleware & ERC-8004 Reputation system.
 - [ ] **Phase 5:** Live Strategy Feed & Risk Intelligence Dashboard.
 - [ ] **Phase 6:** AI Yield Simulator & Strategy Marketplace Launch.
 
