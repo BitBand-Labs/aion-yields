@@ -50,6 +50,13 @@ As per the **Convergence Hackathon** requirements, here are the primary files im
 - **Chainlink Price Feeds (Oracle)**: [`ChainlinkPriceOracle.sol`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/ChainlinkPriceOracle.sol)
 - **Chainlink Data Streams (High-Freq Monitoring)**: [`LendingPool.sol`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/core/LendingPool.sol)
 
+
+## Additional Important Links:
+
+### 🤖 Autonomous Economy Core
+- **AI Agent Identity & Reputation (ERC-8004)**: [`AIAgentRegistry.sol`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/ai/AIAgentRegistry.sol)
+- **Machine-to-Machine Payments (x402)**: [`X402PaymentGateway.sol`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/payments/X402PaymentGateway.sol)
+
 ---
 
 ## ✨ Studio Grade Experience
