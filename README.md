@@ -43,12 +43,12 @@ flowchart TD
 ## 🔗 Chainlink Integration: File Reference
 As per the **Convergence Hackathon** requirements, here are the primary files implementing Chainlink services:
 
-- **Chainlink CRE (Orchestration)**: [`CREExecutionHook.sol`](file:///home/babalola/Desktop/babalola/hacks/AION-Yield/smartcontract/contracts/chainlink/CREExecutionHook.sol)
-- **Chainlink CCIP (Cross-Chain)**: [`CrossChainVault.sol`](file:///home/babalola/Desktop/babalola/hacks/AION-Yield/smartcontract/contracts/chainlink/CrossChainVault.sol)
-- **Chainlink Functions (AI/API)**: [`ChainlinkFunctionsConsumer.sol`](file:///home/babalola/Desktop/babalola/hacks/AION-Yield/smartcontract/contracts/chainlink/ChainlinkFunctionsConsumer.sol)
-- **Chainlink Automation (Lending/Liquidations)**: [`LiquidationAutomation.sol`](file:///home/babalola/Desktop/babalola/hacks/AION-Yield/smartcontract/contracts/chainlink/LiquidationAutomation.sol)
-- **Chainlink Price Feeds (Oracle)**: [`ChainlinkPriceOracle.sol`](file:///home/babalola/Desktop/babalola/hacks/AION-Yield/smartcontract/contracts/chainlink/ChainlinkPriceOracle.sol)
-- **Chainlink Data Streams (High-Freq Monitoring)**: [`LendingPool.sol`](file:///home/babalola/Desktop/babalola/hacks/AION-Yield/smartcontract/contracts/core/LendingPool.sol) (Price interaction)
+- **Chainlink CRE (Orchestration)**: [`CREExecutionHook.sol`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/CREExecutionHook.sol)
+- **Chainlink CCIP (Cross-Chain)**: [`CrossChainVault.sol`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/CrossChainVault.sol)
+- **Chainlink Functions (AI/API)**: [`ChainlinkFunctionsConsumer.sol`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/ChainlinkFunctionsConsumer.sol)
+- **Chainlink Automation (Lending/Liquidations)**: [`LiquidationAutomation.sol`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/LiquidationAutomation.sol)
+- **Chainlink Price Feeds (Oracle)**: [`ChainlinkPriceOracle.sol`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/ChainlinkPriceOracle.sol)
+- **Chainlink Data Streams (High-Freq Monitoring)**: [`LendingPool.sol`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/core/LendingPool.sol)
 
 ---
 
