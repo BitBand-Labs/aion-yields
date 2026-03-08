@@ -7139,15 +7139,15 @@
           "type": "uint64"
         },
         {
-          "indexed": false,
+          "indexed": true,
           "internalType": "address",
-          "name": "sender",
+          "name": "user",
           "type": "address"
         },
         {
           "indexed": false,
           "internalType": "address",
-          "name": "user",
+          "name": "token",
           "type": "address"
         },
         {
@@ -7157,7 +7157,7 @@
           "type": "uint256"
         }
       ],
-      "name": "MessageReceived",
+      "name": "CrossChainDepositReceived",
       "type": "event"
     },
     {
@@ -7176,28 +7176,22 @@
           "type": "uint64"
         },
         {
-          "indexed": false,
+          "indexed": true,
           "internalType": "address",
-          "name": "receiver",
+          "name": "user",
           "type": "address"
         },
         {
-          "components": [
-            {
-              "internalType": "address",
-              "name": "token",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "amount",
-              "type": "uint256"
-            }
-          ],
           "indexed": false,
-          "internalType": "struct Client.EVMTokenAmount",
-          "name": "tokenAmount",
-          "type": "tuple"
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
         },
         {
           "indexed": false,
@@ -7206,7 +7200,7 @@
           "type": "uint256"
         }
       ],
-      "name": "MessageSent",
+      "name": "CrossChainDepositSent",
       "type": "event"
     },
     {
@@ -7315,6 +7309,24 @@
       "type": "function"
     },
     {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "fundVault",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
       "inputs": [],
       "name": "getRouter",
       "outputs": [
@@ -7348,6 +7360,25 @@
           "internalType": "contract IERC20",
           "name": "",
           "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "lockedBalance",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",
@@ -7445,6 +7476,29 @@
       "inputs": [
         {
           "internalType": "uint64",
+          "name": "sourceChainSelector",
+          "type": "uint64"
+        },
+        {
+          "internalType": "address",
+          "name": "sourceToken",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "localToken",
+          "type": "address"
+        }
+      ],
+      "name": "setTokenMapping",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
           "name": "",
           "type": "uint64"
         }
@@ -7477,6 +7531,30 @@
         }
       ],
       "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "",
+          "type": "uint64"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "tokenMappings",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     },
     {
