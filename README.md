@@ -60,7 +60,7 @@ graph TD
 
 ## Chainlink Integration
 
-AION Yield uses **five Chainlink services** as the backbone of its autonomous operation. Every link below points to the exact contract and function where the integration lives.
+AION Yield uses **six Chainlink services** as the backbone of its autonomous operation. Every link below points to the exact contract and function where the integration lives.
 
 ### CRE — Compute Runtime Environment (Core Orchestrator)
 
@@ -107,6 +107,20 @@ Multi-source price data with staleness checks and fallback logic.
 | Function | What It Does |
 |----------|-------------|
 | [`getAssetPrice()`](smartcontract/contracts/chainlink/ChainlinkPriceOracle.sol#L110) | Fetches price from Chainlink AggregatorV3Interface with validity checks |
+
+### ACE — Automated Compliance Engine (AI Guardrails)
+
+On-chain policy framework that validates every AI action before execution. Prevents rogue agents from draining or manipulating the protocol.
+
+| Function | What It Does |
+|----------|-------------|
+| [`PolicyEngine.validateAction()`](smartcontract/contracts/ace/PolicyEngine.sol#L168) | Central router — loops through all registered policies for a given target+selector |
+| [`CertifiedActionValidatorPolicy.submitCertificate()`](smartcontract/contracts/ace/CertifiedActionValidatorPolicy.sol#L135) | Registers EIP-712 signed certificates authorizing specific AI actions |
+| [`CertifiedActionValidatorPolicy.validate()`](smartcontract/contracts/ace/CertifiedActionValidatorPolicy.sol#L191) | Verifies the action has a valid, non-expired, non-replayed certificate from an authorized signer |
+| [`VolumeRatePolicy.validate()`](smartcontract/contracts/ace/VolumeRatePolicy.sol#L148) | Enforces per-action (10% TVL max), cumulative (500k USDC/window), and frequency (5 actions/hour) limits |
+| [`VolumeRatePolicy.postExecutionUpdate()`](smartcontract/contracts/ace/VolumeRatePolicy.sol#L208) | Updates rolling window state after successful execution |
+
+**Policy types:** Certificate validation (stateless, signature check) + Volume/rate limits (stateful, sliding window)
 
 ---
 
