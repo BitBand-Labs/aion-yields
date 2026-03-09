@@ -273,7 +273,7 @@ export default function LandingPage() {
               {/* Top Center Pill */}
               <motion.div 
                 animate={{ y: [0, -12, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                style={{ position: 'absolute', top: 20, left: '38%', width: 150, height: 230, borderRadius: 100, overflow: 'hidden', border: '5px solid var(--color-bg)', boxShadow: '0 20px 40px rgba(0,0,0,0.2)', zIndex: 2, background: 'var(--color-surface)' }}
+                style={{ position: 'absolute', top: 20, left: '38%', width: 150, height: 230, borderRadius: 100, overflow: 'hidden', border: `5px solid ${isLight ? 'var(--color-primary)' : 'var(--color-bg)'}`, boxShadow: '0 20px 40px rgba(0,0,0,0.2)', zIndex: 2, background: 'var(--color-surface)' }}
               >
                 <img src="/assets/illustrations/HERO-ILLUSTRATION-alt.png" alt="AION Architecture" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </motion.div>
@@ -281,7 +281,7 @@ export default function LandingPage() {
               {/* Middle Left Circle */}
               <motion.div 
                 animate={{ y: [0, 8, 0] }} transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                style={{ position: 'absolute', top: '25%', left: '5%', width: 170, height: 170, borderRadius: '50%', overflow: 'hidden', border: '5px solid var(--color-bg)', boxShadow: '0 20px 40px rgba(0,0,0,0.2)', zIndex: 3, background: 'var(--color-surface)' }}
+                style={{ position: 'absolute', top: '25%', left: '5%', width: 170, height: 170, borderRadius: '50%', overflow: 'hidden', border: `5px solid ${isLight ? 'var(--color-primary)' : 'var(--color-bg)'}`, boxShadow: '0 20px 40px rgba(0,0,0,0.2)', zIndex: 3, background: 'var(--color-surface)' }}
               >
                 <img src="/assets/illustrations/AI-FEATURE.png" alt="AI Agent" style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scale(1.2)' }} />
               </motion.div>
@@ -289,7 +289,7 @@ export default function LandingPage() {
               {/* Center Green/Magenta Icon Circle */}
               <motion.div 
                 animate={{ scale: [1, 1.05, 1] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                style={{ position: 'absolute', top: '35%', left: '50%', transform: 'translateX(-50%)', width: 120, height: 120, borderRadius: '50%', border: '5px solid var(--color-bg)', background: '#00FFA3', boxShadow: '0 10px 30px rgba(0,255,163,0.3)', zIndex: 5, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                style={{ position: 'absolute', top: '35%', left: '50%', transform: 'translateX(-50%)', width: 120, height: 120, borderRadius: '50%', border: `5px solid ${isLight ? 'var(--color-primary)' : 'var(--color-bg)'}`, background: '#00FFA3', boxShadow: '0 10px 30px rgba(0,255,163,0.3)', zIndex: 5, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
                 <Zap size={50} color="#0B0B0F" />
               </motion.div>
@@ -297,7 +297,7 @@ export default function LandingPage() {
               {/* Center Right Yellow/Magenta Icon Circle */}
               <motion.div 
                 animate={{ scale: [1, 1.05, 1] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-                style={{ position: 'absolute', top: '55%', left: '72%', width: 110, height: 110, borderRadius: '50%', border: '5px solid var(--color-bg)', background: '#F5A524', boxShadow: '0 10px 30px rgba(245,165,36,0.3)', zIndex: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                style={{ position: 'absolute', top: '55%', left: '72%', width: 110, height: 110, borderRadius: '50%', border: `5px solid ${isLight ? 'var(--color-primary)' : 'var(--color-bg)'}`, background: '#F5A524', boxShadow: '0 10px 30px rgba(245,165,36,0.3)', zIndex: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
                 <Cpu size={42} color="#0B0B0F" />
               </motion.div>
@@ -305,7 +305,7 @@ export default function LandingPage() {
               {/* Bottom Left Pill */}
               <motion.div 
                 animate={{ y: [0, -15, 0] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-                style={{ position: 'absolute', bottom: 40, left: '25%', width: 140, height: 260, borderRadius: 100, overflow: 'hidden', border: '5px solid var(--color-bg)', boxShadow: '0 20px 40px rgba(0,0,0,0.2)', zIndex: 4, background: 'var(--color-surface)' }}
+                style={{ position: 'absolute', bottom: 40, left: '25%', width: 140, height: 260, borderRadius: 100, overflow: 'hidden', border: `5px solid ${isLight ? 'var(--color-primary)' : 'var(--color-bg)'}`, boxShadow: '0 20px 40px rgba(0,0,0,0.2)', zIndex: 4, background: 'var(--color-surface)' }}
               >
                 <img src="/assets/illustrations/MACHINE-PAYMENTS.png" alt="Automation" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </motion.div>
@@ -313,7 +313,7 @@ export default function LandingPage() {
               {/* Bottom Right Pill */}
               <motion.div 
                 animate={{ y: [0, 10, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
-                style={{ position: 'absolute', bottom: 10, right: '5%', width: 160, height: 250, borderRadius: 100, overflow: 'hidden', border: '5px solid var(--color-bg)', boxShadow: '0 20px 40px rgba(0,0,0,0.2)', zIndex: 2, background: 'var(--color-surface)' }}
+                style={{ position: 'absolute', bottom: 10, right: '5%', width: 160, height: 250, borderRadius: 100, overflow: 'hidden', border: `5px solid ${isLight ? 'var(--color-primary)' : 'var(--color-bg)'}`, boxShadow: '0 20px 40px rgba(0,0,0,0.2)', zIndex: 2, background: 'var(--color-surface)' }}
               >
                 <img src="/assets/illustrations/CROSS-CHAIN.png" alt="Cross Chain CCIP" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </motion.div>
