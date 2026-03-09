@@ -132,8 +132,9 @@ export function Header({ title, subtitle }: HeaderProps) {
           )}
         </div>
 
-        {/* Wallet connect */}
-        <div style={{ transform: 'scale(0.9)', transformOrigin: 'right' }}>
+        {/* Network + Wallet connect */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, transform: 'scale(0.9)', transformOrigin: 'right' }}>
+          <appkit-network-button />
           <appkit-button size="sm" />
         </div>
       </div>

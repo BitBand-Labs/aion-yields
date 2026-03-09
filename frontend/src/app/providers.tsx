@@ -29,10 +29,13 @@ const wagmiAdapter = new WagmiAdapter({
 createAppKit({
   adapters: [wagmiAdapter],
   networks: [sepolia, avalancheFuji],
+  defaultNetwork: sepolia,
   projectId,
   metadata,
   features: {
-    analytics: true
+    analytics: true,
+    swaps: false,
+    onramp: false,
   },
   coinbasePreference: 'smartWalletOnly',
   enableCoinbase: false,
@@ -42,7 +45,8 @@ createAppKit({
     '--w3m-color-mix': '#0B101C',
     '--w3m-color-mix-strength': 20,
     '--w3m-border-radius-master': '2px',
-  }
+  },
+  allowUnsupportedChain: false,
 })
 
 export function Web3Providers({ children }: { children: ReactNode }) {
