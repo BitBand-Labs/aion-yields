@@ -212,20 +212,7 @@ export default function LandingPage() {
           {/* ═══ LEFT: Headlines + CTA (untouched) ═══ */}
           <motion.div style={{ opacity: 1, textAlign: 'left', position: 'relative', marginLeft: '60px' }}>
             
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 32 }}>
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.1 }}
-                style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 100, background: 'rgba(255, 0, 122, 0.1)', border: '1px solid rgba(255, 0, 122, 0.2)', color: '#FF007A', fontSize: 14, fontWeight: 700 }}
-              >
-                <Zap size={16} /> Chainlink CRE
-              </motion.div>
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.15 }}
-                style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 100, background: 'rgba(232, 65, 66, 0.1)', border: '1px solid rgba(232, 65, 66, 0.2)', color: '#E84142', fontSize: 14, fontWeight: 700 }}
-              >
-                <Layers size={16} /> Avalanche Integrated
-              </motion.div>
-            </div>
+
             
             <motion.h1
               initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
@@ -258,22 +245,7 @@ export default function LandingPage() {
               </motion.div>
             </motion.div>
 
-            {/* Social Proof */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.5 }}
-              style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 40 }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                {[1, 2, 3].map((_, i) => (
-                  <div key={i} style={{ width: 36, height: 36, borderRadius: '50%', background: `var(--overlay-medium-strong)`, border: '3px solid var(--color-bg)', marginLeft: i > 0 ? -12 : 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FF007A', overflow: 'hidden' }}>
-                     <Zap size={16} />
-                  </div>
-                ))}
-              </div>
-              <p style={{ margin: 0, fontSize: 15, fontWeight: 500, color: 'var(--overlay-half-strong)' }}>
-                <span style={{ fontWeight: 700, color: 'var(--color-text-primary)' }}>1k+ </span> Top DeFi Strategists joined
-              </p>
-            </motion.div>
+
           </motion.div>
 
           {/* ═══ RIGHT: Collage Style Illustration ═══ */}
