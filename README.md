@@ -58,41 +58,7 @@ graph TD
 
 ---
 
----
-
-## 🔗 Chainlink Integration (Hackathon Core)
-
-AION Yield is a deep-tech demonstration of the **Chainlink Convergence** vision:
-
-*   **[Chainlink CRE (Orchestration)](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/CREExecutionHook.sol)**: The "OS" that coordinates agent selection, x402 payment triggers, and subsequent liquidity movement.
-*   **[Chainlink CCIP](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/CrossChainVault.sol)**: Enables "Unified Collateral," allowing a user to deposit on Base and borrow against it on Avalanche, optimized by AI.
-*   **[Chainlink Functions](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/ChainlinkFunctionsConsumer.sol)**: The secure bridge to our Python AI Strategy Engine, handling encrypted inference requests.
-*   **[Chainlink Automation](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/LiquidationAutomation.sol)**: Decentralized "Watchdogs" that monitor AI risk scores and execute preventive liquidations.
-*   **[Chainlink Price Feeds](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/ChainlinkPriceOracle.sol)**: Multi-source price data with institutional-grade fallback logic.
-
----
-
-## 🤖 The Autonomous Economy Core
-
-### x402: Machine-to-Machine Payments
-We implemented the [x402 (HTTP 402 Payment Required)](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/payments/X402PaymentGateway.sol) protocol standard. When an AI Agent provides a yield prediction, the protocol settles the fee in USDC on-chain automatically, creating a self-sustaining economy for machine intelligence.
-
-### ERC-8004: Agent Identity & Reputation
-Every AI agent is a participant in our [ERC-8004 Registry](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/ai/AIAgentRegistry.sol). They earn points for accuracy and are slashed for high-deviation predictions, ensuring capital is only managed by the most "Reputable" models.
-
----
-
-## ✨ Studio Grade Experience (UI/UX)
-
-The AION dashboard is built for high-stakes financial observability:
-*   **Design Tokens**: Zinc/Neutral palette (`#09090b`) with a bespoke Cyan-Blue accent (`#0EA7CB`).
-*   **Tactile Aesthetic**: A 3% noise/grain overlay and an 8pt grid system for a premium, heavy-duty feel.
-*   **Magic Cards**: Components with real-time radial glow effects that track movements, highlighting key AI insights.
-*   **Health Intelligence**: Circular "Stress Gauges" and "Yield Beams" visualize the live flow of capital rebalancing.
-
----
-
-## 🛠️ Technical Deep-Dive
+## Chainlink Integration
 
 AION Yield uses **six Chainlink services** as the backbone of its autonomous operation. Every link below points to the exact contract and function where the integration lives.
 
@@ -102,8 +68,8 @@ The CRE workflow is the autonomous loop that ties everything together: gather on
 
 | Function | What It Does |
 |----------|-------------|
-| [`executePreHook()`](smartcontract/contracts/chainlink/CREExecutionHook.sol#L214) | Reads LendingPool reserves, prices, and allocator state; encodes it as `preHookData` for off-chain compute |
-| [`executePostHook()`](smartcontract/contracts/chainlink/CREExecutionHook.sol#L279) | Decodes AI results, routes to AIYieldEngine for rate adjustment or allocation rebalance |
+| [`executePreHook()`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/CREExecutionHook.sol#L214) | Reads LendingPool reserves, prices, and allocator state; encodes it as `preHookData` for off-chain compute |
+| [`executePostHook()`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/CREExecutionHook.sol#L279) | Decodes AI results, routes to AIYieldEngine for rate adjustment or allocation rebalance |
 
 **5 Workflow Types:** AI Rate Adjustment, Liquidation Scan, Cross-Chain Rebalance, Risk Monitoring, Yield Allocation
 
@@ -113,8 +79,8 @@ Enables cross-chain deposits between Sepolia and Avalanche Fuji using a **Lock &
 
 | Function | What It Does |
 |----------|-------------|
-| [`depositCrossChain()`](smartcontract/contracts/chainlink/CrossChainVault.sol#L94) | Locks user tokens on source chain, sends CCIP message with `(user, token, amount)` |
-| [`_ccipReceive()`](smartcontract/contracts/chainlink/CrossChainVault.sol#L158) | Receives CCIP message on destination, maps token, deposits from vault reserves into LendingPool for user |
+| [`depositCrossChain()`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/CrossChainVault.sol#L94) | Locks user tokens on source chain, sends CCIP message with `(user, token, amount)` |
+| [`_ccipReceive()`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/CrossChainVault.sol#L158) | Receives CCIP message on destination, maps token, deposits from vault reserves into LendingPool for user |
 
 ### Chainlink Functions — Off-Chain AI Inference
 
@@ -122,8 +88,8 @@ Secure bridge between on-chain contracts and the Python AI engine running Anthro
 
 | Function | What It Does |
 |----------|-------------|
-| [`sendRequest()`](smartcontract/contracts/chainlink/ChainlinkFunctionsConsumer.sol#L146) | Submits JavaScript source + encoded market data to Chainlink DON for execution |
-| [`fulfillRequest()`](smartcontract/contracts/chainlink/ChainlinkFunctionsConsumer.sol#L198) | Callback with AI inference result; parses into `InferenceResult` and forwards to AIYieldEngine |
+| [`sendRequest()`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/ChainlinkFunctionsConsumer.sol#L146) | Submits JavaScript source + encoded market data to Chainlink DON for execution |
+| [`fulfillRequest()`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/ChainlinkFunctionsConsumer.sol#L198) | Callback with AI inference result; parses into `InferenceResult` and forwards to AIYieldEngine |
 
 ### Chainlink Automation — Liquidation Watchdog
 
@@ -131,8 +97,8 @@ Decentralized upkeep that monitors positions and triggers liquidations when heal
 
 | Function | What It Does |
 |----------|-------------|
-| [`checkUpkeep()`](smartcontract/contracts/chainlink/LiquidationAutomation.sol#L82) | Scans monitored positions for undercollateralization |
-| [`performUpkeep()`](smartcontract/contracts/chainlink/LiquidationAutomation.sol#L135) | Executes liquidation on unhealthy positions |
+| [`checkUpkeep()`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/LiquidationAutomation.sol#L82) | Scans monitored positions for undercollateralization |
+| [`performUpkeep()`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/LiquidationAutomation.sol#L135) | Executes liquidation on unhealthy positions |
 
 ### Chainlink Data Feeds — Price Oracle
 
@@ -140,7 +106,7 @@ Multi-source price data with staleness checks and fallback logic.
 
 | Function | What It Does |
 |----------|-------------|
-| [`getAssetPrice()`](smartcontract/contracts/chainlink/ChainlinkPriceOracle.sol#L110) | Fetches price from Chainlink AggregatorV3Interface with validity checks |
+| [`getAssetPrice()`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/ChainlinkPriceOracle.sol#L110) | Fetches price from Chainlink AggregatorV3Interface with validity checks |
 
 ### ACE — Automated Compliance Engine (AI Guardrails)
 
@@ -148,11 +114,11 @@ On-chain policy framework that validates every AI action before execution. Preve
 
 | Function | What It Does |
 |----------|-------------|
-| [`PolicyEngine.validateAction()`](smartcontract/contracts/ace/PolicyEngine.sol#L168) | Central router — loops through all registered policies for a given target+selector |
-| [`CertifiedActionValidatorPolicy.submitCertificate()`](smartcontract/contracts/ace/CertifiedActionValidatorPolicy.sol#L135) | Registers EIP-712 signed certificates authorizing specific AI actions |
-| [`CertifiedActionValidatorPolicy.validate()`](smartcontract/contracts/ace/CertifiedActionValidatorPolicy.sol#L191) | Verifies the action has a valid, non-expired, non-replayed certificate from an authorized signer |
-| [`VolumeRatePolicy.validate()`](smartcontract/contracts/ace/VolumeRatePolicy.sol#L148) | Enforces per-action (10% TVL max), cumulative (500k USDC/window), and frequency (5 actions/hour) limits |
-| [`VolumeRatePolicy.postExecutionUpdate()`](smartcontract/contracts/ace/VolumeRatePolicy.sol#L208) | Updates rolling window state after successful execution |
+| [`PolicyEngine.validateAction()`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/ace/PolicyEngine.sol#L168) | Central router — loops through all registered policies for a given target+selector |
+| [`CertifiedActionValidatorPolicy.submitCertificate()`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/ace/CertifiedActionValidatorPolicy.sol#L135) | Registers EIP-712 signed certificates authorizing specific AI actions |
+| [`CertifiedActionValidatorPolicy.validate()`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/ace/CertifiedActionValidatorPolicy.sol#L191) | Verifies the action has a valid, non-expired, non-replayed certificate from an authorized signer |
+| [`VolumeRatePolicy.validate()`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/ace/VolumeRatePolicy.sol#L148) | Enforces per-action (10% TVL max), cumulative (500k USDC/window), and frequency (5 actions/hour) limits |
+| [`VolumeRatePolicy.postExecutionUpdate()`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/ace/VolumeRatePolicy.sol#L208) | Updates rolling window state after successful execution |
 
 **Policy types:** Certificate validation (stateless, signature check) + Volume/rate limits (stateful, sliding window)
 
@@ -201,9 +167,9 @@ Every AI action passes through ACE before execution. This prevents rogue AI agen
 
 | Contract | Key Function | Purpose |
 |----------|-------------|---------|
-| [`PolicyEngine`](smartcontract/contracts/ace/PolicyEngine.sol#L168) | `validateAction()` | Routes validation to registered policies |
-| [`CertifiedActionValidatorPolicy`](smartcontract/contracts/ace/CertifiedActionValidatorPolicy.sol#L191) | `validate()` | Requires EIP-712 signed certificate from authorized signer |
-| [`VolumeRatePolicy`](smartcontract/contracts/ace/VolumeRatePolicy.sol#L148) | `validate()` | Enforces per-action (10% TVL), cumulative (500k USDC/window), and frequency (5 actions/hour) limits |
+| [`PolicyEngine`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/ace/PolicyEngine.sol#L168) | `validateAction()` | Routes validation to registered policies |
+| [`CertifiedActionValidatorPolicy`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/ace/CertifiedActionValidatorPolicy.sol#L191) | `validate()` | Requires EIP-712 signed certificate from authorized signer |
+| [`VolumeRatePolicy`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/ace/VolumeRatePolicy.sol#L148) | `validate()` | Enforces per-action (10% TVL), cumulative (500k USDC/window), and frequency (5 actions/hour) limits |
 
 ---
 
