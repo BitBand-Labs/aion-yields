@@ -212,12 +212,20 @@ export default function LandingPage() {
           {/* ═══ LEFT: Headlines + CTA (untouched) ═══ */}
           <motion.div style={{ opacity: 1, textAlign: 'left', position: 'relative', marginLeft: '60px' }}>
             
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.1 }}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 100, background: 'rgba(255, 0, 122, 0.1)', border: '1px solid rgba(255, 0, 122, 0.2)', color: '#FF007A', fontSize: 14, fontWeight: 700, marginBottom: 32 }}
-            >
-              <Zap size={16} /> Multi-Chain Infrastructure • Chainlink CRE
-            </motion.div>
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 32 }}>
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.1 }}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 100, background: 'rgba(255, 0, 122, 0.1)', border: '1px solid rgba(255, 0, 122, 0.2)', color: '#FF007A', fontSize: 14, fontWeight: 700 }}
+              >
+                <Zap size={16} /> Chainlink CRE
+              </motion.div>
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.15 }}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 100, background: 'rgba(232, 65, 66, 0.1)', border: '1px solid rgba(232, 65, 66, 0.2)', color: '#E84142', fontSize: 14, fontWeight: 700 }}
+              >
+                <Layers size={16} /> Avalanche Integrated
+              </motion.div>
+            </div>
             
             <motion.h1
               initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
@@ -231,7 +239,7 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
               style={{ fontSize: 20, color: 'var(--overlay-half-strong)', maxWidth: 600, margin: '0 0 48px', lineHeight: 1.6 }}
             >
-              Next-generation decentralized finance. Deposit assets, earn yield, and let autonomous AI agents optimize your capital and manage liquidation risks across chains.
+              Next-generation decentralized finance powered by the synergy of Chainlink intelligence and Avalanche execution. Deposit assets, earn yield, and let autonomous AI agents optimize your capital across the C-Chain and beyond.
             </motion.p>
             
             <motion.div 
@@ -375,13 +383,13 @@ export default function LandingPage() {
           <motion.div initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
             <h2 style={{ fontSize: 48, fontWeight: 800, color: 'var(--color-text-primary)', marginBottom: 24, letterSpacing: '-0.04em' }}>Cross-Chain Liquidity</h2>
             <p style={{ fontSize: 20, color: 'var(--overlay-half-strong)', lineHeight: 1.7, marginBottom: 32 }}>
-              Liquidity should never be silos. AION uses Chainlink CCIP to bridge assets and orchestrate capital efficiency across the entire EVM landscape effortlessly.
+              Liquidity should never be silos. AION uses Avalanche Warp Messaging and Chainlink CCIP to orchestrate capital efficiency across the entire EVM landscape effortlessly.
             </p>
             <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: 20 }}>
               {[
-                "CCIP transfers: Secure, decentralized cross-chain asset movement.",
-                "Multi-chain vaults: Unified account abstraction for all your liquidity.",
-                "Liquidity routing: Automated arbitrage and yield chasing across protocols."
+                "Avalanche C-Chain: High-throughput execution hub for AI strategy deployments.",
+                "Warp Messaging: Native interoperability securing cross-chain AI signals.",
+                "Future-proof Architecture: Phase 2 expansion launching dedicated AION Subnets."
               ].map((text, i) => (
                 <li key={i} style={{ display: 'flex', alignItems: 'center', gap: 16, fontSize: 18, color: 'var(--overlay-half)', fontWeight: 500 }}>
                   <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'rgba(255, 0, 122, 0.1)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12 }}>✓</div>
@@ -436,19 +444,24 @@ export default function LandingPage() {
         
         <div style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: 'minmax(480px, 1fr) 1fr', gap: 100, alignItems: 'center', padding: '0 24px', position: 'relative', zIndex: 10 }}>
           <motion.div initial={{ x: -50, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', padding: '8px 20px', borderRadius: 100, background: 'var(--overlay-light)', color: 'var(--color-text-primary)', fontSize: 13, fontWeight: 600, letterSpacing: '0.05em', marginBottom: 32, border: '1px solid var(--overlay-medium)' }}>
-              POWERED BY CHAINLINK
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 12, marginBottom: 32 }}>
+              <div style={{ padding: '8px 20px', borderRadius: 100, background: 'var(--overlay-light)', color: 'var(--color-text-primary)', fontSize: 13, fontWeight: 600, letterSpacing: '0.05em', border: '1px solid var(--overlay-medium)' }}>
+                POWERED BY CHAINLINK
+              </div>
+              <div style={{ padding: '8px 20px', borderRadius: 100, background: 'rgba(232, 65, 66, 0.05)', color: '#E84142', fontSize: 13, fontWeight: 600, letterSpacing: '0.05em', border: '1px solid rgba(232, 65, 66, 0.2)' }}>
+                BUILT ON AVALANCHE
+              </div>
             </div>
             <h2 style={{ fontSize: 56, fontWeight: 800, color: 'var(--color-text-primary)', marginBottom: 20, lineHeight: 1.05, letterSpacing: '-0.04em' }}>
-              The ultimate oracle <br/>& interoperability.
+              The ultimate execution <br/>& interoperability.
             </h2>
             <p style={{ fontSize: 20, color: 'var(--overlay-half-strong)', lineHeight: 1.7, marginBottom: 32 }}>
               AION leverages the full suite of Chainlink services to ensure institutional-grade security, cross-chain composability, and verifiable AI workflows without compromising decentralization.
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
               {[
-                { icon: <Layers size={28} />, title: "Chainlink CRE (Runtime)", desc: "Orchestrating multi-step workflows securely across chains." },
-                { icon: <Network size={28} />, title: "Cross-Chain Composability", desc: "Sourcing liquidity via CCIP to chase highest global yields." },
+                { icon: <Layers size={28} />, title: "Avalanche C-Chain Execution", desc: "High-performance smart contracts powered by Avalanche consensus." },
+                { icon: <Network size={28} />, title: "Chainlink CRE & CCIP", desc: "Orchestrating multi-step workflows securely across chains via Warp Messaging." },
                 { icon: <Cpu size={28} />, title: "Functions & Automation", desc: "Fetching off-chain AI ML inferences with zero-downtime execution." }
               ].map((item, i) => (
                 <div key={i} style={{ display: 'flex', gap: 20, alignItems: 'flex-start' }}>
