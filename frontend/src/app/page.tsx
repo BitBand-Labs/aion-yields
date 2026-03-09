@@ -247,24 +247,41 @@ export default function LandingPage() {
               style={{ display: 'flex', gap: 20 }}
             >
               <motion.div whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(255, 0, 122, 0.5)' }} whileTap={{ scale: 0.98 }}>
-                <Link href="/dashboard" onClick={handleLaunchApp} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 32px', borderRadius: 12, background: '#FF007A', color: 'var(--color-text-primary)', fontSize: 16, fontWeight: 600, textDecoration: 'none' }}>
-                  Start Optimizing <ArrowRight size={18} />
+                <Link href="/dashboard" onClick={handleLaunchApp} style={{ display: 'flex', alignItems: 'center', justifyItems: 'center', gap: 10, padding: '16px 32px', borderRadius: 40, background: '#FF007A', color: '#ffffff', fontSize: 16, fontWeight: 600, textDecoration: 'none' }}>
+                  Start Optimizing
                 </Link>
               </motion.div>
               <motion.div whileHover={{ scale: 1.05, backgroundColor: 'var(--overlay-medium-light)' }} whileTap={{ scale: 0.98 }}>
-                <a href="#architecture" style={{ display: 'flex', alignItems: 'center', padding: '16px 32px', borderRadius: 12, border: '1px solid var(--overlay-medium-strong)', background: 'var(--overlay-ultralight-2)', color: 'var(--color-text-primary)', fontSize: 16, fontWeight: 600, textDecoration: 'none', backdropFilter: 'blur(10px)' }}>
-                  View Architecture
+                <a href="#architecture" style={{ display: 'flex', alignItems: 'center', padding: '16px 32px', borderRadius: 40, border: '1px solid var(--overlay-medium-strong)', background: 'transparent', color: 'var(--color-text-primary)', fontSize: 16, fontWeight: 600, textDecoration: 'none' }}>
+                  Explore Protocol
                 </a>
               </motion.div>
             </motion.div>
+
+            {/* Social Proof */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.5 }}
+              style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 40 }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                {[1, 2, 3].map((_, i) => (
+                  <div key={i} style={{ width: 36, height: 36, borderRadius: '50%', background: `var(--overlay-medium-strong)`, border: '3px solid var(--color-bg)', marginLeft: i > 0 ? -12 : 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FF007A', overflow: 'hidden' }}>
+                     <Zap size={16} />
+                  </div>
+                ))}
+              </div>
+              <p style={{ margin: 0, fontSize: 15, fontWeight: 500, color: 'var(--overlay-half-strong)' }}>
+                <span style={{ fontWeight: 700, color: 'var(--color-text-primary)' }}>1k+ </span> Top DeFi Strategists joined
+              </p>
+            </motion.div>
           </motion.div>
 
-          {/* ═══ RIGHT: Layer 2 — Cycling Hero Illustrations ═══ */}
+          {/* ═══ RIGHT: Collage Style Illustration ═══ */}
           <motion.div
             initial={{ opacity: 0, x: 50, filter: 'blur(10px)' }}
             animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
             transition={{ duration: 1.2, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            style={{ position: 'relative', width: '100%', height: 500, display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+            style={{ position: 'relative', width: '100%', height: 600, display: 'flex', justifyContent: 'center', alignItems: 'center' }}
           >
             {/* Gradient glow behind images */}
             <motion.div
@@ -278,50 +295,58 @@ export default function LandingPage() {
               }}
             />
 
-            {/* Crossfading images with floating motion */}
-            {[
-              '/assets/illustrations/HERO-ILLUSTRATION-alt.png',
-              '/assets/illustrations/HERO-ILLUSTRATION.png',
-              // '/assets/illustrations/3D-ABSTRACT-GRAPHICS-nobg.png',
-            ].map((src, i) => (
-              <motion.div
-                key={src}
-                animate={{
-                  opacity: [
-                    i === 0 ? 1 : 0, i === 0 ? 1 : 0, // 0-6s
-                    i === 1 ? 1 : 0, i === 1 ? 1 : 0, // 6-12s
-                  ],
-                  y: [0, -10, 0, 10, 0],
-                }}
-                transition={{
-                  opacity: {
-                    duration: 12, // 2 images * 6s
-                    repeat: Infinity,
-                    times: [0, 0.4, 0.5, 0.9, 1], // Crossfade timings for 2 items
-                    ease: 'easeInOut',
-                  },
-                  y: {
-                    duration: 8,
-                    repeat: Infinity,
-                    ease: 'easeInOut',
-                  },
-                }}
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  zIndex: 1,
-                }}
+            {/* Collage Container */}
+            <div style={{ position: 'relative', width: 500, height: 600, zIndex: 1 }}>
+              
+              {/* Top Center Pill */}
+              <motion.div 
+                animate={{ y: [0, -12, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                style={{ position: 'absolute', top: 20, left: '38%', width: 150, height: 230, borderRadius: 100, overflow: 'hidden', border: '5px solid var(--color-bg)', boxShadow: '0 20px 40px rgba(0,0,0,0.2)', zIndex: 2, background: 'var(--color-surface)' }}
               >
-                <img
-                  src={src}
-                  alt="AION Yield"
-                  style={{ width: '100%', height: 'auto', maxWidth: 580, objectFit: 'contain' }}
-                />
+                <img src="/assets/illustrations/HERO-ILLUSTRATION-alt.png" alt="AION Architecture" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </motion.div>
-            ))}
+
+              {/* Middle Left Circle */}
+              <motion.div 
+                animate={{ y: [0, 8, 0] }} transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                style={{ position: 'absolute', top: '25%', left: '5%', width: 170, height: 170, borderRadius: '50%', overflow: 'hidden', border: '5px solid var(--color-bg)', boxShadow: '0 20px 40px rgba(0,0,0,0.2)', zIndex: 3, background: 'var(--color-surface)' }}
+              >
+                <img src="/assets/illustrations/AI-FEATURE.png" alt="AI Agent" style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scale(1.2)' }} />
+              </motion.div>
+
+              {/* Center Green/Magenta Icon Circle */}
+              <motion.div 
+                animate={{ scale: [1, 1.05, 1] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                style={{ position: 'absolute', top: '35%', left: '50%', transform: 'translateX(-50%)', width: 120, height: 120, borderRadius: '50%', border: '5px solid var(--color-bg)', background: '#00FFA3', boxShadow: '0 10px 30px rgba(0,255,163,0.3)', zIndex: 5, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                <Zap size={50} color="#0B0B0F" />
+              </motion.div>
+
+              {/* Center Right Yellow/Magenta Icon Circle */}
+              <motion.div 
+                animate={{ scale: [1, 1.05, 1] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+                style={{ position: 'absolute', top: '55%', left: '72%', width: 110, height: 110, borderRadius: '50%', border: '5px solid var(--color-bg)', background: '#F5A524', boxShadow: '0 10px 30px rgba(245,165,36,0.3)', zIndex: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                <Cpu size={42} color="#0B0B0F" />
+              </motion.div>
+
+              {/* Bottom Left Pill */}
+              <motion.div 
+                animate={{ y: [0, -15, 0] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                style={{ position: 'absolute', bottom: 40, left: '25%', width: 140, height: 260, borderRadius: 100, overflow: 'hidden', border: '5px solid var(--color-bg)', boxShadow: '0 20px 40px rgba(0,0,0,0.2)', zIndex: 4, background: 'var(--color-surface)' }}
+              >
+                <img src="/assets/illustrations/MACHINE-PAYMENTS.png" alt="Automation" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </motion.div>
+
+              {/* Bottom Right Pill */}
+              <motion.div 
+                animate={{ y: [0, 10, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
+                style={{ position: 'absolute', bottom: 10, right: '5%', width: 160, height: 250, borderRadius: 100, overflow: 'hidden', border: '5px solid var(--color-bg)', boxShadow: '0 20px 40px rgba(0,0,0,0.2)', zIndex: 2, background: 'var(--color-surface)' }}
+              >
+                <img src="/assets/illustrations/CROSS-CHAIN.png" alt="Cross Chain CCIP" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </motion.div>
+              
+            </div>
           </motion.div>
         </motion.div>
       </section>
