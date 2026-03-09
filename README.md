@@ -356,4 +356,4 @@ cd frontend && npm install && npm run dev
 
 ---
 
-## Team: ChainNomads
+## Team: BitBand-Labs

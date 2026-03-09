@@ -189,6 +189,6 @@
 
 ---
 
-**Team:** ChainNomads (Taiwo & Nonso)
+**Team:** BitBand-Labs (Taiwo & Nonso)
 **Networks:** Ethereum Sepolia, Avalanche Fuji
 **Hackathon:** Chainlink Convergence

@@ -1,4 +1,4 @@
-# Deployment Guide: Sepolia & Avalanche
+# Deployment Guide: Avalanche Fuji (Stage 2 MVP) & Sepolia
 
 This guide provides instructions for deploying the **AION Yield** smart contract suite to testnet environments.
 
@@ -37,11 +37,11 @@ Link the addresses of deployed contracts (e.g., pointing the LendingPool to the 
 npx hardhat run scripts/wire_contracts.ts --network sepolia
 ```
 
-### 3. Cross-Chain Setup (CCIP)
-Enable communication between Sepolia and Avalanche.
+### 3. Cross-Chain Setup (Warp Messaging & CCIP)
+Enable communication between Sepolia and Avalanche. For Stage 2, emphasis is on demonstrating cross-chain awareness via Avalanche C-Chain messaging.
 ```bash
-npx hardhat run scripts/setup_crosschain.ts --network sepolia
 npx hardhat run scripts/setup_crosschain.ts --network avalanche
+npx hardhat run scripts/setup_crosschain.ts --network sepolia
 ```
 
 ---

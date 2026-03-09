@@ -1,6 +1,6 @@
 # 🎨 AION Yield – Frontend Dashboard
 
-The frontend for **AION Yield** is a modern, responsive web application built with **Next.js**, **Tailwind CSS**, and **Wagmi**. It provides a unified interface for both human users and decentralized agent monitoring.
+The frontend for **AION Yield** is a modern, responsive web application built with **Next.js**, **Tailwind CSS**, and **Wagmi**. It provides a unified interface for human users and decentralized agent monitoring, optimized for the **Avalanche Network**.
 
 ---
 

@@ -1,6 +1,6 @@
 # 🏦 AION Yield – Smart Contracts
 
-This directory contains the core Solidity protocol for the **AION Yield** money market. The contracts are designed to run on **Base** and integrate deeply with the **Chainlink** infrastructure stack.
+This directory contains the core Solidity protocol for the **AION Yield** money market. The contracts are designed to run on **Avalanche C-Chain** and integrate deeply with the **Chainlink** infrastructure stack, utilizing **Avalanche Warp Messaging** and preparing for **AION Subnet** deployment.
 
 ---
 
@@ -26,7 +26,7 @@ This directory contains the core Solidity protocol for the **AION Yield** money 
 - **Data Feeds**: Used in the Oracle layer for real-time asset valuation.
 - **Functions**: Used to bridge off-chain AI inference results into the smart contracts.
 - **Automation**: Triggers periodic health factor checks and rebalancing.
-- **CCIP**: Facilitates cross-chain collateral moves and unified liquidity.
+- **CCIP & Warp Messaging**: Facilitates cross-chain collateral moves and unified liquidity between Avalanche chains and external networks.
 
 ---
 
@@ -42,7 +42,7 @@ Create a `.env` file based on `.env.example`:
 ```bash
 cp .env.example .env
 ```
-Ensure you have your **BASE_RPC** and **PRIVATE_KEY** configured.
+Ensure you have your **FUJI_RPC** and **PRIVATE_KEY** configured.
 
 ### Compilation & Testing
 ```bash
@@ -51,9 +51,9 @@ npx hardhat test
 ```
 
 ### Deployment
-To deploy to Base:
+To deploy to Avalanche Fuji C-Chain:
 ```bash
-npx hardhat run scripts/deploy.ts --network base
+npx hardhat run scripts/deploy.ts --network fuji
 ```
 
 ---

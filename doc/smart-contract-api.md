@@ -27,6 +27,12 @@ Calculates dynamic interest rates based on pool utilization.
 **Key Logic:**
 - `getBorrowRate(address asset, uint256 liquidity, uint256 totalsubplied)`: Returns the current annual interest rate for borrowers.
 
+### 4. CrossChainVault (`CrossChainVault.sol`)
+Handles cross-chain liquidity routing and messaging.
+
+**Key Features (Stage 2 MVP):**
+- **Warp Messaging / CCIP**: Transmits AI reallocation signals and locked collateral balances between the Avalanche C-Chain and external networks (Sepolia).
+
 ---
 
 ## 🛡️ ACE - Action Control Engine (`PolicyEngine.sol`)
