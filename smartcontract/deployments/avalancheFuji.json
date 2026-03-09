@@ -15,7 +15,7 @@
     "AIYieldEngine": "0x104895cc071Fb53ba9d4851c0fe1B896dCEB558A",
     "LiquidationAutomation": "0x4b40D1cFc427B1353e9E4896ac1b844eAB489dA1",
     "ChainlinkFunctionsConsumer": "0x15e4F3BB2664e55Be254f82b10d4A51900A1aBc1",
-    "CrossChainVault": "0x666e7bD0bFBE5B004855d67aE6271933b3Df6A54",
+    "CrossChainVault": "0xf9f48fD24bfF611891Fa7608d5864445cf875E08",
     "AutonomousAllocator": "0x5A6259254dA9d37081E2FAd716885ad8393a5408",
     "CREExecutionHook": "0xb38A14851dEd07df71b66835fd4E4aF5055e1cC4",
     "MockUSDC": "0xa35C19170526eB8764a995fb5298eD1156B1b379",
@@ -27,5 +27,9 @@
     "PolicyEngine": "0x7f7787B37544675Ce556e40919Ba8B6Ca887a972",
     "CertifiedActionValidatorPolicy": "0x8DEA4bAd54d04adddC609e5BCe197757498e9b5b",
     "VolumeRatePolicy": "0x750c40739D69b5a5C59e311d7cc603bAc3137C46"
+  },
+  "teleporter": {
+    "messengerAddress": "0x253b2784c75e510dD0fF1da844684a1aC0aa5fcf",
+    "blockchainID": "0x7fc93d85c6d62c5b2ac0b519c87010ea5294012d1e407030d6acd0021cac10d5"
   }
 }

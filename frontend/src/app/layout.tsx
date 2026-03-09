@@ -18,7 +18,8 @@ export const metadata: Metadata = {
     "Base",
     "ERC-8004",
     "x402",
-    "CCIP",
+    "Teleporter",
+    "Avalanche Warp Messaging",
   ],
   openGraph: {
     title: "AION Yield — AI-Orchestrated Money Market Protocol",

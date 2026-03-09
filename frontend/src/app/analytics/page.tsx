@@ -25,7 +25,7 @@ const tvlHistory = [
   { date: 'Jun', value: 24.8 },
 ]
 
-const ccipTransfers = [
+const teleporterTransfers = [
   {
     from: 'Base',
     to: 'Ethereum',
@@ -289,7 +289,7 @@ export default function AnalyticsPage() {
             </div>
           </motion.div>
 
-          {/* CCIP Cross-Chain Activity */}
+          {/* Teleporter Cross-Chain Activity */}
           <motion.div 
             variants={{ hidden: { opacity: 0, x: 20 }, visible: { opacity: 1, x: 0 } }}
             className="card-flat"
@@ -312,7 +312,7 @@ export default function AnalyticsPage() {
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-              {ccipTransfers.map((transfer, i) => (
+              {teleporterTransfers.map((transfer, i) => (
                 <div
                   key={i}
                   style={{
@@ -321,7 +321,7 @@ export default function AnalyticsPage() {
                     justifyContent: 'space-between',
                     padding: '18px 0',
                     borderBottom:
-                      i < ccipTransfers.length - 1
+                      i < teleporterTransfers.length - 1
                         ? '1px solid var(--color-border)'
                         : 'none',
                   }}

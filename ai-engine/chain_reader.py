@@ -1,9 +1,9 @@
-"""On-chain data reader for AION Yield protocol."""
+"""On-chain data reader for AION Yield protocol (multi-chain)."""
 
 import json
 import httpx
 from web3 import Web3
-from config import SEPOLIA_RPC_URL, LENDING_POOL_ADDRESS, PRICE_ORACLE_ADDRESS
+from config import get_chain_config
 
 # Minimal ABIs for reading on-chain data
 LENDING_POOL_ABI = json.loads("""[
@@ -41,15 +41,17 @@ PRICE_ORACLE_ABI = json.loads("""[
 RAY = 10**27
 
 
-def get_web3() -> Web3:
-    return Web3(Web3.HTTPProvider(SEPOLIA_RPC_URL))
+def get_web3(chain: str = "sepolia") -> Web3:
+    cfg = get_chain_config(chain)
+    return Web3(Web3.HTTPProvider(cfg["rpc_url"]))
 
 
-def get_reserve_data(asset_address: str) -> dict:
+def get_reserve_data(asset_address: str, chain: str = "sepolia") -> dict:
     """Fetch reserve data for a specific asset from the LendingPool."""
-    w3 = get_web3()
+    cfg = get_chain_config(chain)
+    w3 = get_web3(chain)
     pool = w3.eth.contract(
-        address=Web3.to_checksum_address(LENDING_POOL_ADDRESS),
+        address=Web3.to_checksum_address(cfg["lending_pool"]),
         abi=LENDING_POOL_ABI,
     )
     try:
@@ -57,19 +59,13 @@ def get_reserve_data(asset_address: str) -> dict:
             Web3.to_checksum_address(asset_address)
         ).call()
 
-        # Struct field indices (matching DataTypes.ReserveData):
-        # 0: aTokenAddress, 1: variableDebtTokenAddress, 2: interestRateStrategyAddress,
-        # 3: chainlinkPriceFeed, 4: liquidityIndex, 5: variableBorrowIndex,
-        # 6: currentLiquidityRate, 7: currentVariableBorrowRate, 8: lastUpdateTimestamp,
-        # 9: reserveFactor, 10: liquidationThreshold, 11: liquidationBonus, 12: ltv,
-        # 13: totalSupply, 14: totalBorrow, 15: totalSupplyScaled, 16: totalBorrowScaled,
-        # 17: isActive, 18: isFrozen, 19: borrowingEnabled, 20: decimals
         total_supply = data[13]
         total_borrow = data[14]
         liquidity_rate = data[6]
         borrow_rate = data[7]
 
         return {
+            "chain": chain,
             "asset": asset_address,
             "totalSupply": str(total_supply),
             "totalBorrow": str(total_borrow),
@@ -90,14 +86,15 @@ def get_reserve_data(asset_address: str) -> dict:
             "isActive": data[17],
         }
     except Exception as e:
-        return {"error": str(e), "asset": asset_address}
+        return {"error": str(e), "asset": asset_address, "chain": chain}
 
 
-def get_asset_price(asset_address: str) -> dict:
+def get_asset_price(asset_address: str, chain: str = "sepolia") -> dict:
     """Fetch asset price from ChainlinkPriceOracle."""
-    w3 = get_web3()
+    cfg = get_chain_config(chain)
+    w3 = get_web3(chain)
     oracle = w3.eth.contract(
-        address=Web3.to_checksum_address(PRICE_ORACLE_ADDRESS),
+        address=Web3.to_checksum_address(cfg["price_oracle"]),
         abi=PRICE_ORACLE_ABI,
     )
     try:
@@ -105,12 +102,13 @@ def get_asset_price(asset_address: str) -> dict:
             Web3.to_checksum_address(asset_address)
         ).call()
         return {
+            "chain": chain,
             "asset": asset_address,
             "price_usd": price / 1e8,
             "is_valid": is_valid,
         }
     except Exception as e:
-        return {"error": str(e), "asset": asset_address}
+        return {"error": str(e), "asset": asset_address, "chain": chain}
 
 
 async def fetch_external_apys() -> dict:
@@ -118,7 +116,6 @@ async def fetch_external_apys() -> dict:
     results = {"aave_v3": {}, "compound": {}}
 
     async with httpx.AsyncClient(timeout=10) as client:
-        # Aave V3 rates from DeFi Llama
         try:
             resp = await client.get("https://yields.llama.fi/pools")
             if resp.status_code == 200:
@@ -131,15 +128,6 @@ async def fetch_external_apys() -> dict:
                             "tvl": pool.get("tvlUsd", 0),
                             "apyBase": pool.get("apyBase", 0),
                         }
-        except Exception:
-            pass
-
-        # Compound V3 rates
-        try:
-            resp = await client.get("https://yields.llama.fi/pools")
-            if resp.status_code == 200:
-                pools = resp.json().get("data", [])
-                for pool in pools:
                     if pool.get("project") == "compound-v3" and pool.get("chain") == "Ethereum":
                         symbol = pool.get("symbol", "")
                         results["compound"][symbol] = {

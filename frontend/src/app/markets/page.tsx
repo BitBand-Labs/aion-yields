@@ -20,7 +20,7 @@ import {
   useTokenAllowance,
   useCrossChainDeposit,
 } from '@/hooks/useContracts'
-import { CONTRACT_ADDRESSES, SUPPORTED_CHAINS } from '@/lib/constants'
+import { CONTRACT_ADDRESSES, SUPPORTED_CHAINS, BLOCKCHAIN_IDS } from '@/lib/constants'
 import abis from '@/lib/abi/abi.json'
 import toast, { Toaster } from 'react-hot-toast'
 
@@ -73,15 +73,15 @@ export default function MarketsPage() {
   const [amount, setAmount] = useState('')
   const [markets, setMarkets] = useState<MarketData[]>([])
 
-  // CCIP chain selectors (Chainlink official)
-  const CCIP_CHAIN_SELECTORS: Record<string, { name: string; selector: bigint }> = {
-    avalancheFuji: { name: 'Avalanche Fuji', selector: 14767482510784806043n },
-    sepolia: { name: 'Ethereum Sepolia', selector: 16015286601757825753n },
+  // Avalanche Teleporter destination chains
+  const DEST_CHAINS: Record<string, { name: string; blockchainID: `0x${string}` }> = {
+    avalancheFuji: { name: 'Avalanche Fuji', blockchainID: BLOCKCHAIN_IDS.avalancheFuji },
+    sepolia: { name: 'Ethereum Sepolia', blockchainID: BLOCKCHAIN_IDS.sepolia },
   }
 
   // Determine destination chain (opposite of current)
   const currentChainIsSepolia = chainId === 11155111
-  const destChain = currentChainIsSepolia ? CCIP_CHAIN_SELECTORS.avalancheFuji : CCIP_CHAIN_SELECTORS.sepolia
+  const destChain = currentChainIsSepolia ? DEST_CHAINS.avalancheFuji : DEST_CHAINS.sepolia
   const destChainName = destChain.name
 
   // Get reserves count
@@ -250,7 +250,7 @@ export default function MarketsPage() {
 
   useEffect(() => {
     if (crossChained) {
-      toast.success(`Cross-chain deposit sent to ${destChainName}! CCIP message in transit.`)
+      toast.success(`Cross-chain deposit sent to ${destChainName}! Teleporter message in transit.`)
       setAmount('')
       setSelectedMarket(null)
     }
@@ -277,7 +277,7 @@ export default function MarketsPage() {
         ? CONTRACT_ADDRESSES[SUPPORTED_CHAINS.avalancheFuji]
         : CONTRACT_ADDRESSES[SUPPORTED_CHAINS.sepolia]
       const destVault = (destAddresses as any).CrossChainVault as Address
-      depositCrossChain(destChain.selector, destVault, selectedMarket.address, parsedAmount)
+      depositCrossChain(destChain.blockchainID, destVault, selectedMarket.address, parsedAmount)
       return
     }
 
@@ -311,7 +311,7 @@ export default function MarketsPage() {
           ? CONTRACT_ADDRESSES[SUPPORTED_CHAINS.avalancheFuji]
           : CONTRACT_ADDRESSES[SUPPORTED_CHAINS.sepolia]
         const destVault = (destAddresses as any).CrossChainVault as Address
-        depositCrossChain(destChain.selector, destVault, selectedMarket.address, parsedAmount)
+        depositCrossChain(destChain.blockchainID, destVault, selectedMarket.address, parsedAmount)
       } else if (actionType === 'supply') {
         deposit(selectedMarket.address, parsedAmount, userAddress)
       } else if (actionType === 'repay') {
@@ -581,10 +581,10 @@ export default function MarketsPage() {
                 <ArrowRightLeft size={18} style={{ color: 'var(--color-primary-light, var(--color-primary))', flexShrink: 0 }} />
                 <div>
                   <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: 'var(--color-text-primary)' }}>
-                    CCIP Cross-Chain Deposit
+                    Avalanche Warp Messaging
                   </p>
                   <p style={{ margin: '2px 0 0', fontSize: 12, color: 'var(--color-text-secondary)' }}>
-                    Deposit {selectedMarket.symbol} on {currentChainIsSepolia ? 'Sepolia' : 'Fuji'} → credited on {destChainName} LendingPool via Chainlink CCIP
+                    Deposit {selectedMarket.symbol} on {currentChainIsSepolia ? 'Sepolia' : 'Fuji'} → credited on {destChainName} LendingPool via Teleporter
                   </p>
                 </div>
               </div>
@@ -646,7 +646,7 @@ export default function MarketsPage() {
             >
               {!isConnected ? 'Connect Wallet' :
                 approving ? 'Approving...' :
-                crossChaining ? 'Sending via CCIP...' :
+                crossChaining ? 'Sending via Teleporter...' :
                 depositing || withdrawing || borrowing || repaying ? 'Confirming...' :
                 actionType === 'crosschain' ? `Cross-Chain Deposit to ${destChainName}` :
                 `${actionType.charAt(0).toUpperCase() + actionType.slice(1)} ${selectedMarket.symbol}`}

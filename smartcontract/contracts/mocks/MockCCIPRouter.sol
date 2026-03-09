@@ -17,8 +17,9 @@ contract MockCCIPRouter is IRouterClient {
 
     struct SentMessage {
         uint64 destinationChainSelector;
-        Client.EVM2AnyMessage message;
+        bytes data;
         bytes32 messageId;
+        address sender;
     }
 
     SentMessage[] public sentMessages;
@@ -50,6 +51,14 @@ contract MockCCIPRouter is IRouterClient {
         messageCount++;
         messageId = keccak256(abi.encode(messageCount, destinationChainSelector, msg.sender));
 
+        // Store the sent message for inspection
+        sentMessages.push(SentMessage({
+            destinationChainSelector: destinationChainSelector,
+            data: message.data,
+            messageId: messageId,
+            sender: msg.sender
+        }));
+
         // Collect LINK fee from sender (already approved)
         address feeToken = message.feeToken;
         if (feeToken != address(0)) {
@@ -78,5 +87,15 @@ contract MockCCIPRouter is IRouterClient {
         });
 
         CCIPReceiver(receiverContract).ccipReceive(message);
+    }
+
+    /// @notice Get the count of sent messages (for test assertions)
+    function getSentMessagesCount() external view returns (uint256) {
+        return sentMessages.length;
+    }
+
+    /// @notice Get a sent message's data by index
+    function getSentMessageData(uint256 index) external view returns (bytes memory) {
+        return sentMessages[index].data;
     }
 }

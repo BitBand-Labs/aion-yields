@@ -36,18 +36,23 @@ const portfolioAssets = [
 const totalValue = portfolioAssets.reduce((sum, a) => sum + a.value, 0)
 
 // Performance data points (30 days)
+function seededRandom(seed: number) {
+  const x = Math.sin(seed * 9301 + 49297) * 49297
+  return x - Math.floor(x)
+}
+
 const generatePerformanceData = () => {
   const days = 30
   const data = []
   let actual = 22000
   let predicted = 22000
-  const baseDate = new Date()
-  baseDate.setDate(baseDate.getDate() - days)
+  // Use a fixed base date to avoid server/client mismatch
+  const baseDate = new Date('2026-02-07')
 
   for (let i = 0; i <= days; i++) {
     const date = new Date(baseDate)
     date.setDate(date.getDate() + i)
-    const dailyReturn = (Math.random() - 0.45) * 300
+    const dailyReturn = (seededRandom(i * 13 + 7) - 0.45) * 300
     actual += dailyReturn
     predicted += dailyReturn * 0.8 + 80
     data.push({
@@ -70,7 +75,7 @@ const aiActivities = [
   { time: '45 min ago', action: 'Opened new DAI position on Compound v3', impact: '+3.9% APY', type: 'deposit' as const, agent: 'Anthropic' },
   { time: '1h 20m ago', action: 'AI prediction: ETH price correction likely in 6h', impact: 'Alert', type: 'prediction' as const, agent: 'Oracle-1' },
   { time: '2h ago', action: 'Harvested yield rewards across 3 protocols', impact: '+$42.50', type: 'harvest' as const, agent: 'Anthropic' },
-  { time: '3h ago', action: 'Cross-chain bridge: $5K USDC Base -> Ethereum via CCIP', impact: 'Completed', type: 'bridge' as const, agent: 'Router-2' },
+  { time: '3h ago', action: 'Cross-chain bridge: $5K USDC C-Chain -> Subnet via Teleporter', impact: 'Completed', type: 'bridge' as const, agent: 'Router-2' },
 ]
 
 const activityIcons: Record<string, typeof Activity> = {

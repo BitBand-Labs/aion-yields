@@ -134,7 +134,7 @@ export default function SettingsPage() {
                    <ShieldCheck size={32} />
                 </div>
                 <h4 style={{ margin: '0 0 8px', fontSize: 18, fontWeight: 700 }}>Security Score: 92/100</h4>
-                <p style={{ fontSize: 13, color: isLight ? 'var(--color-primary)' : 'var(--overlay-half-strong)', lineHeight: 1.6, margin: '0 0 24px', opacity: isLight ? 0.8 : 1 }}>Your account is protected with Hardware Wallet authentication and CCIP Guardian.</p>
+                <p style={{ fontSize: 13, color: isLight ? 'var(--color-primary)' : 'var(--overlay-half-strong)', lineHeight: 1.6, margin: '0 0 24px', opacity: isLight ? 0.8 : 1 }}>Your account is protected with Hardware Wallet authentication and Warp Messaging Guardian.</p>
                 <button className="btn btn-primary" style={{ width: '100%', borderRadius: 12 }}>
                    <Key size={16} /> Enhance Security
                 </button>

@@ -7057,12 +7057,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "router",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "link",
+          "name": "teleporter_",
           "type": "address"
         },
         {
@@ -7078,17 +7073,6 @@
       ],
       "stateMutability": "nonpayable",
       "type": "constructor"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "router",
-          "type": "address"
-        }
-      ],
-      "name": "InvalidRouter",
-      "type": "error"
     },
     {
       "inputs": [
@@ -7129,14 +7113,33 @@
         {
           "indexed": true,
           "internalType": "bytes32",
-          "name": "messageId",
+          "name": "blockchainID",
           "type": "bytes32"
         },
         {
+          "indexed": false,
+          "internalType": "string",
+          "name": "chainName",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "vaultAddress",
+          "type": "address"
+        }
+      ],
+      "name": "ChainRegistered",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
           "indexed": true,
-          "internalType": "uint64",
-          "name": "sourceChainSelector",
-          "type": "uint64"
+          "internalType": "bytes32",
+          "name": "sourceBlockchainID",
+          "type": "bytes32"
         },
         {
           "indexed": true,
@@ -7171,9 +7174,40 @@
         },
         {
           "indexed": true,
-          "internalType": "uint64",
-          "name": "destinationChainSelector",
-          "type": "uint64"
+          "internalType": "bytes32",
+          "name": "destinationBlockchainID",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "CrossChainDepositSent",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "sourceBlockchainID",
+          "type": "bytes32"
         },
         {
           "indexed": true,
@@ -7196,11 +7230,110 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "fees",
+          "name": "nonce",
           "type": "uint256"
         }
       ],
-      "name": "CrossChainDepositSent",
+      "name": "CrossChainWithdrawalFulfilled",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "messageId",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "destinationBlockchainID",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "nonce",
+          "type": "uint256"
+        }
+      ],
+      "name": "CrossChainWithdrawalRequested",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "sourceBlockchainID",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "asset",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "availableLiquidity",
+          "type": "uint256"
+        }
+      ],
+      "name": "LiquidityReportReceived",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "messageId",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "destinationBlockchainID",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "asset",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "availableLiquidity",
+          "type": "uint256"
+        }
+      ],
+      "name": "LiquidityReportSent",
       "type": "event"
     },
     {
@@ -7223,53 +7356,179 @@
       "type": "event"
     },
     {
+      "anonymous": false,
       "inputs": [
         {
-          "components": [
-            {
-              "internalType": "bytes32",
-              "name": "messageId",
-              "type": "bytes32"
-            },
-            {
-              "internalType": "uint64",
-              "name": "sourceChainSelector",
-              "type": "uint64"
-            },
-            {
-              "internalType": "bytes",
-              "name": "sender",
-              "type": "bytes"
-            },
-            {
-              "internalType": "bytes",
-              "name": "data",
-              "type": "bytes"
-            },
-            {
-              "components": [
-                {
-                  "internalType": "address",
-                  "name": "token",
-                  "type": "address"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "amount",
-                  "type": "uint256"
-                }
-              ],
-              "internalType": "struct Client.EVMTokenAmount[]",
-              "name": "destTokenAmounts",
-              "type": "tuple[]"
-            }
-          ],
-          "internalType": "struct Client.Any2EVMMessage",
-          "name": "message",
-          "type": "tuple"
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "sourceBlockchainID",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "asset",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "supplyRate",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "borrowRate",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "utilization",
+          "type": "uint256"
         }
       ],
-      "name": "ccipReceive",
+      "name": "RateSyncReceived",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "messageId",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "destinationBlockchainID",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "asset",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "supplyRate",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "borrowRate",
+          "type": "uint256"
+        }
+      ],
+      "name": "RateSyncSent",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "MSG_DEPOSIT",
+      "outputs": [
+        {
+          "internalType": "uint8",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "MSG_LIQUIDITY_REPORT",
+      "outputs": [
+        {
+          "internalType": "uint8",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "MSG_RATE_SYNC",
+      "outputs": [
+        {
+          "internalType": "uint8",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "MSG_WITHDRAW",
+      "outputs": [
+        {
+          "internalType": "uint8",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "chainRegistry",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "blockchainID",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "string",
+          "name": "chainName",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "vaultAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "bool",
+          "name": "isActive",
+          "type": "bool"
+        },
+        {
+          "internalType": "uint256",
+          "name": "registeredAt",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "blockchainID",
+          "type": "bytes32"
+        }
+      ],
+      "name": "deactivateChain",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -7277,9 +7536,9 @@
     {
       "inputs": [
         {
-          "internalType": "uint64",
-          "name": "destinationChainSelector",
-          "type": "uint64"
+          "internalType": "bytes32",
+          "name": "destinationBlockchainID",
+          "type": "bytes32"
         },
         {
           "internalType": "address",
@@ -7327,13 +7586,104 @@
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "getRouter",
-      "outputs": [
+      "inputs": [
         {
           "internalType": "address",
-          "name": "",
+          "name": "asset",
           "type": "address"
+        }
+      ],
+      "name": "getAggregatedTVL",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "totalTVL",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "chainCount",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "asset",
+          "type": "address"
+        }
+      ],
+      "name": "getBestBorrowRate",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "bestRate",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "bestChain",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "asset",
+          "type": "address"
+        }
+      ],
+      "name": "getBestSupplyRate",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "bestRate",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "bestChain",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getRegisteredChainsCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "asset",
+          "type": "address"
+        }
+      ],
+      "name": "getTotalAvailableLiquidity",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "total",
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",
@@ -7345,19 +7695,6 @@
       "outputs": [
         {
           "internalType": "contract ILendingPool",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "linkToken",
-      "outputs": [
-        {
-          "internalType": "contract IERC20",
           "name": "",
           "type": "address"
         }
@@ -7386,6 +7723,19 @@
     },
     {
       "inputs": [],
+      "name": "messageGasLimit",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "owner",
       "outputs": [
         {
@@ -7400,9 +7750,191 @@
     {
       "inputs": [
         {
-          "internalType": "uint64",
+          "internalType": "uint256",
           "name": "",
-          "type": "uint64"
+          "type": "uint256"
+        }
+      ],
+      "name": "pendingWithdrawals",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "sourceChain",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bool",
+          "name": "fulfilled",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "sourceBlockchainID",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "originSenderAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes",
+          "name": "message",
+          "type": "bytes"
+        }
+      ],
+      "name": "receiveTeleporterMessage",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "blockchainID",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "string",
+          "name": "chainName",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "vaultAddress",
+          "type": "address"
+        }
+      ],
+      "name": "registerChain",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "registeredChains",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "remoteLiquidity",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "availableLiquidity",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "remoteRates",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "supplyRate",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "borrowRate",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "utilization",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "totalSupply",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "totalBorrow",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "lastSyncTime",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
         }
       ],
       "name": "remoteVaults",
@@ -7426,6 +7958,30 @@
     {
       "inputs": [
         {
+          "internalType": "bytes32",
+          "name": "destinationBlockchainID",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "asset",
+          "type": "address"
+        }
+      ],
+      "name": "reportLiquidity",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "messageId",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "address",
           "name": "pool",
           "type": "address"
@@ -7439,9 +7995,22 @@
     {
       "inputs": [
         {
-          "internalType": "uint64",
-          "name": "chainSelector",
-          "type": "uint64"
+          "internalType": "uint256",
+          "name": "gasLimit",
+          "type": "uint256"
+        }
+      ],
+      "name": "setMessageGasLimit",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "blockchainID",
+          "type": "bytes32"
         },
         {
           "internalType": "address",
@@ -7457,9 +8026,9 @@
     {
       "inputs": [
         {
-          "internalType": "uint64",
-          "name": "chainSelector",
-          "type": "uint64"
+          "internalType": "bytes32",
+          "name": "blockchainID",
+          "type": "bytes32"
         },
         {
           "internalType": "bool",
@@ -7475,9 +8044,9 @@
     {
       "inputs": [
         {
-          "internalType": "uint64",
-          "name": "sourceChainSelector",
-          "type": "uint64"
+          "internalType": "bytes32",
+          "name": "sourceBlockchainID",
+          "type": "bytes32"
         },
         {
           "internalType": "address",
@@ -7498,9 +8067,9 @@
     {
       "inputs": [
         {
-          "internalType": "uint64",
+          "internalType": "bytes32",
           "name": "",
-          "type": "uint64"
+          "type": "bytes32"
         }
       ],
       "name": "supportedChains",
@@ -7517,28 +8086,59 @@
     {
       "inputs": [
         {
-          "internalType": "bytes4",
-          "name": "interfaceId",
-          "type": "bytes4"
+          "internalType": "bytes32",
+          "name": "destinationBlockchainID",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "asset",
+          "type": "address"
         }
       ],
-      "name": "supportsInterface",
+      "name": "syncRates",
       "outputs": [
         {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
+          "internalType": "bytes32",
+          "name": "messageId",
+          "type": "bytes32"
         }
       ],
-      "stateMutability": "pure",
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
       "inputs": [
         {
-          "internalType": "uint64",
+          "internalType": "address",
+          "name": "asset",
+          "type": "address"
+        }
+      ],
+      "name": "syncRatesToAll",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "teleporterMessenger",
+      "outputs": [
+        {
+          "internalType": "contract ITeleporterMessenger",
           "name": "",
-          "type": "uint64"
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
         },
         {
           "internalType": "address",
@@ -7573,6 +8173,40 @@
     {
       "inputs": [
         {
+          "internalType": "bytes32",
+          "name": "destinationBlockchainID",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "receiver",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "withdrawCrossChain",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "messageId",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "address",
           "name": "token",
           "type": "address"
@@ -7586,6 +8220,19 @@
       "name": "withdrawToken",
       "outputs": [],
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "withdrawalNonce",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     }
   ]

@@ -61,21 +61,22 @@ export default function LandingPage() {
       const x = Math.sin(seed * 9301 + 49297) * 49297;
       return x - Math.floor(x);
     }
+    const round = (n: number, d = 2) => Math.round(n * 10 ** d) / 10 ** d;
     return Array.from({ length: 20 }).map((_, i) => {
       const r = (offset: number) => seededRandom(i * 7 + offset);
       const color1 = r(0) > 0.5 ? '#FF4DA6' : '#FF007A';
       const color2 = r(1) > 0.5 ? '#FF4DA6' : '#FF007A';
       return {
-        x: [0, r(2) * 60 - 30, r(3) * -40 + 20, 0],
-        y: [0, r(4) * -50 + 25, r(5) * 40 - 20, 0],
-        duration: 12 + r(6) * 8,
-        delay: r(7) * 5,
-        top: `${10 + r(8) * 80}%`,
-        left: `${40 + r(9) * 55}%`,
-        width: 3 + r(10) * 4,
-        height: 3 + r(11) * 4,
+        x: [0, round(r(2) * 60 - 30), round(r(3) * -40 + 20), 0],
+        y: [0, round(r(4) * -50 + 25), round(r(5) * 40 - 20), 0],
+        duration: round(12 + r(6) * 8),
+        delay: round(r(7) * 5),
+        top: `${round(10 + r(8) * 80, 4)}%`,
+        left: `${round(40 + r(9) * 55, 4)}%`,
+        width: `${round(3 + r(10) * 4)}px`,
+        height: `${round(3 + r(11) * 4)}px`,
         background: `radial-gradient(circle, ${color1}, transparent)`,
-        boxShadow: `0 0 ${6 + r(12) * 8}px ${color2}`,
+        boxShadow: `0 0 ${round(6 + r(12) * 8)}px ${color2}`,
       };
     });
   }, []);
@@ -380,7 +381,7 @@ export default function LandingPage() {
           <motion.div initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
             <h2 style={{ fontSize: 48, fontWeight: 800, color: 'var(--color-text-primary)', marginBottom: 24, letterSpacing: '-0.04em' }}>Cross-Chain Liquidity</h2>
             <p style={{ fontSize: 20, color: 'var(--overlay-half-strong)', lineHeight: 1.7, marginBottom: 32 }}>
-              Liquidity should never be silos. AION uses Avalanche Warp Messaging and Chainlink CCIP to orchestrate capital efficiency across the entire EVM landscape effortlessly.
+              Liquidity should never be siloed. AION uses Avalanche Warp Messaging via Teleporter to orchestrate capital efficiency across the entire Avalanche ecosystem effortlessly.
             </p>
             <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: 20 }}>
               {[
@@ -458,7 +459,7 @@ export default function LandingPage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
               {[
                 { icon: <Layers size={28} />, title: "Avalanche C-Chain Execution", desc: "High-performance smart contracts powered by Avalanche consensus." },
-                { icon: <Network size={28} />, title: "Chainlink CRE & CCIP", desc: "Orchestrating multi-step workflows securely across chains via Warp Messaging." },
+                { icon: <Network size={28} />, title: "Chainlink CRE & Teleporter", desc: "Orchestrating multi-step workflows securely across chains via Avalanche Warp Messaging." },
                 { icon: <Cpu size={28} />, title: "Functions & Automation", desc: "Fetching off-chain AI ML inferences with zero-downtime execution." }
               ].map((item, i) => (
                 <div key={i} style={{ display: 'flex', gap: 20, alignItems: 'flex-start' }}>

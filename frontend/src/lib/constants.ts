@@ -11,7 +11,7 @@ export const CONTRACT_ADDRESSES = {
     AIYieldEngine: '0x4a8Ec2D9655600bc5d5D3460e8680251C839E61D',
     LiquidationAutomation: '0xcC1bd02c59888b64bdC7125a1999B8e87F8259FE',
     ChainlinkFunctionsConsumer: '0x39E1ae10B36E43Ee386d53E120B7b4B81dA99D40',
-    CrossChainVault: '0x8A9dD3A9c0Bc6Dd9931fcD75112e6f516B71a9A2',
+    CrossChainVault: '0x5a41D93Edc7016Cb2c27CC897751063a9e3dDDc3',
     AutonomousAllocator: '0x7C9eF492Cc14A795d8BAa6937b4cF23F258Ce6f1',
     CREExecutionHook: '0x17562500756BaB6757E13ce84C6D207A4D144948',
     MockUSDC: '0x331cB2F787b2DC57855Bb30B51bE09aEF53e84C0',
@@ -31,7 +31,7 @@ export const CONTRACT_ADDRESSES = {
     AIYieldEngine: '0x104895cc071Fb53ba9d4851c0fe1B896dCEB558A',
     LiquidationAutomation: '0x4b40D1cFc427B1353e9E4896ac1b844eAB489dA1',
     ChainlinkFunctionsConsumer: '0x15e4F3BB2664e55Be254f82b10d4A51900A1aBc1',
-    CrossChainVault: '0x666e7bD0bFBE5B004855d67aE6271933b3Df6A54',
+    CrossChainVault: '0xf9f48fD24bfF611891Fa7608d5864445cf875E08',
     AutonomousAllocator: '0x5A6259254dA9d37081E2FAd716885ad8393a5408',
     CREExecutionHook: '0xb38A14851dEd07df71b66835fd4E4aF5055e1cC4',
     MockUSDC: '0xa35C19170526eB8764a995fb5298eD1156B1b379',
@@ -47,3 +47,9 @@ export const CONTRACT_ADDRESSES = {
 } as const
 
 export type ContractName = keyof (typeof CONTRACT_ADDRESSES)[typeof SUPPORTED_CHAINS.sepolia]
+
+// Avalanche Teleporter blockchain IDs (bytes32) for cross-chain messaging
+export const BLOCKCHAIN_IDS = {
+  avalancheFuji: '0x7fc93d85c6d62c5b2ac0b519c87010ea5294012d1e407030d6acd0021cac10d5' as `0x${string}`,
+  sepolia: '0x657468657265756d2d7365706f6c696100000000000000000000000000000000' as `0x${string}`,
+} as const

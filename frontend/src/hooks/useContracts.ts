@@ -249,7 +249,7 @@ export function useCrossChainDeposit() {
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash })
 
   const depositCrossChain = (
-    destinationChainSelector: bigint,
+    destinationBlockchainID: `0x${string}`,
     receiver: Address,
     token: Address,
     amount: bigint
@@ -258,7 +258,7 @@ export function useCrossChainDeposit() {
       address: vault,
       abi: abis.CrossChainVault,
       functionName: 'depositCrossChain',
-      args: [destinationChainSelector, receiver, token, amount],
+      args: [destinationBlockchainID, receiver, token, amount],
     })
   }
 

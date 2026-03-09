@@ -6,13 +6,17 @@ describe("CrossChainVault", function () {
     let networkHelpers: any;
     let connection: any;
 
-    const FUJI_SELECTOR = 14767482510784806043n;
-    const SEPOLIA_SELECTOR = 16015286601757825753n;
+    // Avalanche blockchain IDs (bytes32)
+    let FUJI_BLOCKCHAIN_ID: string;
+    let SEPOLIA_BLOCKCHAIN_ID: string;
 
     before(async function () {
         connection = await network.connect();
         ethers = connection.ethers;
         networkHelpers = connection.networkHelpers;
+
+        FUJI_BLOCKCHAIN_ID = ethers.keccak256(ethers.toUtf8Bytes("avalanche-fuji"));
+        SEPOLIA_BLOCKCHAIN_ID = ethers.keccak256(ethers.toUtf8Bytes("ethereum-sepolia"));
     });
 
     async function deployCrossChainFixture() {
@@ -23,11 +27,10 @@ describe("CrossChainVault", function () {
         // Deploy mock tokens
         const MockERC20 = await ethers.getContractFactory("MockERC20");
         const mockUSDC = await MockERC20.deploy("USD Coin", "USDC", 6);
-        const linkToken = await MockERC20.deploy("Chainlink", "LINK", 18);
 
-        // Deploy mock CCIP router
-        const MockRouter = await ethers.getContractFactory("MockCCIPRouter");
-        const mockRouter = await MockRouter.deploy();
+        // Deploy mock Teleporter Messenger
+        const MockTeleporter = await ethers.getContractFactory("MockTeleporterMessenger");
+        const mockTeleporter = await MockTeleporter.deploy();
 
         // Deploy LendingPool with proper initialization
         const InterestRateModel = await ethers.getContractFactory("InterestRateModel");
@@ -66,28 +69,26 @@ describe("CrossChainVault", function () {
         const CrossChainVault = await ethers.getContractFactory("CrossChainVault");
 
         const vaultA = await CrossChainVault.deploy(
-            await mockRouter.getAddress(),
-            await linkToken.getAddress(),
+            await mockTeleporter.getAddress(),
             await lendingPool.getAddress(),
             owner.address
         );
 
         const vaultB = await CrossChainVault.deploy(
-            await mockRouter.getAddress(),
-            await linkToken.getAddress(),
+            await mockTeleporter.getAddress(),
             await lendingPool.getAddress(),
             owner.address
         );
 
         // Configure vaultA: supports Fuji destination, remote vault is vaultB
-        await vaultA.setSupportedChain(FUJI_SELECTOR, true);
-        await vaultA.setRemoteVault(FUJI_SELECTOR, await vaultB.getAddress());
+        await vaultA.setSupportedChain(FUJI_BLOCKCHAIN_ID, true);
+        await vaultA.setRemoteVault(FUJI_BLOCKCHAIN_ID, await vaultB.getAddress());
 
         // Configure vaultB: supports Sepolia destination, remote vault is vaultA
-        await vaultB.setSupportedChain(SEPOLIA_SELECTOR, true);
-        await vaultB.setRemoteVault(SEPOLIA_SELECTOR, await vaultA.getAddress());
+        await vaultB.setSupportedChain(SEPOLIA_BLOCKCHAIN_ID, true);
+        await vaultB.setRemoteVault(SEPOLIA_BLOCKCHAIN_ID, await vaultA.getAddress());
         await vaultB.setTokenMapping(
-            SEPOLIA_SELECTOR,
+            SEPOLIA_BLOCKCHAIN_ID,
             await mockUSDC.getAddress(),
             await mockUSDC.getAddress()
         );
@@ -95,14 +96,11 @@ describe("CrossChainVault", function () {
         // Fund user with USDC
         await mockUSDC.mint(user.address, ethers.parseUnits("10000", 6));
 
-        // Fund vaultA with LINK for fees
-        await linkToken.mint(await vaultA.getAddress(), ethers.parseEther("10"));
-
         // Fund vaultB with USDC for destination deposits
         await mockUSDC.mint(await vaultB.getAddress(), ethers.parseUnits("100000", 6));
 
         return {
-            owner, user, mockUSDC, linkToken, mockRouter,
+            owner, user, mockUSDC, mockTeleporter,
             lendingPool, vaultA, vaultB, DEPOSIT_AMOUNT, ethers
         };
     }
@@ -124,33 +122,33 @@ describe("CrossChainVault", function () {
     describe("Configuration", function () {
         it("should set supported chains correctly", async function () {
             const { vaultA } = await networkHelpers.loadFixture(deployCrossChainFixture);
-            expect(await vaultA.supportedChains(FUJI_SELECTOR)).to.be.true;
-            expect(await vaultA.supportedChains(SEPOLIA_SELECTOR)).to.be.false;
+            expect(await vaultA.supportedChains(FUJI_BLOCKCHAIN_ID)).to.be.true;
+            expect(await vaultA.supportedChains(SEPOLIA_BLOCKCHAIN_ID)).to.be.false;
         });
 
         it("should set remote vaults correctly", async function () {
             const { vaultA, vaultB } = await networkHelpers.loadFixture(deployCrossChainFixture);
-            expect(await vaultA.remoteVaults(FUJI_SELECTOR)).to.equal(await vaultB.getAddress());
-            expect(await vaultB.remoteVaults(SEPOLIA_SELECTOR)).to.equal(await vaultA.getAddress());
+            expect(await vaultA.remoteVaults(FUJI_BLOCKCHAIN_ID)).to.equal(await vaultB.getAddress());
+            expect(await vaultB.remoteVaults(SEPOLIA_BLOCKCHAIN_ID)).to.equal(await vaultA.getAddress());
         });
 
         it("should set token mappings correctly", async function () {
             const { vaultB, mockUSDC } = await networkHelpers.loadFixture(deployCrossChainFixture);
             expect(
-                await vaultB.tokenMappings(SEPOLIA_SELECTOR, await mockUSDC.getAddress())
+                await vaultB.tokenMappings(SEPOLIA_BLOCKCHAIN_ID, await mockUSDC.getAddress())
             ).to.equal(await mockUSDC.getAddress());
         });
 
         it("should only allow owner to configure", async function () {
             const { vaultA, user } = await networkHelpers.loadFixture(deployCrossChainFixture);
             await expectRevert(
-                vaultA.connect(user).setSupportedChain(SEPOLIA_SELECTOR, true)
+                vaultA.connect(user).setSupportedChain(SEPOLIA_BLOCKCHAIN_ID, true)
             );
         });
     });
 
     describe("depositCrossChain (Source Chain)", function () {
-        it("should lock tokens and send CCIP message", async function () {
+        it("should lock tokens and send Teleporter message", async function () {
             const { vaultA, vaultB, mockUSDC, user, DEPOSIT_AMOUNT } =
                 await networkHelpers.loadFixture(deployCrossChainFixture);
 
@@ -158,7 +156,7 @@ describe("CrossChainVault", function () {
             const balBefore = await mockUSDC.balanceOf(user.address);
 
             await vaultA.connect(user).depositCrossChain(
-                FUJI_SELECTOR,
+                FUJI_BLOCKCHAIN_ID,
                 await vaultB.getAddress(),
                 await mockUSDC.getAddress(),
                 DEPOSIT_AMOUNT
@@ -177,7 +175,7 @@ describe("CrossChainVault", function () {
 
             await expectRevert(
                 vaultA.connect(user).depositCrossChain(
-                    SEPOLIA_SELECTOR,
+                    SEPOLIA_BLOCKCHAIN_ID,
                     await vaultB.getAddress(),
                     await mockUSDC.getAddress(),
                     DEPOSIT_AMOUNT
@@ -185,50 +183,28 @@ describe("CrossChainVault", function () {
                 "Chain not supported"
             );
         });
-
-        it("should revert if insufficient LINK for fees", async function () {
-            const { mockRouter, linkToken, lendingPool, vaultB, mockUSDC, user, owner, DEPOSIT_AMOUNT } =
-                await networkHelpers.loadFixture(deployCrossChainFixture);
-
-            const CrossChainVault = await ethers.getContractFactory("CrossChainVault");
-            const noLinkVault = await CrossChainVault.deploy(
-                await mockRouter.getAddress(),
-                await linkToken.getAddress(),
-                await lendingPool.getAddress(),
-                owner.address
-            );
-            await noLinkVault.setSupportedChain(FUJI_SELECTOR, true);
-
-            await mockUSDC.connect(user).approve(await noLinkVault.getAddress(), DEPOSIT_AMOUNT);
-
-            await expectRevert(
-                noLinkVault.connect(user).depositCrossChain(
-                    FUJI_SELECTOR,
-                    await vaultB.getAddress(),
-                    await mockUSDC.getAddress(),
-                    DEPOSIT_AMOUNT
-                ),
-                "Insufficient LINK for fees"
-            );
-        });
     });
 
-    describe("_ccipReceive (Destination Chain)", function () {
-        it("should deposit into LendingPool on behalf of user via CCIP message", async function () {
-            const { vaultA, vaultB, mockUSDC, mockRouter, lendingPool, user } =
+    describe("receiveTeleporterMessage (Destination Chain)", function () {
+        it("should deposit into LendingPool on behalf of user via Teleporter message", async function () {
+            const { vaultA, vaultB, mockUSDC, mockTeleporter, lendingPool, user } =
                 await networkHelpers.loadFixture(deployCrossChainFixture);
 
             const usdcAddr = await mockUSDC.getAddress();
             const DEPOSIT_AMOUNT = ethers.parseUnits("1000", 6);
 
-            const payload = ethers.AbiCoder.defaultAbiCoder().encode(
+            const innerPayload = ethers.AbiCoder.defaultAbiCoder().encode(
                 ["address", "address", "uint256"],
                 [user.address, usdcAddr, DEPOSIT_AMOUNT]
             );
+            const payload = ethers.AbiCoder.defaultAbiCoder().encode(
+                ["uint8", "bytes"],
+                [1, innerPayload] // MSG_DEPOSIT = 1
+            );
 
-            await mockRouter.deliverMessage(
+            await mockTeleporter.deliverMessage(
                 await vaultB.getAddress(),
-                SEPOLIA_SELECTOR,
+                SEPOLIA_BLOCKCHAIN_ID,
                 await vaultA.getAddress(),
                 payload
             );
@@ -238,18 +214,22 @@ describe("CrossChainVault", function () {
         });
 
         it("should revert if sender is not authorized remote vault", async function () {
-            const { vaultB, mockUSDC, mockRouter, user } =
+            const { vaultB, mockUSDC, mockTeleporter, user } =
                 await networkHelpers.loadFixture(deployCrossChainFixture);
 
-            const payload = ethers.AbiCoder.defaultAbiCoder().encode(
+            const innerPayload = ethers.AbiCoder.defaultAbiCoder().encode(
                 ["address", "address", "uint256"],
                 [user.address, await mockUSDC.getAddress(), ethers.parseUnits("1000", 6)]
             );
+            const payload = ethers.AbiCoder.defaultAbiCoder().encode(
+                ["uint8", "bytes"],
+                [1, innerPayload]
+            );
 
             await expectRevert(
-                mockRouter.deliverMessage(
+                mockTeleporter.deliverMessage(
                     await vaultB.getAddress(),
-                    SEPOLIA_SELECTOR,
+                    SEPOLIA_BLOCKCHAIN_ID,
                     user.address,
                     payload
                 ),
@@ -258,19 +238,23 @@ describe("CrossChainVault", function () {
         });
 
         it("should revert if token mapping not set", async function () {
-            const { vaultA, vaultB, mockRouter, user } =
+            const { vaultA, vaultB, mockTeleporter, user } =
                 await networkHelpers.loadFixture(deployCrossChainFixture);
 
             const fakeToken = "0x0000000000000000000000000000000000000001";
-            const payload = ethers.AbiCoder.defaultAbiCoder().encode(
+            const innerPayload = ethers.AbiCoder.defaultAbiCoder().encode(
                 ["address", "address", "uint256"],
                 [user.address, fakeToken, ethers.parseUnits("1000", 6)]
             );
+            const payload = ethers.AbiCoder.defaultAbiCoder().encode(
+                ["uint8", "bytes"],
+                [1, innerPayload]
+            );
 
             await expectRevert(
-                mockRouter.deliverMessage(
+                mockTeleporter.deliverMessage(
                     await vaultB.getAddress(),
-                    SEPOLIA_SELECTOR,
+                    SEPOLIA_BLOCKCHAIN_ID,
                     await vaultA.getAddress(),
                     payload
                 ),
@@ -281,7 +265,7 @@ describe("CrossChainVault", function () {
 
     describe("End-to-End Flow", function () {
         it("should complete full lock-message-deposit cycle", async function () {
-            const { vaultA, vaultB, mockUSDC, mockRouter, lendingPool, user } =
+            const { vaultA, vaultB, mockUSDC, mockTeleporter, lendingPool, user } =
                 await networkHelpers.loadFixture(deployCrossChainFixture);
 
             const usdcAddr = await mockUSDC.getAddress();
@@ -290,21 +274,25 @@ describe("CrossChainVault", function () {
             // 1. Lock tokens on source chain
             await mockUSDC.connect(user).approve(await vaultA.getAddress(), DEPOSIT_AMOUNT);
             await vaultA.connect(user).depositCrossChain(
-                FUJI_SELECTOR,
+                FUJI_BLOCKCHAIN_ID,
                 await vaultB.getAddress(),
                 usdcAddr,
                 DEPOSIT_AMOUNT
             );
             expect(await vaultA.lockedBalance(usdcAddr)).to.equal(DEPOSIT_AMOUNT);
 
-            // 2. Simulate CCIP delivery to destination
-            const payload = ethers.AbiCoder.defaultAbiCoder().encode(
+            // 2. Simulate Teleporter delivery to destination (typed message)
+            const innerPayload = ethers.AbiCoder.defaultAbiCoder().encode(
                 ["address", "address", "uint256"],
                 [user.address, usdcAddr, DEPOSIT_AMOUNT]
             );
-            await mockRouter.deliverMessage(
+            const payload = ethers.AbiCoder.defaultAbiCoder().encode(
+                ["uint8", "bytes"],
+                [1, innerPayload] // MSG_DEPOSIT = 1
+            );
+            await mockTeleporter.deliverMessage(
                 await vaultB.getAddress(),
-                SEPOLIA_SELECTOR,
+                SEPOLIA_BLOCKCHAIN_ID,
                 await vaultA.getAddress(),
                 payload
             );

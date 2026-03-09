@@ -1,6 +1,6 @@
 /**
- * Redeploy CrossChainVault with message-only CCIP (no token bridging).
- * Then configure supported chains, remote vaults, and token mappings.
+ * Redeploy CrossChainVault with Avalanche Teleporter (Warp Messaging).
+ * No LINK token needed — uses native Avalanche ICM.
  *
  *   npx hardhat run scripts/deploy_crosschain_v2.ts --network sepolia
  *   npx hardhat run scripts/deploy_crosschain_v2.ts --network avalancheFuji
@@ -8,8 +8,17 @@
 import { network } from "hardhat";
 import * as fs from "fs";
 
-const SEPOLIA_SELECTOR = "16015286601757825753";
-const FUJI_SELECTOR = "14767482510784806043";
+// Avalanche blockchain IDs (bytes32)
+// C-Chain Fuji testnet blockchain ID
+const FUJI_BLOCKCHAIN_ID = "0x7fc93d85c6d62c5b2ac0b519c87010ea5294012d1e407030d6acd0021cac10d5";
+// Ethereum Sepolia (used as identifier, not a real Avalanche L1)
+const SEPOLIA_BLOCKCHAIN_ID = "0x" + Buffer.from("ethereum-sepolia").toString("hex").padEnd(64, "0");
+
+// Teleporter Messenger addresses on testnets
+const TELEPORTER_ADDRESSES: Record<string, string> = {
+    avalancheFuji: "0x253b2784c75e510dD0fF1da844684a1aC0aa5fcf", // Teleporter on Fuji
+    sepolia: "0x0000000000000000000000000000000000000000", // Placeholder — Teleporter is Avalanche-native
+};
 
 async function main() {
     const connection = await network.connect();
@@ -20,9 +29,10 @@ async function main() {
     const balance = await ethers.provider.getBalance(deployer.address);
     console.log(`\n========================================`);
     console.log(`  Redeploy CrossChainVault on ${networkName}`);
+    console.log(`  (Avalanche Teleporter / Warp Messaging)`);
     console.log(`========================================`);
     console.log(`Deployer: ${deployer.address}`);
-    console.log(`Balance:  ${ethers.formatEther(balance)} ETH\n`);
+    console.log(`Balance:  ${ethers.formatEther(balance)} ETH/AVAX\n`);
 
     // Load deployments
     const sepoliaDeploy = JSON.parse(fs.readFileSync("./deployments/sepolia.json", "utf8"));
@@ -31,14 +41,14 @@ async function main() {
     const isSepoliaNetwork = networkName === "sepolia";
     const localDeploy = isSepoliaNetwork ? sepoliaDeploy : fujiDeploy;
     const remoteDeploy = isSepoliaNetwork ? fujiDeploy : sepoliaDeploy;
-    const localChainlink = localDeploy.chainlink;
 
-    // 1. Deploy new CrossChainVault
+    const teleporterAddr = TELEPORTER_ADDRESSES[networkName] || ethers.ZeroAddress;
+
+    // 1. Deploy new CrossChainVault (no LINK needed with Teleporter)
     console.log("1. Deploying CrossChainVault...");
     const CrossChainVault = await ethers.getContractFactory("CrossChainVault");
     const vault = await CrossChainVault.deploy(
-        localChainlink.ccipRouter,
-        localChainlink.linkToken,
+        teleporterAddr,
         localDeploy.contracts.LendingPool,
         deployer.address
     );
@@ -47,74 +57,42 @@ async function main() {
     console.log(`   CrossChainVault: ${vaultAddr}`);
 
     // 2. Set supported destination chain
-    const destSelector = isSepoliaNetwork ? FUJI_SELECTOR : SEPOLIA_SELECTOR;
+    const destBlockchainID = isSepoliaNetwork ? FUJI_BLOCKCHAIN_ID : SEPOLIA_BLOCKCHAIN_ID;
     const destName = isSepoliaNetwork ? "Fuji" : "Sepolia";
     console.log(`\n2. Setting ${destName} as supported chain...`);
-    let tx = await vault.setSupportedChain(destSelector, true);
+    let tx = await vault.setSupportedChain(destBlockchainID, true);
     await tx.wait();
     console.log("   Done");
 
-    // 3. Set remote vault (use OLD remote vault address for now - will update after both deploys)
-    // We'll set it to a placeholder and update later
+    // 3. Remote vault will be set after both chains are deployed
     console.log(`\n3. Remote vault will be set after both chains are deployed.`);
 
     // 4. Set token mapping: remote MockUSDC => local MockUSDC
     const remoteUSDC = remoteDeploy.contracts.MockUSDC;
     const localUSDC = localDeploy.contracts.MockUSDC;
-    const remoteSelector = isSepoliaNetwork ? FUJI_SELECTOR : SEPOLIA_SELECTOR;
+    const remoteBlockchainID = isSepoliaNetwork ? FUJI_BLOCKCHAIN_ID : SEPOLIA_BLOCKCHAIN_ID;
     console.log(`\n4. Setting token mapping: remote USDC (${remoteUSDC}) => local USDC (${localUSDC})...`);
-    tx = await vault.setTokenMapping(remoteSelector, remoteUSDC, localUSDC);
+    tx = await vault.setTokenMapping(remoteBlockchainID, remoteUSDC, localUSDC);
     await tx.wait();
     console.log("   Done");
 
-    // 5. Transfer LINK to new vault (transfer from deployer)
-    console.log(`\n5. Checking deployer LINK balance...`);
-    const linkToken = new ethers.Contract(
-        localChainlink.linkToken,
-        ["function balanceOf(address) view returns (uint256)", "function transfer(address,uint256) returns (bool)"],
-        deployer
-    );
-    const linkBal = await linkToken.balanceOf(deployer.address);
-    console.log(`   Deployer LINK: ${ethers.formatEther(linkBal)}`);
-
-    // Also check if old vault has LINK we can recover
-    const oldVaultAddr = localDeploy.contracts.CrossChainVault;
-    const oldVault = new ethers.Contract(oldVaultAddr, [
-        "function withdrawToken(address,uint256) external",
-        "function owner() view returns (address)",
-    ], deployer);
-    const oldVaultLink = await linkToken.balanceOf(oldVaultAddr);
-    console.log(`   Old vault LINK: ${ethers.formatEther(oldVaultLink)}`);
-
-    if (oldVaultLink > 0n) {
-        console.log("   Recovering LINK from old vault...");
-        try {
-            tx = await oldVault.withdrawToken(localChainlink.linkToken, oldVaultLink);
-            await tx.wait();
-            console.log("   Recovered!");
-        } catch (e: any) {
-            console.log(`   Could not recover: ${e.message?.slice(0, 80)}`);
-        }
-    }
-
-    // Send 2 LINK to new vault (or whatever we have, up to 2)
-    const updatedLinkBal = await linkToken.balanceOf(deployer.address);
-    const sendAmount = updatedLinkBal > ethers.parseEther("2") ? ethers.parseEther("2") : updatedLinkBal;
-    if (sendAmount > 0n) {
-        console.log(`   Sending ${ethers.formatEther(sendAmount)} LINK to new vault...`);
-        tx = await linkToken.transfer(vaultAddr, sendAmount);
-        await tx.wait();
-        console.log("   Done");
-    }
+    // 5. Fund vault with USDC for cross-chain deposits (destination side)
+    console.log(`\n5. No LINK needed — Teleporter uses native Avalanche Warp Messaging.`);
 
     // 6. Update deployment file
     localDeploy.contracts.CrossChainVault = vaultAddr;
+    // Store teleporter address in chainlink section (rename to teleporter)
+    localDeploy.teleporter = {
+        messengerAddress: teleporterAddr,
+        blockchainID: isSepoliaNetwork ? SEPOLIA_BLOCKCHAIN_ID : FUJI_BLOCKCHAIN_ID,
+    };
     const deployPath = `./deployments/${networkName}.json`;
     fs.writeFileSync(deployPath, JSON.stringify(localDeploy, null, 2));
     console.log(`\n6. Updated ${deployPath}`);
 
     console.log(`\n========================================`);
     console.log(`  CrossChainVault deployed: ${vaultAddr}`);
+    console.log(`  Using Avalanche Teleporter (no LINK fees)`);
     console.log(`========================================`);
     console.log(`\nAfter deploying on BOTH chains, run setup_crosschain_v2.ts to wire remote vaults.`);
 }
