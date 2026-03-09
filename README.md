@@ -1,3 +1,5 @@
+![AION Yield Banner](https://placehold.co/1200x400/0ea7cb/ffffff/png?text=AION+Yield)
+
 # AION Yield — AI-Orchestrated DeFi Lending Protocol
 
 **AION Yield** is a decentralized money market protocol where AI agents autonomously optimize interest rates, rebalance liquidity across protocols, and maximize risk-adjusted yields — all orchestrated by **Chainlink CRE** and secured by on-chain compliance policies.
