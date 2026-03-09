@@ -601,7 +601,7 @@ export default function LandingPage() {
           
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
             <p style={{ color: isLight ? '#ffffff' : 'rgba(255,255,255,0.3)', fontSize: 14, margin: 0 }}>
-              © {new Date().getFullYear()} AION Yield Protocol. Built for Chainlink Convergence.
+              © {new Date().getFullYear()} AION Yield Protocol. Powered by Avalanche.
             </p>
             <div style={{ display: 'flex', gap: 32 }}>
               <Link href="/terms" style={{ color: isLight ? '#ffffff' : 'rgba(255,255,255,0.3)', textDecoration: 'none', fontSize: 14 }}>Terms</Link>
