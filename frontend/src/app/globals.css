@@ -18,26 +18,26 @@
   --color-secondary: #B30056;
   --color-secondary-deep: #99004A;
 
-  /* --- Backgrounds (Deep Dark System) --- */
-  --color-bg: #0B0B0F;
-  --color-bg-elevated: #121218;
+  /* --- Backgrounds --- */
+  --color-bg: #fafafa;
+  --color-bg-elevated: #ffffff;
 
   /* --- Surfaces --- */
-  --color-surface: #1A1A22;
-  --color-surface-raised: #20202A;
-  --color-surface-hover: #20202A;
-  --color-surface-dark: #000000;
+  --color-surface: #ffffff;
+  --color-surface-raised: #ffffff;
+  --color-surface-hover: #f5f5f5;
+  --color-surface-dark: #0a0a0a;
 
   /* --- Text --- */
-  --color-text-primary: #ffffff;
-  --color-text-secondary: #E4E4E7;
-  --color-text-tertiary: #A1A1AA;
+  --color-text-primary: #0a0a0a;
+  --color-text-secondary: #525252;
+  --color-text-tertiary: #a3a3a3;
 
   /* --- Borders + Lines --- */
-  --color-border: #2A2A34;
-  --color-border-hover: #3f3f46;
+  --color-border: #e5e5e5;
+  --color-border-hover: #d4d4d4;
   --color-border-focus: #FF007A;
-  --color-divider: #1F1F28;
+  --color-divider: #e5e5e5;
 
   /* --- Status / Data --- */
   --color-success: #00FFA3;
@@ -46,22 +46,22 @@
   --color-warning-muted: rgba(245, 165, 36, 0.1);
   --color-info: #3B82F6;
   --color-info-muted: rgba(59, 130, 246, 0.1);
-  
+
   /* --- Error/Status Muted --- */
   --color-error: #ef4444;
   --color-error-muted: rgba(239, 68, 68, 0.1);
 
-  /* --- Overlays --- */
-  --overlay-ultralight: rgba(255, 255, 255, 0.02);
-  --overlay-ultralight-2: rgba(255, 255, 255, 0.03);
-  --overlay-light: rgba(255, 255, 255, 0.05);
-  --overlay-medium-light: rgba(255, 255, 255, 0.08);
-  --overlay-medium: rgba(255, 255, 255, 0.1);
-  --overlay-medium-strong: rgba(255, 255, 255, 0.15);
-  --overlay-strong: rgba(255, 255, 255, 0.2);
-  --overlay-half: rgba(255, 255, 255, 0.5);
-  --overlay-half-strong: rgba(255, 255, 255, 0.6);
-  --overlay-high: rgba(255, 255, 255, 0.95);
+  /* --- Overlays (Light Mode) --- */
+  --overlay-ultralight: rgba(0, 0, 0, 0.02);
+  --overlay-ultralight-2: rgba(0, 0, 0, 0.03);
+  --overlay-light: rgba(0, 0, 0, 0.05);
+  --overlay-medium-light: rgba(0, 0, 0, 0.08);
+  --overlay-medium: rgba(0, 0, 0, 0.1);
+  --overlay-medium-strong: rgba(0, 0, 0, 0.15);
+  --overlay-strong: rgba(0, 0, 0, 0.2);
+  --overlay-half: rgba(0, 0, 0, 0.5);
+  --overlay-half-strong: rgba(0, 0, 0, 0.6);
+  --overlay-high: rgba(0, 0, 0, 0.95);
 
   /* --- Accent --- */
   --color-accent: #FF007A;
@@ -101,9 +101,9 @@
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
   --shadow-glow: 0 0 40px rgba(255, 0, 122, 0.15);
   --shadow-glow-hover: 0 0 50px rgba(255, 0, 122, 0.25);
-  
+
   /* --- Background Glow --- */
-  --gradient-glow: radial-gradient(circle, rgba(255,0,122,0.18), transparent 60%);
+  --gradient-glow: radial-gradient(circle, rgba(255, 0, 122, 0.18), transparent 60%);
   --transition-fast: 120ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-base: 250ms cubic-bezier(0.22, 1, 0.36, 1);
   --transition-slow: 400ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -116,22 +116,37 @@
 }
 
 .dark {
-  /* Force the same deep dark background for both modes to ensure premium feel */
+  /* --- Backgrounds (Deep Dark System) --- */
   --color-bg: #0B0B0F;
   --color-bg-elevated: #121218;
 
+  /* --- Surfaces --- */
   --color-surface: #1A1A22;
   --color-surface-raised: #20202A;
   --color-surface-hover: #20202A;
   --color-surface-dark: #000000;
 
+  /* --- Text --- */
   --color-text-primary: #ffffff;
   --color-text-secondary: #E4E4E7;
   --color-text-tertiary: #A1A1AA;
 
+  /* --- Borders + Lines --- */
   --color-border: #2A2A34;
   --color-border-hover: #3f3f46;
   --color-divider: #1F1F28;
+
+  /* --- Overlays (Dark Mode) --- */
+  --overlay-ultralight: rgba(255, 255, 255, 0.02);
+  --overlay-ultralight-2: rgba(255, 255, 255, 0.03);
+  --overlay-light: rgba(255, 255, 255, 0.05);
+  --overlay-medium-light: rgba(255, 255, 255, 0.08);
+  --overlay-medium: rgba(255, 255, 255, 0.1);
+  --overlay-medium-strong: rgba(255, 255, 255, 0.15);
+  --overlay-strong: rgba(255, 255, 255, 0.2);
+  --overlay-half: rgba(255, 255, 255, 0.5);
+  --overlay-half-strong: rgba(255, 255, 255, 0.6);
+  --overlay-high: rgba(255, 255, 255, 0.95);
 }
 
 /* ============================================================
