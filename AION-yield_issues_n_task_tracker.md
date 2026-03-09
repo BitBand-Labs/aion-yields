@@ -12,7 +12,24 @@
 - [x] Define Chainlink service integration scope (CRE, Functions, Automation, CCIP, Data Feeds, ACE)
 - [x] Define AI + x402 + ERC-8004 integration architecture
 - [x] Monorepo setup (smartcontract, frontend, ai-engine, doc)
+- [x] Realign documentation for Avalanche Build Games Stage 2 (MVP)
 - [ ] CI/CD pipeline (GitHub Actions)
+
+---
+
+# 🏔️ Avalanche Build Games (Hackathon Goals)
+
+## Stage 2: MVP (Deadline: March 9)
+- [x] **Avalanche C-Chain Integration**: Deploy core contracts to Fuji C-Chain.
+- [x] **Technical Documentation**: Detailed architecture and README on GitHub.
+- [ ] **Functional Prototype**: Live frontend interacting with Fuji contracts.
+- [ ] **Warp Messaging via CCIP**: Ensure cross-chain logic demonstrates multi-chain awareness via C-Chain messaging.
+- [ ] **Product Walkthrough Video**: Record a max 5-minute video demonstrating key features.
+
+## Stage 3 & Phase 2 (Advanced)
+- [ ] **Avalanche Subnet (AION Subnet)**: Set up dedicated execution framework for high-throughput AI strategy execution.
+- [ ] **Avalanche Warp Messaging natively**: Move from CCIP abstraction to native Warp Messaging for subnet-to-C-chain communication.
+- [ ] **Avalanche Bridge**: Integrate for external Ethereum liquidity sourcing.
 
 ---
 
@@ -167,6 +184,8 @@
 - [ ] Portfolio page — performance charts, AI prediction line
 - [ ] CRE CLI simulation demo
 - [ ] Vercel production deployment
+- [ ] Record 5-min Hackathon product walkthrough video
+- [ ] Submit Stage 2 MVP to Avalanche Build Games platform
 
 ---
 
