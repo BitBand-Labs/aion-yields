@@ -58,7 +58,41 @@ graph TD
 
 ---
 
-## Chainlink Integration
+---
+
+## 🔗 Chainlink Integration (Hackathon Core)
+
+AION Yield is a deep-tech demonstration of the **Chainlink Convergence** vision:
+
+*   **[Chainlink CRE (Orchestration)](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/CREExecutionHook.sol)**: The "OS" that coordinates agent selection, x402 payment triggers, and subsequent liquidity movement.
+*   **[Chainlink CCIP](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/CrossChainVault.sol)**: Enables "Unified Collateral," allowing a user to deposit on Base and borrow against it on Avalanche, optimized by AI.
+*   **[Chainlink Functions](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/ChainlinkFunctionsConsumer.sol)**: The secure bridge to our Python AI Strategy Engine, handling encrypted inference requests.
+*   **[Chainlink Automation](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/LiquidationAutomation.sol)**: Decentralized "Watchdogs" that monitor AI risk scores and execute preventive liquidations.
+*   **[Chainlink Price Feeds](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/ChainlinkPriceOracle.sol)**: Multi-source price data with institutional-grade fallback logic.
+
+---
+
+## 🤖 The Autonomous Economy Core
+
+### x402: Machine-to-Machine Payments
+We implemented the [x402 (HTTP 402 Payment Required)](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/payments/X402PaymentGateway.sol) protocol standard. When an AI Agent provides a yield prediction, the protocol settles the fee in USDC on-chain automatically, creating a self-sustaining economy for machine intelligence.
+
+### ERC-8004: Agent Identity & Reputation
+Every AI agent is a participant in our [ERC-8004 Registry](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/ai/AIAgentRegistry.sol). They earn points for accuracy and are slashed for high-deviation predictions, ensuring capital is only managed by the most "Reputable" models.
+
+---
+
+## ✨ Studio Grade Experience (UI/UX)
+
+The AION dashboard is built for high-stakes financial observability:
+*   **Design Tokens**: Zinc/Neutral palette (`#09090b`) with a bespoke Cyan-Blue accent (`#0EA7CB`).
+*   **Tactile Aesthetic**: A 3% noise/grain overlay and an 8pt grid system for a premium, heavy-duty feel.
+*   **Magic Cards**: Components with real-time radial glow effects that track movements, highlighting key AI insights.
+*   **Health Intelligence**: Circular "Stress Gauges" and "Yield Beams" visualize the live flow of capital rebalancing.
+
+---
+
+## 🛠️ Technical Deep-Dive
 
 AION Yield uses **six Chainlink services** as the backbone of its autonomous operation. Every link below points to the exact contract and function where the integration lives.
 
