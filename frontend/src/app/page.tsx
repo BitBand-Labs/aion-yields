@@ -553,7 +553,7 @@ export default function LandingPage() {
               <div style={{ marginBottom: 16 }}>
                 <img src="/assets/logo/AIONYIELD-logo-nobg.png" alt="AION Yield Logo" style={{ height: 40, width: 'auto' }} />
               </div>
-              <p style={{ color: isLight ? 'var(--color-primary)' : 'var(--overlay-half)', fontSize: 16, lineHeight: 1.6, maxWidth: 400 }}>
+              <p style={{ color: isLight ? '#ffffff' : 'var(--overlay-half)', fontSize: 16, lineHeight: 1.6, maxWidth: 400 }}>
                 Autonomous AI agents optimizing cross-chain capital allocation. Built for the future of decentralized money markets.
               </p>
             </div>
@@ -587,12 +587,12 @@ export default function LandingPage() {
           <div style={{ width: '100%', height: 1, background: 'var(--overlay-light)', marginBottom: 24 }} />
           
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
-            <p style={{ color: isLight ? 'rgba(255, 0, 122, 0.6)' : 'rgba(255,255,255,0.3)', fontSize: 14, margin: 0 }}>
+            <p style={{ color: isLight ? '#ffffff' : 'rgba(255,255,255,0.3)', fontSize: 14, margin: 0 }}>
               © {new Date().getFullYear()} AION Yield Protocol. Built for Chainlink Convergence.
             </p>
             <div style={{ display: 'flex', gap: 32 }}>
-              <Link href="/terms" style={{ color: isLight ? 'var(--color-primary)' : 'rgba(255,255,255,0.3)', textDecoration: 'none', fontSize: 14 }}>Terms</Link>
-              <Link href="/privacy" style={{ color: isLight ? 'var(--color-primary)' : 'rgba(255,255,255,0.3)', textDecoration: 'none', fontSize: 14 }}>Privacy</Link>
+              <Link href="/terms" style={{ color: isLight ? '#ffffff' : 'rgba(255,255,255,0.3)', textDecoration: 'none', fontSize: 14 }}>Terms</Link>
+              <Link href="/privacy" style={{ color: isLight ? '#ffffff' : 'rgba(255,255,255,0.3)', textDecoration: 'none', fontSize: 14 }}>Privacy</Link>
             </div>
           </div>
         </div>
@@ -621,7 +621,7 @@ export default function LandingPage() {
               alignItems: 'center',
               justifyContent: 'center',
               zIndex: 100,
-              boxShadow: '0 8px 32px rgba(14,167,203,0.3)',
+              boxShadow: '0 8px 32px rgba(255, 0, 122, 0.3)',
               backdropFilter: 'blur(8px)',
               borderWidth: '1px',
               borderStyle: 'solid',
