@@ -81,19 +81,19 @@ export function Header({ title, subtitle }: HeaderProps) {
               borderRadius: 6,
               border: '1px solid transparent',
               cursor: 'pointer',
-              background: 'transparent',
-              color: 'var(--color-text-tertiary)',
+              background: '#FF007A',
+              color: '#ffffff',
               transition: 'all 0.2s',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'var(--color-bg-elevated)'
-              e.currentTarget.style.borderColor = 'var(--color-border)'
-              e.currentTarget.style.color = 'var(--color-text-primary)'
+              e.currentTarget.style.background = '#E6006E'
+              e.currentTarget.style.borderColor = 'transparent'
+              e.currentTarget.style.color = '#ffffff'
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'transparent'
+              e.currentTarget.style.background = '#FF007A'
               e.currentTarget.style.borderColor = 'transparent'
-              e.currentTarget.style.color = 'var(--color-text-tertiary)'
+              e.currentTarget.style.color = '#ffffff'
             }}
           >
             <Bell size={14} />
@@ -112,19 +112,19 @@ export function Header({ title, subtitle }: HeaderProps) {
                 borderRadius: 6,
                 border: '1px solid transparent',
                 cursor: 'pointer',
-                background: 'transparent',
-                color: 'var(--color-text-tertiary)',
+                background: '#FF007A',
+                color: '#ffffff',
                 transition: 'all 0.2s',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'var(--color-bg-elevated)'
-                e.currentTarget.style.borderColor = 'var(--color-border)'
-                e.currentTarget.style.color = 'var(--color-text-primary)'
+                e.currentTarget.style.background = '#E6006E'
+                e.currentTarget.style.borderColor = 'transparent'
+                e.currentTarget.style.color = '#ffffff'
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'transparent'
+                e.currentTarget.style.background = '#FF007A'
                 e.currentTarget.style.borderColor = 'transparent'
-                e.currentTarget.style.color = 'var(--color-text-tertiary)'
+                e.currentTarget.style.color = '#ffffff'
               }}
             >
               {theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}

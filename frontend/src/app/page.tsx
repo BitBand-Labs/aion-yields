@@ -545,7 +545,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer style={{ background: '#02050A', borderTop: '1px solid var(--overlay-medium-light)', position: 'relative', zIndex: 10 }}>
+      <footer style={{ background: '#FF007A', borderTop: '1px solid var(--overlay-medium-light)', position: 'relative', zIndex: 10 }}>
         <div style={{ maxWidth: 1400, margin: '0 auto', padding: '40px 48px 30px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 32, marginBottom: 32 }}>
             {/* Left: Brand + Desc */}
