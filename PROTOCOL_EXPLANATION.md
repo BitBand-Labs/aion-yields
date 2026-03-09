@@ -2,9 +2,25 @@
 
 ## What is AION Yield?
 
-AION Yield is an **AI-orchestrated DeFi lending protocol** that combines traditional money market mechanics (supply, borrow, liquidate) with autonomous AI agents powered by **Anthropic Claude** and **Chainlink's decentralized infrastructure** (CRE, CCIP, Functions, ACE). The AI continuously analyzes on-chain and off-chain market data to optimize interest rates, rebalance liquidity across protocols, and maximize risk-adjusted yields for users.
+AION Yield is an **AI-orchestrated DeFi lending protocol** that combines traditional money market mechanics (supply, borrow, liquidate) with autonomous AI agents powered by **Anthropic Claude** and **Chainlink's decentralized infrastructure**. The AI continuously analyzes on-chain and off-chain market data to optimize interest rates, rebalance liquidity across protocols, and maximize risk-adjusted yields for users.
 
 **Deployed on:** Ethereum Sepolia and Avalanche Fuji testnets.
+
+---
+
+## 🏔️ Avalanche Integration (The Execution Layer)
+
+AION Yield is an AI-native DeFi automation layer built fundamentally on Avalanche's high-performance infrastructure. 
+
+Chainlink CRE provides the **intelligence layer** that evaluates yield strategies, while Avalanche provides the **execution infrastructure**. This architecture enables autonomous agents to move liquidity across chains and protocols in real time.
+
+**Core Integrations (MVP):**
+1. **Avalanche C-Chain**: The primary smart contract container. Our Vaults and AI Agent Registries live here to leverage EVM compatibility, fast finality, and deep existing DeFi liquidity.
+2. **Avalanche Warp Messaging**: Used for cross-chain AI agent coordination. For example, an AI agent on the C-Chain detects a higher yield on a specialized Subnet, and uses Warp Messaging to trigger the strategy change and liquidity movement.
+
+**Advanced Integrations (Phase 2):**
+3. **Avalanche Subnets (AION Subnet)**: A dedicated execution network for AI agents. Instead of running all high-frequency AI strategy evaluations on the C-Chain, we isolate execution to the AION Subnet for predictable, customizable gas limits and massive throughput.
+4. **Avalanche Bridge**: Enables AION Yield to source and deploy liquidity from external ecosystems (like Ethereum Mainnet) directly into our Avalanche-native strategies.
 
 ---
 

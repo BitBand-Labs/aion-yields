@@ -60,7 +60,24 @@ graph TD
 
 ---
 
-## Chainlink Integration
+## Dual Ecosystem Integration
+
+AION Yield is uniquely positioned at the intersection of **Chainlink** infrastructure and **Avalanche** performance.
+
+### Avalanche Ecosystem (The Execution Layer)
+
+AION Yield is an AI-native DeFi automation layer built on Avalanche.
+
+| Integration | Role in AION Yield (MVP vs Future) | Purpose |
+|-------------|------------------------------------|---------|
+| **Avalanche C-Chain** | Core MVP | Where the smart contracts (Vaults, AI Routing) live. Chosen for EVM compatibility, fast finality, and existing DeFi liquidity. |
+| **Avalanche Warp Messaging** | Core MVP | Cross-chain AI agent coordination. Allows AI to trigger rebalance on C-Chain and execute on specialized subnets. |
+| **Avalanche Subnet (AION Subnet)** | Phase 2 (Advanced) | Dedicated execution network for high-frequency AI strategy execution with predictable gas. |
+| **Avalanche Bridge** | Phase 2 (Advanced) | Allows AION Yield to source and deploy liquidity from external ecosystems (Ethereum, etc.). |
+
+---
+
+## Chainlink Integration (The Intelligence Layer)
 
 AION Yield uses **six Chainlink services** as the backbone of its autonomous operation. Every link below points to the exact contract and function where the integration lives.
 

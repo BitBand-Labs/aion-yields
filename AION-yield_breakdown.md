@@ -9,6 +9,17 @@ The protocol enables users to deposit assets, earn optimized yield, and benefit 
 
 This project is designed for the **Chainlink Convergence Hackathon** and showcases deep integration with Chainlink’s latest infrastructure stack.
 
+## 🏔️ Avalanche Integration (Core Execution Layer)
+To meet the high-throughput requirements of AI-driven DeFi, AION Yield integrates deeply with the Avalanche ecosystem:
+
+### Core Integrations (MVP)
+- **Avalanche C-Chain**: The primary smart contract container where our Vaults, StrategyManagers, and AgentRegistries live. Chosen for EVM compatibility, fast finality, and existing DeFi liquidity.
+- **Avalanche Warp Messaging**: Enables cross-chain AI agent coordination. For example, an AI agent can trigger a strategy change on the C-Chain that executes across other Avalanche subnets.
+
+### Advanced Integrations (Phase 2)
+- **Avalanche Subnets (AION Subnet)**: A dedicated execution network for AI agents. Instead of running high-frequency strategy evaluations on the C-Chain, we isolate execution to an AION Subnet for predictable gas and massive throughput.
+- **Avalanche Bridge**: Allows AION Yield to source and deploy liquidity from external ecosystems (like Ethereum Mainnet) directly into our Avalanche-native strategies.
+
 ---
 
 # 🌐 What Are Chainlink Services?
