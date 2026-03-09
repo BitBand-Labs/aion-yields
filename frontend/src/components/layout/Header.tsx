@@ -30,7 +30,7 @@ export function Header({ title, subtitle }: HeaderProps) {
         padding: '0 var(--space-2)',
         height: 'var(--header-height)',
         background: 'var(--color-bg)',
-        border: theme === 'light' ? '1px solid rgba(14, 167, 203, 0.2)' : '1px solid var(--color-border)',
+        border: theme === 'light' ? '1px solid rgba(255, 0, 122, 0.2)' : '1px solid var(--color-border)',
         borderRadius: '24px',
         zIndex: 30,
       }}

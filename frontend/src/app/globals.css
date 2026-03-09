@@ -7,59 +7,65 @@
    ============================================================ */
 
 :root {
-  /* --- Primary --- */
-  --color-primary: #0EA7CB;
-  --color-primary-hover: #0C8EA9;
-  --color-primary-light: #3DC5E4;
-  --color-primary-muted: rgba(14, 167, 203, 0.1);
+  /* --- Primary (Magenta Family) --- */
+  --color-primary: #FF007A;
+  --color-primary-hover: #E6006E;
+  --color-primary-light: #FF4DA6;
+  --color-primary-active: #CC0062;
+  --color-primary-muted: rgba(255, 0, 122, 0.1);
 
-  /* --- Secondary --- */
-  --color-secondary: #0EA7CB;
+  /* --- Secondary (Magenta Accent) --- */
+  --color-secondary: #B30056;
+  --color-secondary-deep: #99004A;
 
-  /* --- Backgrounds --- */
-  --color-bg: #fafafa;
-  --color-bg-elevated: #ffffff;
+  /* --- Backgrounds (Deep Dark System) --- */
+  --color-bg: #0B0B0F;
+  --color-bg-elevated: #121218;
 
   /* --- Surfaces --- */
-  --color-surface: #ffffff;
-  --color-surface-raised: #ffffff;
-  --color-surface-hover: #f5f5f5;
-  --color-surface-dark: #0a0a0a;
+  --color-surface: #1A1A22;
+  --color-surface-raised: #20202A;
+  --color-surface-hover: #20202A;
+  --color-surface-dark: #000000;
 
   /* --- Text --- */
-  --color-text-primary: #0a0a0a;
-  --color-text-secondary: #525252;
-  --color-text-tertiary: #a3a3a3;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #E4E4E7;
+  --color-text-tertiary: #A1A1AA;
 
-  /* --- Borders --- */
-  --color-border: #e5e5e5;
-  --color-border-hover: #d4d4d4;
-  --color-border-focus: #3d5af1;
+  /* --- Borders + Lines --- */
+  --color-border: #2A2A34;
+  --color-border-hover: #3f3f46;
+  --color-border-focus: #FF007A;
+  --color-divider: #1F1F28;
 
-  /* --- Status --- */
-  --color-success: #10b981;
-  --color-success-muted: rgba(16, 185, 129, 0.1);
-  --color-warning: #f59e0b;
-  --color-warning-muted: rgba(245, 158, 11, 0.1);
+  /* --- Status / Data --- */
+  --color-success: #00FFA3;
+  --color-success-muted: rgba(0, 255, 163, 0.1);
+  --color-warning: #F5A524;
+  --color-warning-muted: rgba(245, 165, 36, 0.1);
+  --color-info: #3B82F6;
+  --color-info-muted: rgba(59, 130, 246, 0.1);
+  
   /* --- Error/Status Muted --- */
   --color-error: #ef4444;
   --color-error-muted: rgba(239, 68, 68, 0.1);
 
-  /* --- Overlays (Light Mode) --- */
-  --overlay-ultralight: rgba(0, 0, 0, 0.02);
-  --overlay-ultralight-2: rgba(0, 0, 0, 0.03);
-  --overlay-light: rgba(0, 0, 0, 0.05);
-  --overlay-medium-light: rgba(0, 0, 0, 0.08);
-  --overlay-medium: rgba(0, 0, 0, 0.1);
-  --overlay-medium-strong: rgba(0, 0, 0, 0.15);
-  --overlay-strong: rgba(0, 0, 0, 0.2);
-  --overlay-half: rgba(0, 0, 0, 0.5);
-  --overlay-half-strong: rgba(0, 0, 0, 0.6);
-  --overlay-high: rgba(0, 0, 0, 0.95);
+  /* --- Overlays --- */
+  --overlay-ultralight: rgba(255, 255, 255, 0.02);
+  --overlay-ultralight-2: rgba(255, 255, 255, 0.03);
+  --overlay-light: rgba(255, 255, 255, 0.05);
+  --overlay-medium-light: rgba(255, 255, 255, 0.08);
+  --overlay-medium: rgba(255, 255, 255, 0.1);
+  --overlay-medium-strong: rgba(255, 255, 255, 0.15);
+  --overlay-strong: rgba(255, 255, 255, 0.2);
+  --overlay-half: rgba(255, 255, 255, 0.5);
+  --overlay-half-strong: rgba(255, 255, 255, 0.6);
+  --overlay-high: rgba(255, 255, 255, 0.95);
 
   /* --- Accent --- */
-  --color-accent: #0EA7CB;
-  --color-accent-muted: rgba(14, 167, 203, 0.15);
+  --color-accent: #FF007A;
+  --color-accent-muted: rgba(255, 0, 122, 0.15);
 
   /* --- Typography --- */
   --font-sans: 'Inter',
@@ -89,14 +95,15 @@
   --radius-lg: 16px;
   --radius-full: 9999px;
 
-  /* --- Shadows --- */
+  /* --- Shadows & Glows --- */
   --shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
-  --shadow-glow: 0 0 20px rgba(14, 167, 203, 0.1);
-  --shadow-glow-hover: 0 0 30px rgba(14, 167, 203, 0.2);
-
-  /* --- Transitions --- */
+  --shadow-glow: 0 0 40px rgba(255, 0, 122, 0.15);
+  --shadow-glow-hover: 0 0 50px rgba(255, 0, 122, 0.25);
+  
+  /* --- Background Glow --- */
+  --gradient-glow: radial-gradient(circle, rgba(255,0,122,0.18), transparent 60%);
   --transition-fast: 120ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-base: 250ms cubic-bezier(0.22, 1, 0.36, 1);
   --transition-slow: 400ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -109,38 +116,22 @@
 }
 
 .dark {
-  /* --- Backgrounds --- */
-  --color-bg: #09090b;
-  --color-bg-elevated: #18181b;
+  /* Force the same deep dark background for both modes to ensure premium feel */
+  --color-bg: #0B0B0F;
+  --color-bg-elevated: #121218;
 
-  /* --- Surfaces --- */
-  --color-surface: #18181b;
-  --color-surface-raised: #27272a;
-  --color-surface-hover: #27272a;
-
-  /* --- Text --- */
-  --color-text-primary: #ffffff;
-  --color-text-secondary: #a1a1aa;
-  --color-text-tertiary: #71717a;
-
-  /* --- Borders --- */
-  --color-border: #27272a;
-  --color-border-hover: #3f3f46;
-
-  /* --- Surface Dark equivalent logic --- */
+  --color-surface: #1A1A22;
+  --color-surface-raised: #20202A;
+  --color-surface-hover: #20202A;
   --color-surface-dark: #000000;
 
-  /* --- Overlays (Dark Mode) --- */
-  --overlay-ultralight: rgba(255, 255, 255, 0.02);
-  --overlay-ultralight-2: rgba(255, 255, 255, 0.03);
-  --overlay-light: rgba(255, 255, 255, 0.05);
-  --overlay-medium-light: rgba(255, 255, 255, 0.08);
-  --overlay-medium: rgba(255, 255, 255, 0.1);
-  --overlay-medium-strong: rgba(255, 255, 255, 0.15);
-  --overlay-strong: rgba(255, 255, 255, 0.2);
-  --overlay-half: rgba(255, 255, 255, 0.5);
-  --overlay-half-strong: rgba(255, 255, 255, 0.6);
-  --overlay-high: rgba(255, 255, 255, 0.95);
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #E4E4E7;
+  --color-text-tertiary: #A1A1AA;
+
+  --color-border: #2A2A34;
+  --color-border-hover: #3f3f46;
+  --color-divider: #1F1F28;
 }
 
 /* ============================================================
@@ -282,7 +273,7 @@ body::before {
 
 .card-glow:hover {
   transform: translateY(-4px) scale(1.01);
-  box-shadow: 0 20px 40px rgba(14, 167, 203, 0.1);
+  box-shadow: var(--shadow-glow-hover);
   border-color: var(--color-primary);
 }
 
@@ -325,6 +316,7 @@ body::before {
 
 .btn:active {
   transform: scale(0.98);
+  background: var(--color-primary-active);
 }
 
 .btn-primary {
@@ -404,7 +396,7 @@ body::before {
 
 .input:focus {
   border-color: var(--color-border-focus);
-  box-shadow: 0 0 0 3px rgba(14, 167, 203, 0.1);
+  box-shadow: 0 0 0 3px rgba(255, 0, 122, 0.15);
 }
 
 .input::placeholder {
@@ -553,11 +545,11 @@ body::before {
 
   0%,
   100% {
-    box-shadow: 0 0 12px rgba(14, 167, 203, 0.1);
+    box-shadow: var(--shadow-glow);
   }
 
   50% {
-    box-shadow: 0 0 24px rgba(14, 167, 203, 0.2);
+    box-shadow: var(--shadow-glow-hover);
   }
 }
 

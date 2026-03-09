@@ -63,8 +63,8 @@ export default function LandingPage() {
     }
     return Array.from({ length: 20 }).map((_, i) => {
       const r = (offset: number) => seededRandom(i * 7 + offset);
-      const color1 = r(0) > 0.5 ? '#3DC5E4' : '#0EA7CB';
-      const color2 = r(1) > 0.5 ? '#3DC5E4' : '#0EA7CB';
+      const color1 = r(0) > 0.5 ? '#FF4DA6' : '#FF007A';
+      const color2 = r(1) > 0.5 ? '#FF4DA6' : '#FF007A';
       return {
         x: [0, r(2) * 60 - 30, r(3) * -40 + 20, 0],
         y: [0, r(4) * -50 + 25, r(5) * 40 - 20, 0],
@@ -104,8 +104,8 @@ export default function LandingPage() {
       <Toaster position="top-center" reverseOrder={false} />
       {/* Background Gradients & Noise */}
       <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', pointerEvents: 'none', zIndex: 0 }}>
-        <div style={{ position: 'absolute', top: '-30%', left: '-10%', width: '60vw', height: '60vw', background: 'radial-gradient(circle, rgba(14, 167, 203, 0.15) 0%, transparent 60%)', filter: 'blur(80px)' }} />
-        <div style={{ position: 'absolute', bottom: '-20%', right: '-20%', width: '80vw', height: '80vw', background: 'radial-gradient(circle, rgba(14, 167, 203, 0.08) 0%, transparent 70%)', filter: 'blur(100px)' }} />
+        <div style={{ position: 'absolute', top: '-30%', left: '-10%', width: '60vw', height: '60vw', background: 'radial-gradient(circle, rgba(255, 0, 122, 0.15) 0%, transparent 60%)', filter: 'blur(80px)' }} />
+        <div style={{ position: 'absolute', bottom: '-20%', right: '-20%', width: '80vw', height: '80vw', background: 'radial-gradient(circle, rgba(255, 0, 122, 0.08) 0%, transparent 70%)', filter: 'blur(100px)' }} />
         <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(var(--overlay-ultralight) 1px, transparent 1px), linear-gradient(90deg, var(--overlay-ultralight) 1px, transparent 1px)', backgroundSize: '64px 64px', opacity: 0.5, maskImage: 'radial-gradient(ellipse at center, black 40%, transparent 80%)' }} />
       </div>
 
@@ -116,7 +116,7 @@ export default function LandingPage() {
         transition={{ duration: 0.8 }}
         style={{
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          padding: '20px 48px', borderBottom: `1px solid ${isLight ? 'rgba(14, 167, 203, 0.2)' : 'var(--overlay-light)'}`,
+          padding: '20px 48px', borderBottom: `1px solid ${isLight ? 'rgba(255, 0, 122, 0.2)' : 'var(--overlay-light)'}`,
           background: isLight ? 'rgba(255,255,255, 0.8)' : 'rgba(11,16,28, 0.6)', 
           backdropFilter: isLight ? 'none' : 'blur(24px)',
           position: 'sticky', top: 0, zIndex: 50,
@@ -131,8 +131,8 @@ export default function LandingPage() {
               {isConnected ? 'Connected' : 'Connect Wallet'}
             </button>
           </motion.div>
-          <motion.div whileHover={{ scale: 1.05, boxShadow: '0 8px 20px rgba(14, 167, 203, 0.4)' }} whileTap={{ scale: 0.98 }}>
-            <Link href="/dashboard" onClick={handleLaunchApp} style={{ display: 'inline-block', padding: '10px 20px', borderRadius: 8, background: '#0EA7CB', color: 'var(--color-text-primary)', textDecoration: 'none', fontWeight: 500, fontSize: 14, whiteSpace: 'nowrap' }}>
+          <motion.div whileHover={{ scale: 1.05, boxShadow: '0 8px 20px rgba(255, 0, 122, 0.4)' }} whileTap={{ scale: 0.98 }}>
+            <Link href="/dashboard" onClick={handleLaunchApp} style={{ display: 'inline-block', padding: '10px 20px', borderRadius: 8, background: '#FF007A', color: 'var(--color-text-primary)', textDecoration: 'none', fontWeight: 500, fontSize: 14, whiteSpace: 'nowrap' }}>
               Launch App
             </Link>
           </motion.div>
@@ -147,7 +147,7 @@ export default function LandingPage() {
         <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0 }}>
           <div style={{
             position: 'absolute', inset: 0,
-            backgroundImage: 'linear-gradient(rgba(14, 167, 203, 0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(14, 167, 203, 0.06) 1px, transparent 1px)',
+            backgroundImage: 'linear-gradient(rgba(255, 0, 122, 0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 0, 122, 0.06) 1px, transparent 1px)',
             backgroundSize: '48px 48px',
             maskImage: 'radial-gradient(ellipse at 70% 50%, black 20%, transparent 70%)',
           }} />
@@ -164,7 +164,7 @@ export default function LandingPage() {
           style={{
             position: 'absolute', top: '20%', right: '10%',
             width: '50vw', height: '50vw',
-            background: 'radial-gradient(circle, rgba(14, 167, 203, 0.15) 0%, rgba(14, 167, 203, 0.08) 40%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(255, 0, 122, 0.15) 0%, rgba(255, 0, 122, 0.08) 40%, transparent 70%)',
             filter: 'blur(80px)', pointerEvents: 'none', zIndex: 0,
           }}
         />
@@ -214,7 +214,7 @@ export default function LandingPage() {
             
             <motion.div 
               initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.1 }}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 100, background: 'rgba(14, 167, 203, 0.1)', border: '1px solid rgba(14, 167, 203, 0.2)', color: '#0EA7CB', fontSize: 14, fontWeight: 700, marginBottom: 32 }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 100, background: 'rgba(255, 0, 122, 0.1)', border: '1px solid rgba(255, 0, 122, 0.2)', color: '#FF007A', fontSize: 14, fontWeight: 700, marginBottom: 32 }}
             >
               <Zap size={16} /> Multi-Chain Infrastructure • Chainlink CRE
             </motion.div>
@@ -224,7 +224,7 @@ export default function LandingPage() {
               style={{ fontSize: 'clamp(48px, 6vw, 84px)', fontWeight: 800, lineHeight: 1.05, letterSpacing: '-0.04em', marginBottom: 32 }}
             >
               <span style={{ color: 'var(--overlay-high)' }}>AI-Orchestrated</span> <br />
-              <span style={{ background: 'linear-gradient(90deg, #3DC5E4, #0EA7CB)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Money Market Protocol</span>
+              <span style={{ background: 'linear-gradient(90deg, #FF4DA6, #FF007A)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Money Market Protocol</span>
             </motion.h1>
             
             <motion.p
@@ -238,8 +238,8 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4 }}
               style={{ display: 'flex', gap: 20 }}
             >
-              <motion.div whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(14, 167, 203, 0.5)' }} whileTap={{ scale: 0.98 }}>
-                <Link href="/dashboard" onClick={handleLaunchApp} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 32px', borderRadius: 12, background: '#0EA7CB', color: 'var(--color-text-primary)', fontSize: 16, fontWeight: 600, textDecoration: 'none' }}>
+              <motion.div whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(255, 0, 122, 0.5)' }} whileTap={{ scale: 0.98 }}>
+                <Link href="/dashboard" onClick={handleLaunchApp} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 32px', borderRadius: 12, background: '#FF007A', color: 'var(--color-text-primary)', fontSize: 16, fontWeight: 600, textDecoration: 'none' }}>
                   Start Optimizing <ArrowRight size={18} />
                 </Link>
               </motion.div>
@@ -265,7 +265,7 @@ export default function LandingPage() {
               style={{
                 position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
                 width: '120%', height: '120%',
-                background: 'radial-gradient(circle, rgba(14, 167, 203, 0.2) 0%, rgba(14, 167, 203, 0.1) 40%, transparent 65%)',
+                background: 'radial-gradient(circle, rgba(255, 0, 122, 0.2) 0%, rgba(255, 0, 122, 0.1) 40%, transparent 65%)',
                 filter: 'blur(40px)', pointerEvents: 'none', zIndex: 0,
               }}
             />
@@ -346,7 +346,7 @@ export default function LandingPage() {
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(400px, 1.2fr) 1fr', gap: 80, alignItems: 'center', marginBottom: 160 }}>
           <motion.div initial={{ opacity: 0, scale: 0.8, x: -50 }} whileInView={{ opacity: 1, scale: 1, x: 0 }} viewport={{ amount: 0.3 }} transition={{ duration: 0.8 }} style={{ position: 'relative' }}>
             {isLight && (
-              <div style={{ position: 'absolute', inset: -40, background: 'radial-gradient(circle, rgba(14, 167, 203, 0.08) 0%, transparent 70%)', filter: 'blur(40px)', zIndex: -1 }} />
+              <div style={{ position: 'absolute', inset: -40, background: 'radial-gradient(circle, rgba(255, 0, 122, 0.08) 0%, transparent 70%)', filter: 'blur(40px)', zIndex: -1 }} />
             )}
             <img src="/assets/illustrations/AI-FEATURE.png" alt="AI Yield Optimization" style={{ width: '100%', height: 'auto', borderRadius: 32, /* boxShadow: '0 40px 80px rgba(0,0,0,0.5)' */ }} />
           </motion.div>
@@ -362,7 +362,7 @@ export default function LandingPage() {
                 "Yield prediction: Advanced ML models forecasting APY trends and liquidity depth."
               ].map((text, i) => (
                 <li key={i} style={{ display: 'flex', alignItems: 'center', gap: 16, fontSize: 18, color: 'var(--overlay-half)', fontWeight: 500 }}>
-                  <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'rgba(14, 167, 203, 0.1)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12 }}>✓</div>
+                  <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'rgba(255, 0, 122, 0.1)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12 }}>✓</div>
                   {text}
                 </li>
               ))}
@@ -384,7 +384,7 @@ export default function LandingPage() {
                 "Liquidity routing: Automated arbitrage and yield chasing across protocols."
               ].map((text, i) => (
                 <li key={i} style={{ display: 'flex', alignItems: 'center', gap: 16, fontSize: 18, color: 'var(--overlay-half)', fontWeight: 500 }}>
-                  <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'rgba(14, 167, 203, 0.1)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12 }}>✓</div>
+                  <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'rgba(255, 0, 122, 0.1)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12 }}>✓</div>
                   {text}
                 </li>
               ))}
@@ -392,7 +392,7 @@ export default function LandingPage() {
           </motion.div>
           <motion.div initial={{ opacity: 0, scale: 0.8, x: 50 }} whileInView={{ opacity: 1, scale: 1, x: 0 }} viewport={{ amount: 0.3 }} transition={{ duration: 0.8 }} style={{ position: 'relative' }}>
             {isLight && (
-              <div style={{ position: 'absolute', inset: -40, background: 'radial-gradient(circle, rgba(14, 167, 203, 0.08) 0%, transparent 70%)', filter: 'blur(40px)', zIndex: -1 }} />
+              <div style={{ position: 'absolute', inset: -40, background: 'radial-gradient(circle, rgba(255, 0, 122, 0.08) 0%, transparent 70%)', filter: 'blur(40px)', zIndex: -1 }} />
             )}
             <img src="/assets/illustrations/CROSS-CHAIN.png" alt="Cross-Chain Liquidity" style={{ width: '100%', height: 'auto', borderRadius: 32, /* boxShadow: '0 40px 80px rgba(0,0,0,0.5)' */ }} />
           </motion.div>
@@ -432,7 +432,7 @@ export default function LandingPage() {
         initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 1 }}
         style={{ position: 'relative', padding: '100px 0', borderTop: '1px solid var(--overlay-light)', borderBottom: '1px solid var(--overlay-light)', overflow: 'hidden' }}
       >
-        <div style={{ position: 'absolute', top: 0, bottom: 0, left: '50%', right: 0, background: 'radial-gradient(ellipse at right, rgba(14, 167, 203, 0.15) 0%, transparent 70%)', zIndex: 0 }} />
+        <div style={{ position: 'absolute', top: 0, bottom: 0, left: '50%', right: 0, background: 'radial-gradient(ellipse at right, rgba(255, 0, 122, 0.15) 0%, transparent 70%)', zIndex: 0 }} />
         
         <div style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: 'minmax(480px, 1fr) 1fr', gap: 100, alignItems: 'center', padding: '0 24px', position: 'relative', zIndex: 10 }}>
           <motion.div initial={{ x: -50, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
@@ -452,7 +452,7 @@ export default function LandingPage() {
                 { icon: <Cpu size={28} />, title: "Functions & Automation", desc: "Fetching off-chain AI ML inferences with zero-downtime execution." }
               ].map((item, i) => (
                 <div key={i} style={{ display: 'flex', gap: 20, alignItems: 'flex-start' }}>
-                  <div style={{ width: 56, height: 56, borderRadius: 16, background: 'rgba(14, 167, 203, 0.15)', color: '#3DC5E4', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: '1px solid rgba(14, 167, 203, 0.3)' }}>
+                  <div style={{ width: 56, height: 56, borderRadius: 16, background: 'rgba(255, 0, 122, 0.15)', color: '#FF4DA6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: '1px solid rgba(255, 0, 122, 0.3)' }}>
                     {item.icon}
                   </div>
                   <div>
@@ -471,7 +471,7 @@ export default function LandingPage() {
               height: 600, 
               borderRadius: 40, 
               background: isLight 
-                ? 'linear-gradient(135deg, rgba(14, 167, 203, 0.02) 0%, rgba(255,255,255,0.01) 100%)' 
+                ? 'linear-gradient(135deg, rgba(255, 0, 122, 0.02) 0%, rgba(255,255,255,0.01) 100%)' 
                 : 'transparent',
               border: isLight ? '1px solid rgba(0,0,0,0.05)' : 'none',
               overflow: 'hidden', 
@@ -487,12 +487,12 @@ export default function LandingPage() {
             <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(var(--overlay-ultralight-2) 1px, transparent 1px), linear-gradient(90deg, var(--overlay-ultralight-2) 1px, transparent 1px)', backgroundSize: '80px 80px', opacity: 1 }} />
             
             {/* Rotating rings */}
-            <motion.div animate={{ rotate: 360 }} transition={{ duration: 60, repeat: Infinity, ease: "linear" }} style={{ position: 'absolute', width: 500, height: 500, border: '1px solid rgba(14, 167, 203, 0.3)', borderRadius: '50%', boxShadow: '0 0 40px rgba(14, 167, 203, 0.1)' }} />
+            <motion.div animate={{ rotate: 360 }} transition={{ duration: 60, repeat: Infinity, ease: "linear" }} style={{ position: 'absolute', width: 500, height: 500, border: '1px solid rgba(255, 0, 122, 0.3)', borderRadius: '50%', boxShadow: '0 0 40px rgba(255, 0, 122, 0.1)' }} />
             <motion.div animate={{ rotate: -360 }} transition={{ duration: 80, repeat: Infinity, ease: "linear" }} style={{ position: 'absolute', width: 340, height: 340, border: '1px dashed var(--overlay-medium-strong)', borderRadius: '50%' }} />
             
             {/* Premium center node */}
             <motion.div animate={{ y: [-15, 15, -15] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} style={{ position: 'relative', padding: 32, borderRadius: 32, background: 'var(--overlay-light)', backdropFilter: 'blur(32px)', border: '1px solid var(--overlay-medium)', boxShadow: '0 30px 60px rgba(0,0,0,0.6)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
-              <div style={{ width: 80, height: 80, borderRadius: 20, background: 'linear-gradient(135deg, #0EA7CB, #3DC5E4)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 60px rgba(14, 167, 203, 0.8)' }}>
+              <div style={{ width: 80, height: 80, borderRadius: 20, background: 'linear-gradient(135deg, #FF007A, #FF4DA6)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 60px rgba(255, 0, 122, 0.8)' }}>
                  <Network size={40} color="#fff" />
               </div>
               <div style={{ textAlign: 'center' }}>
@@ -503,7 +503,7 @@ export default function LandingPage() {
 
             {/* Satellites */}
             <motion.div style={{ position: 'absolute', width: 16, height: 16, borderRadius: '50%', background: '#fff', boxShadow: '0 0 24px #fff' }} animate={{ x: [0, 250, 0, -250, 0], y: [-250, 0, 250, 0, -250] }} transition={{ duration: 10, repeat: Infinity, ease: "linear" }} />
-            <motion.div style={{ position: 'absolute', width: 12, height: 12, borderRadius: '50%', background: '#0EA7CB', boxShadow: '0 0 20px #0EA7CB' }} animate={{ x: [0, -170, 0, 170, 0], y: [170, 0, -170, 0, 170] }} transition={{ duration: 8, repeat: Infinity, ease: "linear" }} />
+            <motion.div style={{ position: 'absolute', width: 12, height: 12, borderRadius: '50%', background: '#FF007A', boxShadow: '0 0 20px #FF007A' }} animate={{ x: [0, -170, 0, 170, 0], y: [170, 0, -170, 0, 170] }} transition={{ duration: 8, repeat: Infinity, ease: "linear" }} />
           </motion.div>
         </div>
       </motion.section>
@@ -522,8 +522,8 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} whileHover={{ y: -16, transition: { duration: 0.3 } }}
             style={{ position: 'relative', padding: 40, borderRadius: 40, background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)', border: '1px solid var(--overlay-medium-light)', overflow: 'hidden', boxShadow: '0 40px 80px rgba(0,0,0,0.3)' }}
           >
-            <div style={{ position: 'absolute', top: -150, right: -150, width: 400, height: 400, background: 'radial-gradient(circle, rgba(14, 167, 203, 0.2) 0%, transparent 60%)', filter: 'blur(60px)' }} />
-            <div style={{ display: 'inline-flex', alignItems: 'center', padding: '8px 20px', borderRadius: 100, background: 'rgba(14, 167, 203, 0.1)', color: '#0EA7CB', fontSize: 13, fontWeight: 700, letterSpacing: '0.05em', marginBottom: 24 }}>HTTP 402 STANDARD</div>
+            <div style={{ position: 'absolute', top: -150, right: -150, width: 400, height: 400, background: 'radial-gradient(circle, rgba(255, 0, 122, 0.2) 0%, transparent 60%)', filter: 'blur(60px)' }} />
+            <div style={{ display: 'inline-flex', alignItems: 'center', padding: '8px 20px', borderRadius: 100, background: 'rgba(255, 0, 122, 0.1)', color: '#FF007A', fontSize: 13, fontWeight: 700, letterSpacing: '0.05em', marginBottom: 24 }}>HTTP 402 STANDARD</div>
             <h3 style={{ fontSize: 36, fontWeight: 800, color: 'var(--color-text-primary)', marginBottom: 24, letterSpacing: '-0.02em' }}>x402 Inference Payments</h3>
             <p style={{ color: 'var(--overlay-half)', fontSize: 18, lineHeight: 1.7 }}>
               A crypto-native HTTP payment standard resurrecting the HTTP 402 "Payment Required" code. When our protocol queries an AI model, it natively settles the microtransaction instantly via USDC.
@@ -587,7 +587,7 @@ export default function LandingPage() {
           <div style={{ width: '100%', height: 1, background: 'var(--overlay-light)', marginBottom: 24 }} />
           
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
-            <p style={{ color: isLight ? 'rgba(14, 167, 203, 0.6)' : 'rgba(255,255,255,0.3)', fontSize: 14, margin: 0 }}>
+            <p style={{ color: isLight ? 'rgba(255, 0, 122, 0.6)' : 'rgba(255,255,255,0.3)', fontSize: 14, margin: 0 }}>
               © {new Date().getFullYear()} AION Yield Protocol. Built for Chainlink Convergence.
             </p>
             <div style={{ display: 'flex', gap: 32 }}>
@@ -603,7 +603,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, scale: 0.5, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.5, y: 20 }}
-            whileHover={{ scale: 1.1, backgroundColor: '#0C8EA9' }}
+            whileHover={{ scale: 1.1, backgroundColor: '#E6006E' }}
             whileTap={{ scale: 0.9 }}
             onClick={scrollToTop}
             style={{
@@ -613,7 +613,7 @@ export default function LandingPage() {
               width: '50px',
               height: '50px',
               borderRadius: '50%',
-              background: '#0EA7CB',
+              background: '#FF007A',
               color: 'white',
               border: 'none',
               cursor: 'pointer',

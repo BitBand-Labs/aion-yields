@@ -247,7 +247,7 @@ export default function BorrowPage() {
               initial={{ width: 0 }}
               animate={{ width: `${utilization}%` }}
               transition={{ duration: 1.2, ease: 'circOut' }}
-              style={{ height: '100%', background: 'linear-gradient(90deg, var(--color-primary), var(--color-primary-light))', boxShadow: '0 0 15px rgba(14, 167, 203, 0.4)', borderRadius: 6 }}
+              style={{ height: '100%', background: 'linear-gradient(90deg, var(--color-primary), var(--color-primary-light))', boxShadow: '0 0 15px rgba(255, 0, 122, 0.4)', borderRadius: 6 }}
             />
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -405,7 +405,7 @@ export default function BorrowPage() {
 
             <motion.div
               variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
-              style={{ padding: 24, borderRadius: 'var(--radius-lg)', background: 'rgba(14, 167, 203, 0.03)', border: '1px dashed var(--color-primary-muted)' }}
+              style={{ padding: 24, borderRadius: 'var(--radius-lg)', background: 'rgba(255, 0, 122, 0.03)', border: '1px dashed var(--color-primary-muted)' }}
             >
               <h4 style={{ fontSize: 14, fontWeight: 700, margin: '0 0 12px', color: 'var(--color-text-primary)' }}>Did you know?</h4>
               <p style={{ fontSize: 13, color: 'var(--color-text-secondary)', lineHeight: 1.6, margin: 0 }}>
