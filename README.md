@@ -61,92 +61,53 @@ graph TD
 
 ---
 
-## Dual Ecosystem Integration
+## How the Protocol Works
 
-AION Yield is uniquely positioned at the intersection of **Chainlink** infrastructure and **Avalanche** performance.
+### 1. Lending & Borrowing
 
-### Avalanche Ecosystem (The Execution Layer)
+At its core, AION Yield is a decentralized money market. Users deposit assets (USDC) into the **LendingPool** and receive interest-bearing **aTokens** that automatically grow in value as borrowers pay interest. Borrowers post collateral and take loans against it, paying a variable borrow rate.
 
-AION Yield is an AI-native DeFi automation layer built on Avalanche.
+The protocol tracks every position's **health factor** — the ratio of collateral value to debt value. If a borrower's health factor drops below 1.0 (meaning their collateral no longer safely covers their debt), their position becomes eligible for liquidation. **Chainlink Automation** continuously monitors all positions and triggers liquidations when needed, ensuring the protocol stays solvent.
 
-| Integration | Role in AION Yield (MVP vs Future) | Purpose |
-|-------------|------------------------------------|---------|
-| **Avalanche C-Chain** | Core MVP | Where the smart contracts (Vaults, AI Routing) live. Chosen for EVM compatibility, fast finality, and existing DeFi liquidity. |
-| **Avalanche Warp Messaging** | Core MVP | Cross-chain AI agent coordination. Allows AI to trigger rebalance on C-Chain and execute on specialized subnets. |
-| **Avalanche Subnet (AION Subnet)** | Phase 2 (Advanced) | Dedicated execution network for high-frequency AI strategy execution with predictable gas. |
-| **Avalanche Bridge** | Phase 2 (Advanced) | Allows AION Yield to source and deploy liquidity from external ecosystems (Ethereum, etc.). |
+Asset prices are sourced from **Chainlink Data Feeds**, providing reliable, tamper-resistant pricing with staleness checks and fallback logic.
 
----
+### 2. AI-Powered Rate Optimization
 
-## Chainlink Integration (The Intelligence Layer)
+This is what makes AION different from static lending protocols. Instead of fixed interest rate parameters, an AI engine (Anthropic Claude) continuously analyzes market conditions and recommends optimal rate curve adjustments.
 
-AION Yield uses **five Chainlink services** plus **Avalanche Warp Messaging** as the backbone of its autonomous operation. Every link below points to the exact contract and function where the integration lives.
+The AI engine reads live on-chain data — current utilization, supply/borrow volumes, liquidity depth — and benchmarks AION's rates against competitors like Aave V3 and Compound using DeFi Llama data. It then recommends adjustments to four key parameters: `baseRate`, `slope1` (normal borrowing zone), `slope2` (penalty zone above optimal utilization), and `optimalUtilization` (the kink point). These recommendations are applied on-chain through the **AIYieldEngine**, which updates the LendingPool's interest rate curve in real time.
 
-### CRE — Compute Runtime Environment (Core Orchestrator)
+### 3. Autonomous Orchestration (Chainlink CRE)
 
-The CRE workflow is the autonomous loop that ties everything together: gather on-chain data → run AI inference off-chain → apply results on-chain.
+The **CRE (Compute Runtime Environment)** is the autonomous loop that makes this work without human intervention. It operates in three phases:
 
-| Function | What It Does |
-|----------|-------------|
-| [`executePreHook()`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/CREExecutionHook.sol#L214) | Reads LendingPool reserves, prices, and allocator state; encodes it as `preHookData` for off-chain compute |
-| [`executePostHook()`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/CREExecutionHook.sol#L279) | Decodes AI results, routes to AIYieldEngine for rate adjustment or allocation rebalance |
+- **Analyze:** The CREExecutionHook gathers on-chain state — reserve data, prices, allocator positions — and packages it for off-chain processing.
+- **Validate:** AI recommendations pass through the **ACE (Automated Compliance Engine)** before execution. This on-chain policy framework enforces guardrails: EIP-712 signed certificates must authorize each action, and volume/rate limits prevent any single action from exceeding 10% of TVL or 5 actions per hour.
+- **Execute:** Approved recommendations are applied on-chain — rate parameters updated, liquidity rebalanced across protocols, or risk alerts triggered.
 
-**5 Workflow Types:** AI Rate Adjustment, Liquidation Scan, Cross-Chain Rebalance, Risk Monitoring, Yield Allocation
+The CRE supports five workflow types: AI Rate Adjustment, Liquidation Scanning, Cross-Chain Rebalance, Risk Monitoring, and Yield Allocation.
 
-### Avalanche Warp Messaging (Teleporter/ICM) — Cross-Chain
+### 4. Cross-Chain Deposits (Avalanche Warp Messaging)
 
-Enables cross-chain deposits between Sepolia and Avalanche Fuji using **Avalanche Teleporter** with a **Lock & Message** pattern. Tokens are locked on the source chain, a Warp message is sent via Teleporter, and the destination vault deposits from its pre-funded reserves into the LendingPool for the user.
+Users on Ethereum Sepolia can deposit directly into the Avalanche Fuji LendingPool without manually bridging tokens. The **CrossChainVault** uses Avalanche's native Warp Messaging (via Teleporter/ICM) with a **Lock & Message** pattern:
 
-| Function | What It Does |
-|----------|-------------|
-| [`depositCrossChain()`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/CrossChainVault.sol#L94) | Locks user tokens on source chain, sends Teleporter message with `(user, token, amount)` |
-| [`receiveTeleporterMessage()`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/CrossChainVault.sol#L158) | Receives Warp message on destination, maps token, deposits from vault reserves into LendingPool for user |
+1. User calls `depositCrossChain()` on the source chain vault
+2. Tokens are locked on the source chain
+3. A Warp message is sent via Teleporter (no LINK fees, validator-secured)
+4. The destination vault receives the message and auto-deposits from its pre-funded reserves into the LendingPool
+5. User immediately starts earning supply APY on the destination chain
 
-### Chainlink Functions — Off-Chain AI Inference
+This approach was chosen over CCIP because it provides native Avalanche integration with fast finality and zero bridging fees.
 
-Secure bridge between on-chain contracts and the Python AI engine running Anthropic Claude.
+### 5. AI Agent Economy
 
-| Function | What It Does |
-|----------|-------------|
-| [`sendRequest()`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/ChainlinkFunctionsConsumer.sol#L146) | Submits JavaScript source + encoded market data to Chainlink DON for execution |
-| [`fulfillRequest()`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/ChainlinkFunctionsConsumer.sol#L198) | Callback with AI inference result; parses into `InferenceResult` and forwards to AIYieldEngine |
-
-### Chainlink Automation — Liquidation Watchdog
-
-Decentralized upkeep that monitors positions and triggers liquidations when health factors drop below 1.0.
-
-| Function | What It Does |
-|----------|-------------|
-| [`checkUpkeep()`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/LiquidationAutomation.sol#L82) | Scans monitored positions for undercollateralization |
-| [`performUpkeep()`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/LiquidationAutomation.sol#L135) | Executes liquidation on unhealthy positions |
-
-### Chainlink Data Feeds — Price Oracle
-
-Multi-source price data with staleness checks and fallback logic.
-
-| Function | What It Does |
-|----------|-------------|
-| [`getAssetPrice()`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/chainlink/ChainlinkPriceOracle.sol#L110) | Fetches price from Chainlink AggregatorV3Interface with validity checks |
-
-### ACE — Automated Compliance Engine (AI Guardrails)
-
-On-chain policy framework that validates every AI action before execution. Prevents rogue agents from draining or manipulating the protocol.
-
-| Function | What It Does |
-|----------|-------------|
-| [`PolicyEngine.validateAction()`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/ace/PolicyEngine.sol#L168) | Central router — loops through all registered policies for a given target+selector |
-| [`CertifiedActionValidatorPolicy.submitCertificate()`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/ace/CertifiedActionValidatorPolicy.sol#L135) | Registers EIP-712 signed certificates authorizing specific AI actions |
-| [`CertifiedActionValidatorPolicy.validate()`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/ace/CertifiedActionValidatorPolicy.sol#L191) | Verifies the action has a valid, non-expired, non-replayed certificate from an authorized signer |
-| [`VolumeRatePolicy.validate()`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/ace/VolumeRatePolicy.sol#L148) | Enforces per-action (10% TVL max), cumulative (500k USDC/window), and frequency (5 actions/hour) limits |
-| [`VolumeRatePolicy.postExecutionUpdate()`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/ace/VolumeRatePolicy.sol#L208) | Updates rolling window state after successful execution |
-
-**Policy types:** Certificate validation (stateless, signature check) + Volume/rate limits (stateful, sliding window)
+AION implements an **ERC-8004-inspired agent registry** where AI agents must register, stake tokens, and maintain reputation scores to participate. This creates accountability — agents that produce bad recommendations can be slashed. The **x402 payment protocol** handles micropayments for each AI inference, with revenue distributed through the AIRevenueDistributor: 70% to the agent pool, 15% as top-agent bonuses, 10% to the community, and 5% to the protocol reserve.
 
 ---
 
 ## CRE Workflow — End-to-End Flow
 
-This is how the autonomous optimization loop works:
+The diagram below shows a single pass of the autonomous optimization loop — from data gathering through AI analysis to on-chain execution:
 
 ```mermaid
 sequenceDiagram
@@ -181,21 +142,9 @@ sequenceDiagram
 
 ---
 
-## On-Chain Compliance — ACE (Automated Compliance Engine)
-
-Every AI action passes through ACE before execution. This prevents rogue AI agents from draining or manipulating the protocol.
-
-| Contract | Key Function | Purpose |
-|----------|-------------|---------|
-| [`PolicyEngine`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/ace/PolicyEngine.sol#L168) | `validateAction()` | Routes validation to registered policies |
-| [`CertifiedActionValidatorPolicy`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/ace/CertifiedActionValidatorPolicy.sol#L191) | `validate()` | Requires EIP-712 signed certificate from authorized signer |
-| [`VolumeRatePolicy`](https://github.com/ChainNomads/AION-Yield/blob/main/smartcontract/contracts/ace/VolumeRatePolicy.sol#L148) | `validate()` | Enforces per-action (10% TVL), cumulative (500k USDC/window), and frequency (5 actions/hour) limits |
-
----
-
 ## AI Engine (Off-Chain)
 
-A Python FastAPI server that reads on-chain data and uses Anthropic Claude to produce rate and allocation recommendations.
+The AI engine is a Python FastAPI server that serves as the intelligence layer. It reads live on-chain data from both Avalanche Fuji and Ethereum Sepolia, fetches competitive APY data from DeFi Llama, and uses Anthropic Claude to produce actionable rate and allocation recommendations.
 
 ```mermaid
 flowchart LR
@@ -227,7 +176,9 @@ flowchart LR
 
 ---
 
-## Cross-Chain Deposits (Avalanche Warp Messaging)
+## Cross-Chain Deposits
+
+Users on one chain can deposit directly into another chain's LendingPool using Avalanche's native Warp Messaging. No manual bridging required.
 
 ```mermaid
 sequenceDiagram
@@ -281,7 +232,7 @@ Borrow Rate
 ```
 ├── smartcontract/           # Hardhat v3, Solidity contracts
 │   ├── contracts/
-│   │   ├── chainlink/       # CRE, CCIP, Functions, Automation, Price Feeds
+│   │   ├── chainlink/       # CRE, Teleporter, Functions, Automation, Price Feeds
 │   │   ├── core/            # LendingPool, InterestRateModel, Governance
 │   │   ├── ace/             # PolicyEngine, CertifiedAction, VolumeRate
 │   │   ├── ai/              # AIYieldEngine, AutonomousAllocator, AgentRegistry
