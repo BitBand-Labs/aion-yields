@@ -47,3 +47,4 @@ Thumbs.db
 
 # Compilation Errors/Logs
 *.txt
+!hackathon-submission-answers.txt
