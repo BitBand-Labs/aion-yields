@@ -326,4 +326,4 @@ cd frontend && npm install && npm run dev
 
 ---
 
-## Team: BitBand-Labs
+## Team: AION-YIELD
