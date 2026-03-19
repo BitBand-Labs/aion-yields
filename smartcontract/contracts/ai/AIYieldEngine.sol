@@ -6,32 +6,31 @@ import "../ace/PolicyProtected.sol";
 
 /**
  * @title AIYieldEngine
- * @author ChainNomads (AION Yield)
+ * @author ChainNomads (AION Finance)
  * @notice AI-driven yield optimization engine integrated with Chainlink CRE and Functions.
  *
- * @dev This contract serves as the on-chain coordinator for AI-driven yield optimization.
- *      It handles TWO modes of optimization:
+ * @dev On-chain coordinator for AI-driven yield optimization. Two modes:
  *
- *      MODE 1 — RATE OPTIMIZATION (Internal):
- *        Adjusts interest rate curves within the AION LendingPool.
+ *      MODE 1 - ALLOCATION OPTIMIZATION:
+ *        AI recommends how to distribute capital across strategies via the
+ *        AutonomousAllocator, which calls vault.updateDebt() per strategy.
  *
- *      MODE 2 — ALLOCATION OPTIMIZATION (Cross-Protocol):
- *        Routes AI allocation decisions to the AutonomousAllocator, which moves
- *        liquidity across external protocols (Aave, Morpho) for maximum yield.
+ *      MODE 2 - HARVEST RECOMMENDATION:
+ *        AI recommends which strategies should be harvested (processReport).
  *
  *      AI WORKFLOW:
  *      ┌─────────────┐     ┌──────────┐     ┌─────────────────┐     ┌────────────┐
- *      │ Trigger      │ ──→ │ CRE      │ ──→ │ Chainlink       │ ──→ │ AI Model   │
+ *      │ Trigger      │ --> │ CRE      │ --> │ Chainlink       │ --> │ AI Model   │
  *      │ (Automation) │     │ Workflow  │     │ Functions       │     │ (Off-chain)│
  *      └─────────────┘     └──────────┘     └─────────────────┘     └────────────┘
- *            ↑                                                              │
- *            │                          ┌─────────────────────────────────────┘
- *            │                          ↓
+ *            ^                                                              │
+ *            │                          ┌───────────────────────────────────┘
+ *            │                          v
  *      ┌─────────────┐     ┌──────────────────────┐     ┌─────────────────────┐
- *      │ LendingPool  │ ←── │ This Contract         │ ──→ │ Autonomous         │
- *      │ Rate Update  │     │ (AI Yield Engine)     │     │ Allocator          │
- *      └─────────────┘     └──────────────────────┘     │  → Aave V3          │
- *                                                        │  → Morpho Blue     │
+ *      │ AionVault    │ <-- │ This Contract         │ --> │ Autonomous         │
+ *      │ processReport│     │ (AI Yield Engine)     │     │ Allocator          │
+ *      └─────────────┘     └──────────────────────┘     │  -> StrategyAave   │
+ *                                                        │  -> StrategyCurve  │
  *                                                        └─────────────────────┘
  */
 contract AIYieldEngine is Ownable, PolicyProtected {
@@ -39,11 +38,11 @@ contract AIYieldEngine is Ownable, PolicyProtected {
     //                      STORAGE
     // ============================================================
 
-    /// @dev The lending pool to apply AI recommendations to
-    address public lendingPool;
-
-    /// @dev The AutonomousAllocator for cross-protocol allocation
+    /// @dev The AutonomousAllocator for strategy allocation
     address public autonomousAllocator;
+
+    /// @dev The AionVault for harvest operations
+    address public aionVault;
 
     /// @dev Authorized CRE workflow addresses (who can submit AI results)
     mapping(address => bool) public authorizedCallers;
@@ -54,15 +53,9 @@ contract AIYieldEngine is Ownable, PolicyProtected {
     /// @dev Latest prediction per asset
     mapping(address => YieldPrediction) public latestPrediction;
 
-    /// @dev AI-recommended rate parameters per asset
-    mapping(address => RecommendedRates) public aiRecommendedRates;
-
     /// @dev AI-recommended allocation per asset
     mapping(address => AllocationRecommendation)
         public aiRecommendedAllocations;
-
-    /// @dev Whether AI rate adjustments are enabled
-    bool public aiAdjustmentsEnabled;
 
     /// @dev Whether AI allocation adjustments are enabled
     bool public aiAllocationEnabled;
@@ -70,36 +63,24 @@ contract AIYieldEngine is Ownable, PolicyProtected {
     /// @dev Minimum confidence threshold for applying AI recommendations (0-10000 bps)
     uint256 public minConfidenceThreshold = 7000; // 70%
 
-    /// @dev Maximum rate deviation allowed from current rates (bps)
-    uint256 public maxRateDeviation = 2000; // 20%
-
     // ============================================================
     //                     DATA TYPES
     // ============================================================
 
     struct YieldPrediction {
-        address asset; // Target asset
-        uint256 predictedAPY; // AI-predicted APY (RAY)
-        uint256 riskScore; // Risk level (0-10000)
-        uint256 confidence; // Confidence level (0-10000)
-        uint256 timestamp; // When prediction was made
-        address agentId; // Which AI agent made this
-        bytes32 proofHash; // Hash of the prediction proof (for verification)
-    }
-
-    struct RecommendedRates {
-        uint256 baseRate; // Recommended base rate (RAY)
-        uint256 rateSlope1; // Recommended slope 1 (RAY)
-        uint256 rateSlope2; // Recommended slope 2 (RAY)
-        uint256 optimalUtilization; // Recommended optimal utilization (RAY)
-        uint256 lastUpdateTime; // When this was last updated
-        bool isApplied; // Whether this has been applied to the pool
+        address asset;
+        uint256 predictedAPY;  // AI-predicted APY (RAY)
+        uint256 riskScore;     // Risk level (0-10000)
+        uint256 confidence;    // Confidence level (0-10000)
+        uint256 timestamp;
+        address agentId;       // Which AI agent made this
+        bytes32 proofHash;     // Hash of the prediction proof
     }
 
     struct AllocationRecommendation {
         address asset;
-        uint256[] protocolIndices;
-        uint256[] allocationBps;
+        address[] strategies;       // Strategy addresses
+        uint256[] targetDebts;      // Target debt for each strategy
         uint256 confidence;
         bytes32 proofHash;
         uint256 timestamp;
@@ -118,16 +99,6 @@ contract AIYieldEngine is Ownable, PolicyProtected {
         address indexed agentId
     );
 
-    event RatesRecommended(
-        address indexed asset,
-        uint256 baseRate,
-        uint256 rateSlope1,
-        uint256 rateSlope2,
-        uint256 optimalUtilization
-    );
-
-    event RatesApplied(address indexed asset, uint256 timestamp);
-
     event AllocationRecommended(
         address indexed asset,
         uint256 confidence,
@@ -136,7 +107,8 @@ contract AIYieldEngine is Ownable, PolicyProtected {
 
     event AllocationApplied(address indexed asset, uint256 timestamp);
 
-    event AIAdjustmentsToggled(bool enabled);
+    event HarvestTriggered(address indexed strategy, uint256 timestamp);
+
     event AIAllocationToggled(bool enabled);
 
     // ============================================================
@@ -145,9 +117,9 @@ contract AIYieldEngine is Ownable, PolicyProtected {
 
     constructor(
         address initialOwner,
-        address lendingPool_
+        address aionVault_
     ) Ownable(initialOwner) {
-        lendingPool = lendingPool_;
+        aionVault = aionVault_;
     }
 
     // ============================================================
@@ -164,27 +136,10 @@ contract AIYieldEngine is Ownable, PolicyProtected {
 
     // ============================================================
     //        CRE CALLBACK: RECEIVE AI PREDICTION
-    //   (Called by Chainlink CRE after AI model execution)
     // ============================================================
 
     /**
      * @notice Receives a yield prediction from the AI model via Chainlink CRE/Functions.
-     * @dev This is the callback function that Chainlink CRE calls after completing
-     *      the AI inference workflow.
-     *
-     *      CRE Workflow:
-     *      1. Automation trigger → CRE starts workflow
-     *      2. CRE calls Chainlink Functions with market data
-     *      3. Functions calls off-chain AI model
-     *      4. AI model returns prediction
-     *      5. CRE calls this function with the result
-     *
-     * @param asset The asset the prediction is for
-     * @param predictedAPY The AI-predicted optimal APY (RAY precision)
-     * @param riskScore Risk assessment (0-10000 bps)
-     * @param confidence Confidence level (0-10000 bps)
-     * @param agentId The AI agent that made this prediction
-     * @param proofHash Verification hash for the prediction
      */
     function receivePrediction(
         address asset,
@@ -217,111 +172,39 @@ contract AIYieldEngine is Ownable, PolicyProtected {
     }
 
     // ============================================================
-    //    RATE RECOMMENDATION (AI → Protocol Rate Adjustment)
+    //  ALLOCATION RECOMMENDATION (AI -> Strategy Debt Allocation)
     // ============================================================
 
     /**
-     * @notice Submits AI-recommended rate parameters for an asset.
-     * @dev Called by the CRE workflow after the AI model determines optimal rates.
-     *      Rates are stored but not applied until explicitly approved or auto-applied
-     *      if AI adjustments are enabled and confidence threshold is met.
-     */
-    function submitRateRecommendation(
-        address asset,
-        uint256 baseRate,
-        uint256 rateSlope1,
-        uint256 rateSlope2,
-        uint256 optimalUtilization,
-        uint256 confidence
-    ) external onlyAuthorized policyCheck(abi.encode(keccak256(abi.encode(asset, baseRate, rateSlope1, rateSlope2)))) {
-        aiRecommendedRates[asset] = RecommendedRates({
-            baseRate: baseRate,
-            rateSlope1: rateSlope1,
-            rateSlope2: rateSlope2,
-            optimalUtilization: optimalUtilization,
-            lastUpdateTime: block.timestamp,
-            isApplied: false
-        });
-
-        emit RatesRecommended(
-            asset,
-            baseRate,
-            rateSlope1,
-            rateSlope2,
-            optimalUtilization
-        );
-
-        // Auto-apply if enabled and confidence threshold met
-        if (aiAdjustmentsEnabled && confidence >= minConfidenceThreshold) {
-            _applyRecommendedRates(asset);
-        }
-    }
-
-    /**
-     * @notice Manually apply the latest AI-recommended rates for an asset.
-     * @dev Can be called by owner to manually approve AI recommendations.
-     */
-    function applyRecommendedRates(address asset) external onlyOwner {
-        _applyRecommendedRates(asset);
-    }
-
-    /**
-     * @notice Internal function to apply recommended rates to the lending pool.
-     */
-    function _applyRecommendedRates(address asset) internal {
-        RecommendedRates storage rates = aiRecommendedRates[asset];
-        require(rates.lastUpdateTime > 0, "No recommendation available");
-        require(!rates.isApplied, "Already applied");
-
-        // Call LendingPool to update rate parameters
-        ILendingPoolForAI(lendingPool).aiAdjustRateParams(
-            asset,
-            rates.baseRate,
-            rates.rateSlope1,
-            rates.rateSlope2,
-            rates.optimalUtilization
-        );
-
-        rates.isApplied = true;
-
-        emit RatesApplied(asset, block.timestamp);
-    }
-
-    // ============================================================
-    //  ALLOCATION RECOMMENDATION (AI → Cross-Protocol Rebalance)
-    // ============================================================
-
-    /**
-     * @notice Submits AI-recommended allocation across protocols for an asset.
-     * @dev Called by the CRE workflow after the AI model scans Aave, Morpho, etc.
-     *      and determines the optimal percentage split.
+     * @notice Submits AI-recommended allocation across strategies for an asset.
+     * @dev Called by the CRE workflow after AI determines optimal strategy debt levels.
      *
-     *      Example: AI decides 50% AION Pool, 30% Aave, 20% Morpho
-     *      protocolIndices = [0, 1, 2]
-     *      allocationBps   = [5000, 3000, 2000]
+     *      Example: AI decides StrategyAave should hold $2M, StrategyCurve $1M
+     *      strategies  = [strategyAave, strategyCurve]
+     *      targetDebts = [2_000_000e6, 1_000_000e6]
      *
-     * @param asset The asset to allocate
-     * @param protocolIndices Ordered list of protocol indices in the Allocator
-     * @param allocationBps Corresponding allocation percentages (must sum to 10000)
+     * @param asset The asset being allocated
+     * @param strategies_ Ordered list of strategy addresses
+     * @param targetDebts Target debt for each strategy
      * @param confidence AI confidence in this allocation (0-10000)
      * @param proofHash Verification hash from the AI model
      */
     function submitAllocationRecommendation(
         address asset,
-        uint256[] calldata protocolIndices,
-        uint256[] calldata allocationBps,
+        address[] calldata strategies_,
+        uint256[] calldata targetDebts,
         uint256 confidence,
         bytes32 proofHash
     ) external onlyAuthorized policyCheck(abi.encode(proofHash)) {
         require(
-            protocolIndices.length == allocationBps.length,
+            strategies_.length == targetDebts.length,
             "Array length mismatch"
         );
 
         aiRecommendedAllocations[asset] = AllocationRecommendation({
             asset: asset,
-            protocolIndices: protocolIndices,
-            allocationBps: allocationBps,
+            strategies: strategies_,
+            targetDebts: targetDebts,
             confidence: confidence,
             proofHash: proofHash,
             timestamp: block.timestamp,
@@ -330,9 +213,7 @@ contract AIYieldEngine is Ownable, PolicyProtected {
 
         emit AllocationRecommended(asset, confidence, proofHash);
 
-        // Auto-apply if enabled and confidence threshold met.
-        // Wrapped in try/catch so the recommendation is always recorded,
-        // even if downstream execution fails (e.g. allocator cooldown, missing adapters).
+        // Auto-apply if enabled and confidence threshold met
         if (aiAllocationEnabled && confidence >= minConfidenceThreshold) {
             try this.executeAllocationInternal(asset) {} catch {}
         }
@@ -340,7 +221,6 @@ contract AIYieldEngine is Ownable, PolicyProtected {
 
     /**
      * @notice External entry point for try/catch self-call during auto-apply.
-     * @dev Only callable by this contract itself.
      */
     function executeAllocationInternal(address asset) external {
         require(msg.sender == address(this), "Only self-call");
@@ -355,7 +235,7 @@ contract AIYieldEngine is Ownable, PolicyProtected {
     }
 
     /**
-     * @notice Internal function to apply recommended allocation to the AutonomousAllocator.
+     * @notice Internal: apply recommended allocation via AutonomousAllocator.
      */
     function _applyRecommendedAllocation(address asset) internal {
         AllocationRecommendation storage rec = aiRecommendedAllocations[asset];
@@ -363,29 +243,47 @@ contract AIYieldEngine is Ownable, PolicyProtected {
         require(!rec.isApplied, "Already applied");
         require(autonomousAllocator != address(0), "Allocator not set");
 
-        // Build the allocation instruction array for the Allocator
-        IAutonomousAllocator.AllocationInstruction[]
-            memory instructions = new IAutonomousAllocator.AllocationInstruction[](
-                rec.protocolIndices.length
-            );
-
-        for (uint256 i = 0; i < rec.protocolIndices.length; i++) {
-            instructions[i] = IAutonomousAllocator.AllocationInstruction({
-                protocolIndex: rec.protocolIndices[i],
-                allocationBps: rec.allocationBps[i]
-            });
-        }
-
-        // Execute the allocation
-        IAutonomousAllocator(autonomousAllocator).executeAllocation(
-            asset,
-            instructions,
+        // Forward to allocator which calls vault.updateDebt() per strategy
+        IAllocatorForAI(autonomousAllocator).executeStrategyAllocation(
+            rec.strategies,
+            rec.targetDebts,
             rec.confidence,
             rec.proofHash
         );
 
         rec.isApplied = true;
         emit AllocationApplied(asset, block.timestamp);
+    }
+
+    // ============================================================
+    //        HARVEST RECOMMENDATION (AI -> Vault Harvest)
+    // ============================================================
+
+    /**
+     * @notice AI recommends harvesting a specific strategy.
+     * @dev Calls vault.processReport() for the given strategy.
+     */
+    function triggerHarvest(
+        address strategy
+    ) external onlyAuthorized {
+        require(aionVault != address(0), "Vault not set");
+
+        IAionVaultForAI(aionVault).processReport(strategy);
+
+        emit HarvestTriggered(strategy, block.timestamp);
+    }
+
+    /**
+     * @notice AI recommends batch harvesting multiple strategies.
+     */
+    function triggerBatchHarvest(
+        address[] calldata strategies_
+    ) external onlyAuthorized {
+        require(aionVault != address(0), "Vault not set");
+
+        for (uint256 i = 0; i < strategies_.length; i++) {
+            try IAionVaultForAI(aionVault).processReport(strategies_[i]) {} catch {}
+        }
     }
 
     // ============================================================
@@ -399,11 +297,6 @@ contract AIYieldEngine is Ownable, PolicyProtected {
         authorizedCallers[caller] = authorized;
     }
 
-    function setAIAdjustmentsEnabled(bool enabled) external onlyOwner {
-        aiAdjustmentsEnabled = enabled;
-        emit AIAdjustmentsToggled(enabled);
-    }
-
     function setAIAllocationEnabled(bool enabled) external onlyOwner {
         aiAllocationEnabled = enabled;
         emit AIAllocationToggled(enabled);
@@ -414,12 +307,8 @@ contract AIYieldEngine is Ownable, PolicyProtected {
         minConfidenceThreshold = threshold;
     }
 
-    function setMaxRateDeviation(uint256 deviation) external onlyOwner {
-        maxRateDeviation = deviation;
-    }
-
-    function setLendingPool(address pool) external onlyOwner {
-        lendingPool = pool;
+    function setAionVault(address vault_) external onlyOwner {
+        aionVault = vault_;
     }
 
     function setAutonomousAllocator(address allocator_) external onlyOwner {
@@ -438,16 +327,10 @@ contract AIYieldEngine is Ownable, PolicyProtected {
     //                   VIEW FUNCTIONS
     // ============================================================
 
-    /**
-     * @notice Returns the number of predictions stored for an asset.
-     */
     function getPredictionCount(address asset) external view returns (uint256) {
         return predictionHistory[asset].length;
     }
 
-    /**
-     * @notice Returns a specific prediction from history.
-     */
     function getPrediction(
         address asset,
         uint256 index
@@ -455,9 +338,6 @@ contract AIYieldEngine is Ownable, PolicyProtected {
         return predictionHistory[asset][index];
     }
 
-    /**
-     * @notice Returns the latest prediction for an asset.
-     */
     function getLatestPrediction(
         address asset
     ) external view returns (YieldPrediction memory) {
@@ -466,33 +346,22 @@ contract AIYieldEngine is Ownable, PolicyProtected {
 }
 
 // ============================================================
-//              INTERFACE FOR LENDING POOL
+//              INTERFACE FOR AUTONOMOUS ALLOCATOR
 // ============================================================
 
-interface ILendingPoolForAI {
-    function aiAdjustRateParams(
-        address asset,
-        uint256 baseRate,
-        uint256 rateSlope1,
-        uint256 rateSlope2,
-        uint256 optimalUtilization
+interface IAllocatorForAI {
+    function executeStrategyAllocation(
+        address[] memory strategies,
+        uint256[] memory targetDebts,
+        uint256 confidence,
+        bytes32 aiProofHash
     ) external;
 }
 
 // ============================================================
-//         INTERFACE FOR AUTONOMOUS ALLOCATOR
+//              INTERFACE FOR AION VAULT
 // ============================================================
 
-interface IAutonomousAllocator {
-    struct AllocationInstruction {
-        uint256 protocolIndex;
-        uint256 allocationBps;
-    }
-
-    function executeAllocation(
-        address asset,
-        AllocationInstruction[] memory instructions,
-        uint256 confidence,
-        bytes32 aiProofHash
-    ) external;
+interface IAionVaultForAI {
+    function processReport(address strategy) external returns (uint256 gain, uint256 loss);
 }

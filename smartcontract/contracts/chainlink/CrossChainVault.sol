@@ -4,32 +4,22 @@ pragma solidity ^0.8.20;
 import {ITeleporterMessenger, TeleporterMessageInput, TeleporterFeeInfo} from "../interfaces/ITeleporterMessenger.sol";
 import {ITeleporterReceiver} from "../interfaces/ITeleporterReceiver.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import "../interfaces/ILendingPool.sol";
 
 /**
  * @title CrossChainVault
- * @author ChainNomads (AION Yield)
+ * @author ChainNomads (AION Finance)
  * @notice Avalanche Teleporter-enabled vault implementing Warp Messaging for cross-chain
  *         deposits, withdrawals, and multi-chain state synchronization.
  * @dev Uses Avalanche Interchain Messaging (ICM) via Teleporter with typed messages:
  *
  *      Message Types:
- *      - DEPOSIT:           Lock tokens on source, credit on destination LendingPool
+ *      - DEPOSIT:           Lock tokens on source, deposit into AionVault on destination
  *      - WITHDRAW:          Request withdrawal on destination, unlock on source
- *      - RATE_SYNC:         Broadcast interest rate/utilization data to remote chains
+ *      - YIELD_SYNC:        Broadcast vault yield/TVL data to remote chains
  *      - LIQUIDITY_REPORT:  Announce available liquidity for AI-driven cross-chain rebalancing
- *
- *      Multi-chain awareness:
- *      - Tracks remote chain state (rates, utilization, TVL) via RATE_SYNC messages
- *      - Maintains a chain registry for coordinated multi-chain operations
- *      - Enables AI rebalancer to make informed cross-chain allocation decisions
- *
- *      Avalanche Warp Messaging benefits:
- *      - No LINK token fees — optional relayer incentives via any ERC20
- *      - Sub-second finality via BLS validator signatures
- *      - Native to Avalanche L1s, Subnets, and C-Chain
  */
 contract CrossChainVault is ITeleporterReceiver, Ownable {
     using SafeERC20 for IERC20;
@@ -40,7 +30,7 @@ contract CrossChainVault is ITeleporterReceiver, Ownable {
 
     uint8 public constant MSG_DEPOSIT = 1;
     uint8 public constant MSG_WITHDRAW = 2;
-    uint8 public constant MSG_RATE_SYNC = 3;
+    uint8 public constant MSG_YIELD_SYNC = 3;
     uint8 public constant MSG_LIQUIDITY_REPORT = 4;
 
     // ============================================================
@@ -50,8 +40,8 @@ contract CrossChainVault is ITeleporterReceiver, Ownable {
     /// @dev Avalanche Teleporter Messenger contract
     ITeleporterMessenger public teleporterMessenger;
 
-    /// @dev The lending pool on THIS chain
-    ILendingPool public lendingPool;
+    /// @dev The AionVault on THIS chain (ERC4626)
+    IERC4626 public aionVault;
 
     /// @dev Mapping of supported destination blockchains (blockchainID => allowed)
     mapping(bytes32 => bool) public supportedChains;
@@ -68,27 +58,25 @@ contract CrossChainVault is ITeleporterReceiver, Ownable {
     /// @dev Gas limit for cross-chain messages
     uint256 public messageGasLimit = 300_000;
 
-    // ─── Warp Messaging: Multi-Chain State ────────────────────────
+    // --- Multi-Chain State ---
 
-    /// @dev Remote chain rate data: blockchainID => asset => RateData
-    struct RateData {
-        uint256 supplyRate;      // Current supply APY (RAY)
-        uint256 borrowRate;      // Current borrow APY (RAY)
-        uint256 utilization;     // Current utilization (RAY)
-        uint256 totalSupply;     // Total deposited
-        uint256 totalBorrow;     // Total borrowed
-        uint256 lastSyncTime;    // When this data was last synced
+    struct YieldData {
+        uint256 totalAssets;       // Vault total assets
+        uint256 totalSupply;       // Vault share supply
+        uint256 pricePerShare;     // Current share price
+        uint256 totalIdle;         // Idle reserve
+        uint256 totalDebt;         // Deployed to strategies
+        uint256 lastSyncTime;
     }
-    mapping(bytes32 => mapping(address => RateData)) public remoteRates;
+    mapping(bytes32 => YieldData) public remoteYieldData;
 
-    /// @dev Remote chain liquidity: blockchainID => asset => available liquidity
     struct LiquidityData {
         uint256 availableLiquidity;
         uint256 timestamp;
     }
-    mapping(bytes32 => mapping(address => LiquidityData)) public remoteLiquidity;
+    mapping(bytes32 => LiquidityData) public remoteLiquidity;
 
-    /// @dev Chain registry for multi-chain awareness
+    /// @dev Chain registry
     struct ChainInfo {
         bytes32 blockchainID;
         string chainName;
@@ -146,32 +134,27 @@ contract CrossChainVault is ITeleporterReceiver, Ownable {
         uint256 nonce
     );
 
-    event RateSyncSent(
+    event YieldSyncSent(
         bytes32 indexed messageId,
         bytes32 indexed destinationBlockchainID,
-        address asset,
-        uint256 supplyRate,
-        uint256 borrowRate
+        uint256 totalAssets,
+        uint256 pricePerShare
     );
 
-    event RateSyncReceived(
+    event YieldSyncReceived(
         bytes32 indexed sourceBlockchainID,
-        address indexed asset,
-        uint256 supplyRate,
-        uint256 borrowRate,
-        uint256 utilization
+        uint256 totalAssets,
+        uint256 pricePerShare
     );
 
     event LiquidityReportSent(
         bytes32 indexed messageId,
         bytes32 indexed destinationBlockchainID,
-        address asset,
         uint256 availableLiquidity
     );
 
     event LiquidityReportReceived(
         bytes32 indexed sourceBlockchainID,
-        address indexed asset,
         uint256 availableLiquidity
     );
 
@@ -187,21 +170,17 @@ contract CrossChainVault is ITeleporterReceiver, Ownable {
 
     constructor(
         address teleporter_,
-        address lendingPool_,
+        address aionVault_,
         address initialOwner
     ) Ownable(initialOwner) {
         teleporterMessenger = ITeleporterMessenger(teleporter_);
-        lendingPool = ILendingPool(lendingPool_);
+        aionVault = IERC4626(aionVault_);
     }
 
     // ============================================================
     //              CROSS-CHAIN SENDING (Source Chain)
     // ============================================================
 
-    /**
-     * @notice Lock tokens on this chain and send a Teleporter message to credit
-     *         the user on the destination chain's LendingPool.
-     */
     function depositCrossChain(
         bytes32 destinationBlockchainID,
         address receiver,
@@ -210,11 +189,9 @@ contract CrossChainVault is ITeleporterReceiver, Ownable {
     ) external returns (bytes32 messageId) {
         require(supportedChains[destinationBlockchainID], "Chain not supported");
 
-        // 1. Lock tokens from user into this vault
         IERC20(token).safeTransferFrom(msg.sender, address(this), amount);
         lockedBalance[token] += amount;
 
-        // 2. Prepare typed payload: MSG_DEPOSIT
         bytes memory payload = abi.encode(
             MSG_DEPOSIT,
             abi.encode(msg.sender, token, amount)
@@ -231,14 +208,6 @@ contract CrossChainVault is ITeleporterReceiver, Ownable {
         );
     }
 
-    /**
-     * @notice Request a cross-chain withdrawal: sends a message to the source chain
-     *         to unlock tokens that were previously locked via depositCrossChain.
-     * @param destinationBlockchainID The blockchain where tokens are locked.
-     * @param receiver The CrossChainVault address on the destination chain.
-     * @param token The token address (on THIS chain) to withdraw.
-     * @param amount The amount to withdraw.
-     */
     function withdrawCrossChain(
         bytes32 destinationBlockchainID,
         address receiver,
@@ -249,7 +218,6 @@ contract CrossChainVault is ITeleporterReceiver, Ownable {
 
         uint256 nonce = withdrawalNonce++;
 
-        // Encode: MSG_WITHDRAW + (user, token, amount, nonce)
         bytes memory payload = abi.encode(
             MSG_WITHDRAW,
             abi.encode(msg.sender, token, amount, nonce)
@@ -272,67 +240,54 @@ contract CrossChainVault is ITeleporterReceiver, Ownable {
     // ============================================================
 
     /**
-     * @notice Broadcast current interest rates and utilization for an asset
-     *         to a remote chain, enabling multi-chain rate awareness.
-     * @param destinationBlockchainID Target blockchain to sync rates to.
-     * @param asset The local asset whose rates to broadcast.
+     * @notice Broadcast current vault yield data to a remote chain.
      */
-    function syncRates(
-        bytes32 destinationBlockchainID,
-        address asset
+    function syncYieldData(
+        bytes32 destinationBlockchainID
     ) external returns (bytes32 messageId) {
         require(supportedChains[destinationBlockchainID], "Chain not supported");
 
-        DataTypes.ReserveData memory reserve = lendingPool.getReserveData(asset);
+        uint256 vaultTotalAssets = aionVault.totalAssets();
+        uint256 vaultTotalSupply = aionVault.totalSupply();
+        uint256 pricePerShare = vaultTotalSupply > 0
+            ? aionVault.convertToAssets(1e18)
+            : 1e18;
 
-        uint256 utilization = 0;
-        if (reserve.totalSupply > 0) {
-            utilization = (reserve.totalBorrow * 1e27) / reserve.totalSupply;
-        }
-
-        bytes memory ratePayload = abi.encode(
-            asset,
-            uint256(reserve.currentLiquidityRate),
-            uint256(reserve.currentVariableBorrowRate),
-            utilization,
-            reserve.totalSupply,
-            reserve.totalBorrow
+        bytes memory yieldPayload = abi.encode(
+            vaultTotalAssets,
+            vaultTotalSupply,
+            pricePerShare
         );
 
-        bytes memory payload = abi.encode(MSG_RATE_SYNC, ratePayload);
+        bytes memory payload = abi.encode(MSG_YIELD_SYNC, yieldPayload);
 
         address receiver = remoteVaults[destinationBlockchainID];
         require(receiver != address(0), "Remote vault not set");
 
         messageId = _sendTeleporterMessage(destinationBlockchainID, receiver, payload);
 
-        emit RateSyncSent(
+        emit YieldSyncSent(
             messageId,
             destinationBlockchainID,
-            asset,
-            reserve.currentLiquidityRate,
-            reserve.currentVariableBorrowRate
+            vaultTotalAssets,
+            pricePerShare
         );
     }
 
     /**
-     * @notice Broadcast available liquidity for an asset to a remote chain.
-     *         Used by the AI rebalancer to identify cross-chain rebalancing opportunities.
-     * @param destinationBlockchainID Target blockchain.
-     * @param asset The local asset to report liquidity for.
+     * @notice Broadcast available idle liquidity to a remote chain.
      */
     function reportLiquidity(
-        bytes32 destinationBlockchainID,
-        address asset
+        bytes32 destinationBlockchainID
     ) external returns (bytes32 messageId) {
         require(supportedChains[destinationBlockchainID], "Chain not supported");
 
-        DataTypes.ReserveData memory reserve = lendingPool.getReserveData(asset);
-        uint256 available = reserve.totalSupply - reserve.totalBorrow;
+        // Available liquidity = what can be deposited (maxDeposit)
+        uint256 available = aionVault.maxDeposit(address(this));
 
         bytes memory payload = abi.encode(
             MSG_LIQUIDITY_REPORT,
-            abi.encode(asset, available)
+            abi.encode(available)
         );
 
         address receiver = remoteVaults[destinationBlockchainID];
@@ -343,21 +298,18 @@ contract CrossChainVault is ITeleporterReceiver, Ownable {
         emit LiquidityReportSent(
             messageId,
             destinationBlockchainID,
-            asset,
             available
         );
     }
 
     /**
-     * @notice Broadcast rates to ALL registered remote chains for a given asset.
-     *         Enables protocol-wide multi-chain awareness in a single call.
+     * @notice Broadcast yield data to ALL registered remote chains.
      */
-    function syncRatesToAll(address asset) external {
+    function syncYieldDataToAll() external {
         for (uint256 i = 0; i < registeredChains.length; i++) {
             bytes32 chainId = registeredChains[i];
             if (chainRegistry[chainId].isActive && supportedChains[chainId]) {
-                // Use try/catch so one chain failure doesn't block others
-                try this.syncRates(chainId, asset) {} catch {}
+                try this.syncYieldData(chainId) {} catch {}
             }
         }
     }
@@ -366,37 +318,25 @@ contract CrossChainVault is ITeleporterReceiver, Ownable {
     //          CROSS-CHAIN RECEIVING (Destination Chain)
     // ============================================================
 
-    /**
-     * @notice Callback called by Teleporter Messenger when a message is received.
-     * @dev Routes to the appropriate handler based on message type.
-     * @param sourceBlockchainID The blockchain ID of the source chain.
-     * @param originSenderAddress The sender address on the source chain.
-     * @param message The message payload.
-     */
     function receiveTeleporterMessage(
         bytes32 sourceBlockchainID,
         address originSenderAddress,
         bytes calldata message
     ) external override {
-        // 1. Only the Teleporter Messenger can call this
         require(msg.sender == address(teleporterMessenger), "Unauthorized: not Teleporter");
-
-        // 2. Validate sender is an authorized vault on the source chain
         require(remoteVaults[sourceBlockchainID] == originSenderAddress, "Invalid remote sender");
 
-        // 3. Decode message type
         (uint8 msgType, bytes memory msgData) = abi.decode(
             message,
             (uint8, bytes)
         );
 
-        // 4. Route to handler
         if (msgType == MSG_DEPOSIT) {
             _handleDeposit(sourceBlockchainID, msgData);
         } else if (msgType == MSG_WITHDRAW) {
             _handleWithdraw(sourceBlockchainID, msgData);
-        } else if (msgType == MSG_RATE_SYNC) {
-            _handleRateSync(sourceBlockchainID, msgData);
+        } else if (msgType == MSG_YIELD_SYNC) {
+            _handleYieldSync(sourceBlockchainID, msgData);
         } else if (msgType == MSG_LIQUIDITY_REPORT) {
             _handleLiquidityReport(sourceBlockchainID, msgData);
         } else {
@@ -416,8 +356,9 @@ contract CrossChainVault is ITeleporterReceiver, Ownable {
         address localToken = tokenMappings[sourceBlockchainID][sourceToken];
         require(localToken != address(0), "Token mapping not set");
 
-        IERC20(localToken).approve(address(lendingPool), amount);
-        lendingPool.deposit(localToken, amount, user);
+        // Deposit into the AionVault on behalf of the user
+        IERC20(localToken).approve(address(aionVault), amount);
+        aionVault.deposit(amount, user);
 
         emit CrossChainDepositReceived(
             sourceBlockchainID,
@@ -436,13 +377,11 @@ contract CrossChainVault is ITeleporterReceiver, Ownable {
             (address, address, uint256, uint256)
         );
 
-        // Resolve local token
         address localToken = tokenMappings[sourceBlockchainID][token];
         if (localToken == address(0)) {
-            localToken = token; // Same-token assumption if no mapping
+            localToken = token;
         }
 
-        // Unlock from locked balance and transfer to user
         require(lockedBalance[localToken] >= amount, "Insufficient locked balance");
         lockedBalance[localToken] -= amount;
 
@@ -465,46 +404,40 @@ contract CrossChainVault is ITeleporterReceiver, Ownable {
         );
     }
 
-    function _handleRateSync(
+    function _handleYieldSync(
         bytes32 sourceBlockchainID,
         bytes memory data
     ) internal {
         (
-            address asset,
-            uint256 supplyRate,
-            uint256 borrowRate,
-            uint256 utilization,
-            uint256 totalSupply,
-            uint256 totalBorrow
-        ) = abi.decode(data, (address, uint256, uint256, uint256, uint256, uint256));
+            uint256 totalAssets_,
+            uint256 totalSupply_,
+            uint256 pricePerShare
+        ) = abi.decode(data, (uint256, uint256, uint256));
 
-        remoteRates[sourceBlockchainID][asset] = RateData({
-            supplyRate: supplyRate,
-            borrowRate: borrowRate,
-            utilization: utilization,
-            totalSupply: totalSupply,
-            totalBorrow: totalBorrow,
+        remoteYieldData[sourceBlockchainID] = YieldData({
+            totalAssets: totalAssets_,
+            totalSupply: totalSupply_,
+            pricePerShare: pricePerShare,
+            totalIdle: 0,
+            totalDebt: 0,
             lastSyncTime: block.timestamp
         });
 
-        emit RateSyncReceived(sourceBlockchainID, asset, supplyRate, borrowRate, utilization);
+        emit YieldSyncReceived(sourceBlockchainID, totalAssets_, pricePerShare);
     }
 
     function _handleLiquidityReport(
         bytes32 sourceBlockchainID,
         bytes memory data
     ) internal {
-        (address asset, uint256 availableLiquidity) = abi.decode(
-            data,
-            (address, uint256)
-        );
+        (uint256 availableLiquidity) = abi.decode(data, (uint256));
 
-        remoteLiquidity[sourceBlockchainID][asset] = LiquidityData({
+        remoteLiquidity[sourceBlockchainID] = LiquidityData({
             availableLiquidity: availableLiquidity,
             timestamp: block.timestamp
         });
 
-        emit LiquidityReportReceived(sourceBlockchainID, asset, availableLiquidity);
+        emit LiquidityReportReceived(sourceBlockchainID, availableLiquidity);
     }
 
     // ============================================================
@@ -512,98 +445,49 @@ contract CrossChainVault is ITeleporterReceiver, Ownable {
     // ============================================================
 
     /**
-     * @notice Get the best supply rate across all known chains for an asset.
-     * @return bestRate The highest supply rate found.
-     * @return bestChain The blockchain ID offering the best rate (bytes32(0) = local).
+     * @notice Get the best yield (price per share growth) across all known chains.
      */
-    function getBestSupplyRate(
-        address asset
-    ) external view returns (uint256 bestRate, bytes32 bestChain) {
-        // Check local rate first
-        DataTypes.ReserveData memory localReserve = lendingPool.getReserveData(asset);
-        bestRate = localReserve.currentLiquidityRate;
-        bestChain = bytes32(0); // 0 = local chain
-
-        // Compare with remote chains
-        for (uint256 i = 0; i < registeredChains.length; i++) {
-            bytes32 chainId = registeredChains[i];
-            RateData memory remote = remoteRates[chainId][asset];
-            if (remote.lastSyncTime > 0 && remote.supplyRate > bestRate) {
-                bestRate = remote.supplyRate;
-                bestChain = chainId;
-            }
-        }
-    }
-
-    /**
-     * @notice Get the lowest borrow rate across all known chains for an asset.
-     * @return bestRate The lowest borrow rate found.
-     * @return bestChain The blockchain ID offering the best rate (bytes32(0) = local).
-     */
-    function getBestBorrowRate(
-        address asset
-    ) external view returns (uint256 bestRate, bytes32 bestChain) {
-        DataTypes.ReserveData memory localReserve = lendingPool.getReserveData(asset);
-        bestRate = localReserve.currentVariableBorrowRate;
+    function getBestYieldChain()
+        external
+        view
+        returns (uint256 bestPricePerShare, bytes32 bestChain)
+    {
+        // Check local vault
+        uint256 localSupply = aionVault.totalSupply();
+        bestPricePerShare = localSupply > 0 ? aionVault.convertToAssets(1e18) : 1e18;
         bestChain = bytes32(0);
 
         for (uint256 i = 0; i < registeredChains.length; i++) {
             bytes32 chainId = registeredChains[i];
-            RateData memory remote = remoteRates[chainId][asset];
-            if (remote.lastSyncTime > 0 && remote.borrowRate < bestRate) {
-                bestRate = remote.borrowRate;
+            YieldData memory remote = remoteYieldData[chainId];
+            if (remote.lastSyncTime > 0 && remote.pricePerShare > bestPricePerShare) {
+                bestPricePerShare = remote.pricePerShare;
                 bestChain = chainId;
             }
         }
     }
 
     /**
-     * @notice Get aggregated TVL across all known chains for an asset.
-     * @return totalTVL Sum of totalSupply across all chains.
-     * @return chainCount Number of chains reporting data.
+     * @notice Get aggregated TVL across all known chains.
      */
-    function getAggregatedTVL(
-        address asset
-    ) external view returns (uint256 totalTVL, uint256 chainCount) {
-        // Local TVL
-        DataTypes.ReserveData memory localReserve = lendingPool.getReserveData(asset);
-        totalTVL = localReserve.totalSupply;
+    function getAggregatedTVL()
+        external
+        view
+        returns (uint256 totalTVL, uint256 chainCount)
+    {
+        totalTVL = aionVault.totalAssets();
         chainCount = 1;
 
-        // Remote TVLs
         for (uint256 i = 0; i < registeredChains.length; i++) {
             bytes32 chainId = registeredChains[i];
-            RateData memory remote = remoteRates[chainId][asset];
+            YieldData memory remote = remoteYieldData[chainId];
             if (remote.lastSyncTime > 0) {
-                totalTVL += remote.totalSupply;
+                totalTVL += remote.totalAssets;
                 chainCount++;
             }
         }
     }
 
-    /**
-     * @notice Get the total available liquidity across all chains.
-     */
-    function getTotalAvailableLiquidity(
-        address asset
-    ) external view returns (uint256 total) {
-        // Local available
-        DataTypes.ReserveData memory localReserve = lendingPool.getReserveData(asset);
-        total = localReserve.totalSupply - localReserve.totalBorrow;
-
-        // Remote available
-        for (uint256 i = 0; i < registeredChains.length; i++) {
-            bytes32 chainId = registeredChains[i];
-            LiquidityData memory remote = remoteLiquidity[chainId][asset];
-            if (remote.timestamp > 0) {
-                total += remote.availableLiquidity;
-            }
-        }
-    }
-
-    /**
-     * @notice Get the number of registered remote chains.
-     */
     function getRegisteredChainsCount() external view returns (uint256) {
         return registeredChains.length;
     }
@@ -622,11 +506,11 @@ contract CrossChainVault is ITeleporterReceiver, Ownable {
                 destinationBlockchainID: destinationBlockchainID,
                 destinationAddress: receiver,
                 feeInfo: TeleporterFeeInfo({
-                    feeTokenAddress: address(0), // No fee — relayers incentivized externally
+                    feeTokenAddress: address(0),
                     amount: 0
                 }),
                 requiredGasLimit: messageGasLimit,
-                allowedRelayerAddresses: new address[](0), // Any relayer can deliver
+                allowedRelayerAddresses: new address[](0),
                 message: payload
             })
         );
@@ -636,21 +520,14 @@ contract CrossChainVault is ITeleporterReceiver, Ownable {
     //                  ADMIN FUNCTIONS
     // ============================================================
 
-    function setSupportedChain(
-        bytes32 blockchainID,
-        bool supported
-    ) external onlyOwner {
+    function setSupportedChain(bytes32 blockchainID, bool supported) external onlyOwner {
         supportedChains[blockchainID] = supported;
     }
 
-    function setRemoteVault(
-        bytes32 blockchainID,
-        address vault
-    ) external onlyOwner {
+    function setRemoteVault(bytes32 blockchainID, address vault) external onlyOwner {
         remoteVaults[blockchainID] = vault;
     }
 
-    /// @notice Map a token on a source chain to its equivalent on this chain
     function setTokenMapping(
         bytes32 sourceBlockchainID,
         address sourceToken,
@@ -659,17 +536,14 @@ contract CrossChainVault is ITeleporterReceiver, Ownable {
         tokenMappings[sourceBlockchainID][sourceToken] = localToken;
     }
 
-    function setLendingPool(address pool) external onlyOwner {
-        lendingPool = ILendingPool(pool);
+    function setAionVault(address vault_) external onlyOwner {
+        aionVault = IERC4626(vault_);
     }
 
     function setMessageGasLimit(uint256 gasLimit) external onlyOwner {
         messageGasLimit = gasLimit;
     }
 
-    /**
-     * @notice Register a remote chain in the multi-chain registry.
-     */
     function registerChain(
         bytes32 blockchainID,
         string calldata chainName,
@@ -686,27 +560,21 @@ contract CrossChainVault is ITeleporterReceiver, Ownable {
         });
         registeredChains.push(blockchainID);
 
-        // Auto-configure
         supportedChains[blockchainID] = true;
         remoteVaults[blockchainID] = vaultAddress;
 
         emit ChainRegistered(blockchainID, chainName, vaultAddress);
     }
 
-    /**
-     * @notice Deactivate a chain from the registry.
-     */
     function deactivateChain(bytes32 blockchainID) external onlyOwner {
         chainRegistry[blockchainID].isActive = false;
         supportedChains[blockchainID] = false;
     }
 
-    /// @notice Fund the vault with tokens for cross-chain deposits
     function fundVault(address token, uint256 amount) external {
         IERC20(token).safeTransferFrom(msg.sender, address(this), amount);
     }
 
-    /// @notice Allows owner to withdraw stuck tokens
     function withdrawToken(address token, uint256 amount) external onlyOwner {
         IERC20(token).safeTransfer(msg.sender, amount);
     }

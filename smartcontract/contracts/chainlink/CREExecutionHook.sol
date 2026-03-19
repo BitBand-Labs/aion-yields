@@ -5,30 +5,28 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
  * @title CREExecutionHook
- * @author ChainNomads (AION Yield)
+ * @author ChainNomads (AION Finance)
  * @notice Chainlink CRE (Compute Runtime Environment) compatible execution hooks.
  *
  * @dev Provides hook points for Chainlink CRE workflows to interact with the
- *      AION Yield protocol. CRE orchestrates multi-step workflows that combine
- *      on-chain and off-chain computation.
+ *      AION Finance yield optimization protocol.
  *
  *      CRE WORKFLOW PATTERN:
  *      ┌─────────────┐     ┌──────────────┐     ┌──────────────┐
- *      │ CRE Trigger  │ ──→ │ Pre-hook     │ ──→ │ Off-chain    │
+ *      │ CRE Trigger  │ --> │ Pre-hook     │ --> │ Off-chain    │
  *      │ (Automation) │     │ (Gather data)│     │ Compute      │
  *      └─────────────┘     └──────────────┘     └──────────────┘
  *                                                      │
  *      ┌─────────────┐     ┌──────────────┐            │
- *      │ Protocol     │ ←── │ Post-hook    │ ←──────────┘
+ *      │ Protocol     │ <-- │ Post-hook    │ <----------┘
  *      │ Updated      │     │ (Apply data) │
  *      └─────────────┘     └──────────────┘
  *
  *      Supported Workflow Types:
- *      1. AI_RATE_ADJUSTMENT    - AI-driven interest rate optimization
- *      2. LIQUIDATION_SCAN     - Detect and execute liquidations
+ *      1. YIELD_ALLOCATION      - AI-driven strategy allocation optimization
+ *      2. STRATEGY_HARVEST      - Trigger strategy harvest/report
  *      3. CROSS_CHAIN_REBALANCE - Rebalance liquidity across chains
  *      4. RISK_MONITORING       - Continuous risk assessment
- *      5. YIELD_ALLOCATION      - Cross-protocol yield optimization (Aave, Morpho)
  */
 contract CREExecutionHook is Ownable {
     // ============================================================
@@ -48,9 +46,8 @@ contract CREExecutionHook is Ownable {
     bytes32[] public workflowIds;
 
     /// @dev Protocol contract references
-    address public lendingPool;
+    address public aionVault;
     address public aiYieldEngine;
-    address public liquidationAutomation;
     address public crossChainVault;
     address public autonomousAllocator;
 
@@ -63,11 +60,10 @@ contract CREExecutionHook is Ownable {
     // ============================================================
 
     enum WorkflowType {
-        AI_RATE_ADJUSTMENT,
-        LIQUIDATION_SCAN,
+        YIELD_ALLOCATION,
+        STRATEGY_HARVEST,
         CROSS_CHAIN_REBALANCE,
-        RISK_MONITORING,
-        YIELD_ALLOCATION
+        RISK_MONITORING
     }
 
     enum ExecutionStatus {
@@ -82,8 +78,8 @@ contract CREExecutionHook is Ownable {
     struct WorkflowConfig {
         bytes32 workflowId;
         WorkflowType workflowType;
-        uint256 minInterval; // Minimum seconds between executions
-        uint256 lastExecutionTime; // Last execution timestamp
+        uint256 minInterval;
+        uint256 lastExecutionTime;
         bool isActive;
         string description;
     }
@@ -95,9 +91,9 @@ contract CREExecutionHook is Ownable {
         uint256 startTime;
         uint256 endTime;
         ExecutionStatus status;
-        bytes preHookData; // Data gathered in pre-hook
-        bytes postHookData; // Data applied in post-hook
-        bytes result; // Final result
+        bytes preHookData;
+        bytes postHookData;
+        bytes result;
     }
 
     // ============================================================
@@ -149,15 +145,13 @@ contract CREExecutionHook is Ownable {
 
     constructor(
         address initialOwner,
-        address lendingPool_,
+        address aionVault_,
         address aiYieldEngine_,
-        address liquidationAutomation_,
         address crossChainVault_,
         address autonomousAllocator_
     ) Ownable(initialOwner) {
-        lendingPool = lendingPool_;
+        aionVault = aionVault_;
         aiYieldEngine = aiYieldEngine_;
-        liquidationAutomation = liquidationAutomation_;
         crossChainVault = crossChainVault_;
         autonomousAllocator = autonomousAllocator_;
     }
@@ -166,13 +160,6 @@ contract CREExecutionHook is Ownable {
     //               WORKFLOW REGISTRATION
     // ============================================================
 
-    /**
-     * @notice Register a new CRE workflow.
-     * @param workflowType The type of workflow
-     * @param minInterval Minimum seconds between consecutive executions
-     * @param description Human-readable description
-     * @return workflowId The unique workflow identifier
-     */
     function registerWorkflow(
         WorkflowType workflowType,
         uint256 minInterval,
@@ -199,18 +186,8 @@ contract CREExecutionHook is Ownable {
 
     // ============================================================
     //            PRE-HOOK: GATHER ON-CHAIN DATA
-    //    (Called at the start of a CRE workflow)
     // ============================================================
 
-    /**
-     * @notice Execute the pre-hook phase of a CRE workflow.
-     * @dev Gathers on-chain data needed for off-chain processing.
-     *      This data is sent to Chainlink Functions / off-chain compute.
-     *
-     * @param workflowId The workflow to execute
-     * @return executionId Unique execution identifier
-     * @return data Encoded on-chain data for off-chain processing
-     */
     function executePreHook(
         bytes32 workflowId
     )
@@ -230,19 +207,14 @@ contract CREExecutionHook is Ownable {
             abi.encode(workflowId, block.timestamp, totalExecutions)
         );
 
-        // Gather data based on workflow type
-        if (workflow.workflowType == WorkflowType.AI_RATE_ADJUSTMENT) {
-            data = _gatherRateData();
-        } else if (workflow.workflowType == WorkflowType.LIQUIDATION_SCAN) {
-            data = _gatherLiquidationData();
-        } else if (
-            workflow.workflowType == WorkflowType.CROSS_CHAIN_REBALANCE
-        ) {
+        if (workflow.workflowType == WorkflowType.YIELD_ALLOCATION) {
+            data = _gatherAllocationData();
+        } else if (workflow.workflowType == WorkflowType.STRATEGY_HARVEST) {
+            data = _gatherHarvestData();
+        } else if (workflow.workflowType == WorkflowType.CROSS_CHAIN_REBALANCE) {
             data = _gatherRebalanceData();
         } else if (workflow.workflowType == WorkflowType.RISK_MONITORING) {
             data = _gatherRiskData();
-        } else if (workflow.workflowType == WorkflowType.YIELD_ALLOCATION) {
-            data = _gatherAllocationData();
         }
 
         executions[executionId] = WorkflowExecution({
@@ -266,16 +238,8 @@ contract CREExecutionHook is Ownable {
 
     // ============================================================
     //          POST-HOOK: APPLY OFF-CHAIN RESULTS
-    //   (Called after off-chain computation completes)
     // ============================================================
 
-    /**
-     * @notice Execute the post-hook phase of a CRE workflow.
-     * @dev Applies the results from off-chain AI computation back on-chain.
-     *
-     * @param executionId The execution to complete
-     * @param result Encoded result from off-chain computation
-     */
     function executePostHook(
         bytes32 executionId,
         bytes calldata result
@@ -288,20 +252,15 @@ contract CREExecutionHook is Ownable {
 
         WorkflowConfig storage workflow = workflows[execution.workflowId];
 
-        // Apply results based on workflow type
         bool success = false;
-        if (workflow.workflowType == WorkflowType.AI_RATE_ADJUSTMENT) {
-            success = _applyRateAdjustment(result);
-        } else if (workflow.workflowType == WorkflowType.LIQUIDATION_SCAN) {
-            success = _applyLiquidationResults(result);
-        } else if (
-            workflow.workflowType == WorkflowType.CROSS_CHAIN_REBALANCE
-        ) {
+        if (workflow.workflowType == WorkflowType.YIELD_ALLOCATION) {
+            success = _applyAllocationResults(result);
+        } else if (workflow.workflowType == WorkflowType.STRATEGY_HARVEST) {
+            success = _applyHarvestResults(result);
+        } else if (workflow.workflowType == WorkflowType.CROSS_CHAIN_REBALANCE) {
             success = _applyRebalanceResults(result);
         } else if (workflow.workflowType == WorkflowType.RISK_MONITORING) {
             success = _applyRiskResults(result);
-        } else if (workflow.workflowType == WorkflowType.YIELD_ALLOCATION) {
-            success = _applyAllocationResults(result);
         }
 
         execution.postHookData = result;
@@ -332,20 +291,23 @@ contract CREExecutionHook is Ownable {
     //           INTERNAL: DATA GATHERING (PRE-HOOKS)
     // ============================================================
 
-    function _gatherRateData() internal view returns (bytes memory) {
-        // Encode current rate data from lending pool for AI analysis
-        // In production: fetch current rates, utilization, market data
-        return abi.encode(lendingPool, block.timestamp, "rate_data");
+    function _gatherAllocationData() internal view returns (bytes memory) {
+        return abi.encode(
+            autonomousAllocator,
+            aiYieldEngine,
+            aionVault,
+            block.timestamp,
+            "yield_allocation"
+        );
     }
 
-    function _gatherLiquidationData() internal view returns (bytes memory) {
-        return
-            abi.encode(
-                lendingPool,
-                liquidationAutomation,
-                block.timestamp,
-                "liquidation_scan"
-            );
+    function _gatherHarvestData() internal view returns (bytes memory) {
+        return abi.encode(
+            aionVault,
+            aiYieldEngine,
+            block.timestamp,
+            "strategy_harvest"
+        );
     }
 
     function _gatherRebalanceData() internal view returns (bytes memory) {
@@ -353,102 +315,40 @@ contract CREExecutionHook is Ownable {
     }
 
     function _gatherRiskData() internal view returns (bytes memory) {
-        return
-            abi.encode(
-                lendingPool,
-                aiYieldEngine,
-                block.timestamp,
-                "risk_monitoring"
-            );
-    }
-
-    /**
-     * @notice Gathers data for cross-protocol yield allocation.
-     * @dev Encodes the allocator address and current state for the off-chain AI
-     *      to scan Aave/Morpho APYs and compute optimal allocation.
-     */
-    function _gatherAllocationData() internal view returns (bytes memory) {
-        return
-            abi.encode(
-                autonomousAllocator,
-                aiYieldEngine,
-                lendingPool,
-                block.timestamp,
-                "yield_allocation"
-            );
+        return abi.encode(
+            aionVault,
+            aiYieldEngine,
+            block.timestamp,
+            "risk_monitoring"
+        );
     }
 
     // ============================================================
     //         INTERNAL: RESULT APPLICATION (POST-HOOKS)
     // ============================================================
 
-    function _applyRateAdjustment(
-        bytes calldata result
-    ) internal returns (bool) {
-        // Decode AI-recommended rates and apply them
-        // In production: call aiYieldEngine.submitRateRecommendation(...)
-        if (aiYieldEngine != address(0) && result.length > 0) {
-            return true;
-        }
-        return false;
-    }
-
-    function _applyLiquidationResults(
-        bytes calldata result
-    ) internal returns (bool) {
-        // Process liquidation scan results
-        if (liquidationAutomation != address(0) && result.length > 0) {
-            return true;
-        }
-        return false;
-    }
-
-    function _applyRebalanceResults(
-        bytes calldata result
-    ) internal returns (bool) {
-        // Apply cross-chain rebalancing instructions
-        if (crossChainVault != address(0) && result.length > 0) {
-            return true;
-        }
-        return false;
-    }
-
-    function _applyRiskResults(bytes calldata result) internal returns (bool) {
-        // Apply risk monitoring alerts/actions
-        if (result.length > 0) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * @notice Applies cross-protocol allocation results from the AI.
-     * @dev Decodes the AI result and forwards allocation instructions
-     *      to the AIYieldEngine, which routes them to the AutonomousAllocator.
-     */
     function _applyAllocationResults(
         bytes calldata result
     ) internal returns (bool) {
         if (aiYieldEngine == address(0) || result.length == 0) return false;
 
-        // Decode AI result: (asset, protocolIndices[], allocationBps[], confidence, proofHash)
+        // Decode: (asset, strategies[], targetDebts[], confidence, proofHash)
         (
             address asset,
-            uint256[] memory protocolIndices,
-            uint256[] memory allocationBps,
+            address[] memory strategies,
+            uint256[] memory targetDebts,
             uint256 confidence,
             bytes32 proofHash
         ) = abi.decode(
                 result,
-                (address, uint256[], uint256[], uint256, bytes32)
+                (address, address[], uint256[], uint256, bytes32)
             );
 
-        // Forward to AIYieldEngine → AutonomousAllocator
         try
             IAIYieldEngineForCRE(aiYieldEngine).submitAllocationRecommendation(
                 asset,
-                protocolIndices,
-                allocationBps,
+                strategies,
+                targetDebts,
                 confidence,
                 proofHash
             )
@@ -457,6 +357,39 @@ contract CREExecutionHook is Ownable {
         } catch {
             return false;
         }
+    }
+
+    function _applyHarvestResults(
+        bytes calldata result
+    ) internal returns (bool) {
+        if (aiYieldEngine == address(0) || result.length == 0) return false;
+
+        // Decode: list of strategy addresses to harvest
+        address[] memory strategies = abi.decode(result, (address[]));
+
+        try
+            IAIYieldEngineForCRE(aiYieldEngine).triggerBatchHarvest(strategies)
+        {
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
+    function _applyRebalanceResults(
+        bytes calldata result
+    ) internal view returns (bool) {
+        if (crossChainVault == address(0) || result.length == 0) return false;
+        return true;
+    }
+
+    function _applyRiskResults(
+        bytes calldata result
+    ) internal pure returns (bool) {
+        if (result.length > 0) {
+            return true;
+        }
+        return false;
     }
 
     // ============================================================
@@ -478,16 +411,12 @@ contract CREExecutionHook is Ownable {
         workflows[workflowId].isActive = active;
     }
 
-    function setLendingPool(address pool) external onlyOwner {
-        lendingPool = pool;
+    function setAionVault(address vault_) external onlyOwner {
+        aionVault = vault_;
     }
 
     function setAIYieldEngine(address engine) external onlyOwner {
         aiYieldEngine = engine;
-    }
-
-    function setLiquidationAutomation(address automation) external onlyOwner {
-        liquidationAutomation = automation;
     }
 
     function setCrossChainVault(address vault) external onlyOwner {
@@ -540,9 +469,11 @@ contract CREExecutionHook is Ownable {
 interface IAIYieldEngineForCRE {
     function submitAllocationRecommendation(
         address asset,
-        uint256[] memory protocolIndices,
-        uint256[] memory allocationBps,
+        address[] memory strategies,
+        uint256[] memory targetDebts,
         uint256 confidence,
         bytes32 proofHash
     ) external;
+
+    function triggerBatchHarvest(address[] memory strategies) external;
 }

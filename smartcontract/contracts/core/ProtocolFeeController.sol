@@ -7,24 +7,24 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 /**
  * @title ProtocolFeeController
- * @author ChainNomads (AION Yield)
- * @notice Centralized protocol fee management for the AION Yield money market.
+ * @author ChainNomads (AION Finance)
+ * @notice Governance-level fee configuration and fee share distribution.
  *
- * @dev Manages all protocol fee parameters and treasury fund distribution:
- *      - Reserve factors per asset (% of interest going to protocol)
- *      - Flash loan fees
- *      - Liquidation protocol share
- *      - Treasury withdrawal and distribution
+ * @dev The AionVault executes fee logic internally (mints fee shares to feeRecipient).
+ *      This controller serves as:
+ *      1. Global fee config store (default performance + management fees)
+ *      2. Per-vault fee overrides
+ *      3. Per-strategy fee overrides
+ *      4. Fee recipient (receives vault fee shares, then distributes)
  *
- *      Fee Flow:
+ *      FEE FLOW:
  *      ┌──────────────┐     ┌───────────────┐     ┌──────────────┐
- *      │ Interest      │ ──→ │ This          │ ──→ │ Treasury     │
- *      │ Accrued       │     │ Controller    │     │ Wallet       │
- *      └──────────────┘     └───────────────┘     └──────────────┘
- *                                  │
- *                                  ├──→ Insurance Fund
- *                                  ├──→ Development Fund
- *                                  └──→ Staking Rewards
+ *      │ AionVault     │ --> │ This          │ --> │ Treasury     │
+ *      │ mints fee     │     │ Controller    │     │ Wallet       │
+ *      │ shares        │     │ (feeRecipient)│     └──────────────┘
+ *      └──────────────┘     └───────────────┘           │
+ *                                  ├--> Insurance Fund   │
+ *                                  └--> Development Fund │
  */
 contract ProtocolFeeController is Ownable {
     using SafeERC20 for IERC20;
@@ -33,14 +33,11 @@ contract ProtocolFeeController is Ownable {
     //                      CONSTANTS
     // ============================================================
 
-    /// @dev Maximum reserve factor: 50%
-    uint256 public constant MAX_RESERVE_FACTOR = 5000;
+    /// @dev Maximum vault performance fee: 50%
+    uint256 public constant MAX_PERFORMANCE_FEE = 5000;
 
-    /// @dev Maximum flash loan fee: 1%
-    uint256 public constant MAX_FLASH_LOAN_FEE = 100;
-
-    /// @dev Maximum liquidation protocol share: 50%
-    uint256 public constant MAX_LIQUIDATION_PROTOCOL_SHARE = 5000;
+    /// @dev Maximum vault management fee: 5%
+    uint256 public constant MAX_MANAGEMENT_FEE = 500;
 
     /// @dev Basis points denominator
     uint256 public constant BPS = 10000;
@@ -49,73 +46,62 @@ contract ProtocolFeeController is Ownable {
     //                      STORAGE
     // ============================================================
 
+    // ---- Fund Addresses ----
+
     /// @dev Treasury address for protocol revenue
     address public treasury;
 
-    /// @dev Insurance fund address (covers bad debt)
+    /// @dev Insurance fund address
     address public insuranceFund;
 
     /// @dev Development fund address
     address public developmentFund;
 
-    /// @dev Per-asset reserve factor in bps (portion of interest to protocol)
-    mapping(address => uint256) public reserveFactors;
+    // ---- Distribution Ratios (must sum to BPS) ----
 
-    /// @dev Flash loan fee in bps (e.g., 9 = 0.09%)
-    uint256 public flashLoanFee = 9;
+    uint256 public treasuryShare = 5000;     // 50%
+    uint256 public insuranceShare = 3000;    // 30%
+    uint256 public developmentShare = 2000;  // 20%
 
-    /// @dev Protocol's share of liquidation bonus in bps
-    uint256 public liquidationProtocolShare = 1000; // 10%
+    // ---- Global Vault Fee Defaults ----
 
-    /// @dev Treasury distribution ratios in bps (must sum to 10000)
-    uint256 public treasuryShare = 5000; // 50% to treasury
-    uint256 public insuranceShare = 3000; // 30% to insurance
-    uint256 public developmentShare = 2000; // 20% to dev fund
+    /// @dev Default performance fee for vaults (BPS)
+    uint256 public defaultPerformanceFee = 1500; // 15%
 
-    /// @dev Total fees collected per asset (for accounting)
-    mapping(address => uint256) public totalFeesCollected;
+    /// @dev Default management fee for vaults (BPS)
+    uint256 public defaultManagementFee = 200; // 2%
 
-    /// @dev Total fees distributed per asset
+    // ---- Per-Vault Fee Overrides ----
+
+    mapping(address => uint256) public vaultPerformanceFees;
+    mapping(address => uint256) public vaultManagementFees;
+    mapping(address => bool) public hasVaultOverride;
+
+    // ---- Per-Strategy Fee Overrides ----
+
+    mapping(address => uint256) public strategyPerformanceFees;
+    mapping(address => bool) public hasStrategyOverride;
+
+    // ---- Fee Accounting ----
+
+    /// @dev Total fee shares redeemed and distributed per token
     mapping(address => uint256) public totalFeesDistributed;
-
-    /// @dev Accrued undistributed fees per asset
-    mapping(address => uint256) public accruedFees;
 
     // ============================================================
     //                        EVENTS
     // ============================================================
 
-    event ReserveFactorUpdated(
-        address indexed asset,
-        uint256 oldFactor,
-        uint256 newFactor
-    );
-    event FlashLoanFeeUpdated(uint256 oldFee, uint256 newFee);
-    event LiquidationProtocolShareUpdated(uint256 oldShare, uint256 newShare);
-    event FeesCollected(address indexed asset, uint256 amount, string source);
-    event FeesDistributed(
-        address indexed asset,
-        uint256 toTreasury,
-        uint256 toInsurance,
-        uint256 toDevelopment
-    );
-    event DistributionRatiosUpdated(
-        uint256 treasuryShare,
-        uint256 insuranceShare,
-        uint256 developmentShare
-    );
-    event TreasuryUpdated(
-        address indexed oldTreasury,
-        address indexed newTreasury
-    );
-    event InsuranceFundUpdated(
-        address indexed oldFund,
-        address indexed newFund
-    );
-    event DevelopmentFundUpdated(
-        address indexed oldFund,
-        address indexed newFund
-    );
+    event DefaultPerformanceFeeUpdated(uint256 oldFee, uint256 newFee);
+    event DefaultManagementFeeUpdated(uint256 oldFee, uint256 newFee);
+    event VaultFeeOverrideSet(address indexed vault, uint256 performanceFee, uint256 managementFee);
+    event VaultFeeOverrideRemoved(address indexed vault);
+    event StrategyFeeOverrideSet(address indexed strategy, uint256 performanceFee);
+    event StrategyFeeOverrideRemoved(address indexed strategy);
+    event DistributionRatiosUpdated(uint256 treasuryShare, uint256 insuranceShare, uint256 developmentShare);
+    event FeesDistributed(address indexed token, uint256 toTreasury, uint256 toInsurance, uint256 toDevelopment);
+    event TreasuryUpdated(address indexed oldTreasury, address indexed newTreasury);
+    event InsuranceFundUpdated(address indexed oldFund, address indexed newFund);
+    event DevelopmentFundUpdated(address indexed oldFund, address indexed newFund);
 
     // ============================================================
     //                    CONSTRUCTOR
@@ -134,131 +120,122 @@ contract ProtocolFeeController is Ownable {
     }
 
     // ============================================================
-    //                FEE PARAMETER MANAGEMENT
+    //            GLOBAL FEE CONFIGURATION
     // ============================================================
 
     /**
-     * @notice Set the reserve factor for a specific asset.
-     * @dev Reserve factor determines what % of interest income goes to protocol.
-     * @param asset The reserve asset address
-     * @param factor New reserve factor in bps (e.g., 1000 = 10%)
+     * @notice Set the default performance fee applied to new vaults.
+     * @param fee Fee in BPS (e.g., 1500 = 15%)
      */
-    function setReserveFactor(
-        address asset,
-        uint256 factor
+    function setDefaultPerformanceFee(uint256 fee) external onlyOwner {
+        require(fee <= MAX_PERFORMANCE_FEE, "Exceeds max");
+        uint256 old = defaultPerformanceFee;
+        defaultPerformanceFee = fee;
+        emit DefaultPerformanceFeeUpdated(old, fee);
+    }
+
+    /**
+     * @notice Set the default annual management fee applied to new vaults.
+     * @param fee Fee in BPS (e.g., 200 = 2%)
+     */
+    function setDefaultManagementFee(uint256 fee) external onlyOwner {
+        require(fee <= MAX_MANAGEMENT_FEE, "Exceeds max");
+        uint256 old = defaultManagementFee;
+        defaultManagementFee = fee;
+        emit DefaultManagementFeeUpdated(old, fee);
+    }
+
+    // ============================================================
+    //            PER-VAULT FEE OVERRIDES
+    // ============================================================
+
+    /**
+     * @notice Set custom fee overrides for a specific vault.
+     */
+    function setVaultFeeOverride(
+        address vault,
+        uint256 perfFee,
+        uint256 mgmtFee
     ) external onlyOwner {
-        require(factor <= MAX_RESERVE_FACTOR, "Exceeds max reserve factor");
-        uint256 oldFactor = reserveFactors[asset];
-        reserveFactors[asset] = factor;
-        emit ReserveFactorUpdated(asset, oldFactor, factor);
+        require(perfFee <= MAX_PERFORMANCE_FEE, "Exceeds max performance fee");
+        require(mgmtFee <= MAX_MANAGEMENT_FEE, "Exceeds max management fee");
+        vaultPerformanceFees[vault] = perfFee;
+        vaultManagementFees[vault] = mgmtFee;
+        hasVaultOverride[vault] = true;
+        emit VaultFeeOverrideSet(vault, perfFee, mgmtFee);
     }
 
     /**
-     * @notice Set the flash loan fee.
-     * @param fee New fee in bps (e.g., 9 = 0.09%)
+     * @notice Remove custom fee overrides, reverting to defaults.
      */
-    function setFlashLoanFee(uint256 fee) external onlyOwner {
-        require(fee <= MAX_FLASH_LOAN_FEE, "Exceeds max flash loan fee");
-        uint256 oldFee = flashLoanFee;
-        flashLoanFee = fee;
-        emit FlashLoanFeeUpdated(oldFee, fee);
-    }
-
-    /**
-     * @notice Set the protocol's share of liquidation bonus.
-     * @param share New share in bps
-     */
-    function setLiquidationProtocolShare(uint256 share) external onlyOwner {
-        require(share <= MAX_LIQUIDATION_PROTOCOL_SHARE, "Exceeds max share");
-        uint256 oldShare = liquidationProtocolShare;
-        liquidationProtocolShare = share;
-        emit LiquidationProtocolShareUpdated(oldShare, share);
+    function removeVaultFeeOverride(address vault) external onlyOwner {
+        delete vaultPerformanceFees[vault];
+        delete vaultManagementFees[vault];
+        hasVaultOverride[vault] = false;
+        emit VaultFeeOverrideRemoved(vault);
     }
 
     // ============================================================
-    //                 FEE COLLECTION
+    //            PER-STRATEGY FEE OVERRIDES
     // ============================================================
 
     /**
-     * @notice Record fees collected from interest accrual.
-     * @dev Called by the LendingPool when minting treasury shares.
-     * @param asset The asset fees were collected in
-     * @param amount The fee amount
+     * @notice Set a custom performance fee for a specific strategy.
+     * @dev Some strategies (e.g., private deals) may warrant different fee rates.
      */
-    function collectFees(
-        address asset,
-        uint256 amount,
-        string calldata source
-    ) external {
-        require(amount > 0, "Zero amount");
-        accruedFees[asset] += amount;
-        totalFeesCollected[asset] += amount;
-        emit FeesCollected(asset, amount, source);
+    function setStrategyFeeOverride(
+        address strategy,
+        uint256 perfFee
+    ) external onlyOwner {
+        require(perfFee <= MAX_PERFORMANCE_FEE, "Exceeds max");
+        strategyPerformanceFees[strategy] = perfFee;
+        hasStrategyOverride[strategy] = true;
+        emit StrategyFeeOverrideSet(strategy, perfFee);
     }
 
-    /**
-     * @notice Calculate the flash loan fee for a given amount.
-     * @param amount The flash loan principal
-     * @return fee The fee to charge
-     */
-    function calculateFlashLoanFee(
-        uint256 amount
-    ) external view returns (uint256) {
-        return (amount * flashLoanFee) / BPS;
-    }
-
-    /**
-     * @notice Calculate the protocol's share of a liquidation bonus.
-     * @param bonusAmount The total liquidation bonus
-     * @return protocolShare The protocol's portion
-     */
-    function calculateLiquidationProtocolFee(
-        uint256 bonusAmount
-    ) external view returns (uint256) {
-        return (bonusAmount * liquidationProtocolShare) / BPS;
+    function removeStrategyFeeOverride(address strategy) external onlyOwner {
+        delete strategyPerformanceFees[strategy];
+        hasStrategyOverride[strategy] = false;
+        emit StrategyFeeOverrideRemoved(strategy);
     }
 
     // ============================================================
-    //                FEE DISTRIBUTION
+    //            FEE DISTRIBUTION
     // ============================================================
 
     /**
-     * @notice Distribute accrued fees for an asset to treasury, insurance, and dev fund.
-     * @dev Anyone can call this to trigger distribution.
-     * @param asset The asset to distribute fees for
+     * @notice Distribute protocol fee tokens to treasury, insurance, and dev fund.
+     * @dev The vault's feeRecipient is set to this contract. When fee shares are
+     *      redeemed for underlying tokens, call this to split them.
+     * @param token The ERC20 token to distribute
      */
-    function distributeFees(address asset) external {
-        uint256 amount = accruedFees[asset];
-        require(amount > 0, "No fees to distribute");
+    function distributeFees(address token) external {
+        uint256 balance = IERC20(token).balanceOf(address(this));
+        require(balance > 0, "No fees to distribute");
 
-        accruedFees[asset] = 0;
-        totalFeesDistributed[asset] += amount;
+        totalFeesDistributed[token] += balance;
 
-        uint256 toTreasury = (amount * treasuryShare) / BPS;
-        uint256 toInsurance = (amount * insuranceShare) / BPS;
-        uint256 toDevelopment = amount - toTreasury - toInsurance; // Remainder to avoid rounding loss
+        uint256 toTreasury = (balance * treasuryShare) / BPS;
+        uint256 toInsurance = (balance * insuranceShare) / BPS;
+        uint256 toDevelopment = balance - toTreasury - toInsurance;
 
         if (toTreasury > 0 && treasury != address(0)) {
-            IERC20(asset).safeTransfer(treasury, toTreasury);
+            IERC20(token).safeTransfer(treasury, toTreasury);
         }
         if (toInsurance > 0 && insuranceFund != address(0)) {
-            IERC20(asset).safeTransfer(insuranceFund, toInsurance);
+            IERC20(token).safeTransfer(insuranceFund, toInsurance);
         }
         if (toDevelopment > 0 && developmentFund != address(0)) {
-            IERC20(asset).safeTransfer(developmentFund, toDevelopment);
+            IERC20(token).safeTransfer(developmentFund, toDevelopment);
         }
 
-        emit FeesDistributed(asset, toTreasury, toInsurance, toDevelopment);
+        emit FeesDistributed(token, toTreasury, toInsurance, toDevelopment);
     }
 
     // ============================================================
     //           DISTRIBUTION RATIO MANAGEMENT
     // ============================================================
 
-    /**
-     * @notice Update treasury distribution ratios.
-     * @dev All three shares must sum to 10000 (100%).
-     */
     function setDistributionRatios(
         uint256 treasuryShare_,
         uint256 insuranceShare_,
@@ -271,11 +248,7 @@ contract ProtocolFeeController is Ownable {
         treasuryShare = treasuryShare_;
         insuranceShare = insuranceShare_;
         developmentShare = developmentShare_;
-        emit DistributionRatiosUpdated(
-            treasuryShare_,
-            insuranceShare_,
-            developmentShare_
-        );
+        emit DistributionRatiosUpdated(treasuryShare_, insuranceShare_, developmentShare_);
     }
 
     // ============================================================
@@ -305,25 +278,34 @@ contract ProtocolFeeController is Ownable {
     //                   VIEW FUNCTIONS
     // ============================================================
 
-    function getReserveFactor(address asset) external view returns (uint256) {
-        return reserveFactors[asset];
+    /**
+     * @notice Get the applicable performance fee for a vault.
+     */
+    function getVaultPerformanceFee(address vault) external view returns (uint256) {
+        if (hasVaultOverride[vault]) return vaultPerformanceFees[vault];
+        return defaultPerformanceFee;
     }
 
-    function getPendingFees(address asset) external view returns (uint256) {
-        return accruedFees[asset];
+    /**
+     * @notice Get the applicable management fee for a vault.
+     */
+    function getVaultManagementFee(address vault) external view returns (uint256) {
+        if (hasVaultOverride[vault]) return vaultManagementFees[vault];
+        return defaultManagementFee;
     }
 
-    function getFeeStats(
-        address asset
-    )
-        external
-        view
-        returns (uint256 collected, uint256 distributed, uint256 pending)
-    {
-        return (
-            totalFeesCollected[asset],
-            totalFeesDistributed[asset],
-            accruedFees[asset]
-        );
+    /**
+     * @notice Get the applicable performance fee for a strategy.
+     */
+    function getStrategyPerformanceFee(address strategy) external view returns (uint256) {
+        if (hasStrategyOverride[strategy]) return strategyPerformanceFees[strategy];
+        return defaultPerformanceFee;
+    }
+
+    /**
+     * @notice Get pending fee balance for a token.
+     */
+    function getPendingFees(address token) external view returns (uint256) {
+        return IERC20(token).balanceOf(address(this));
     }
 }
