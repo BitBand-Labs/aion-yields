@@ -48,3 +48,6 @@ Thumbs.db
 # Compilation Errors/Logs
 *.txt
 !hackathon-submission-answers.txt
+
+# Kite wallet credentials — never commit private keys
+ai-engine/kite_wallet.json

@@ -469,4 +469,12 @@ contract AIAgentRegistry is Ownable {
     function isWhitelisted(address agent) external view returns (bool) {
         return whitelistedAgents[agent];
     }
+
+    /**
+     * @notice Check whether an agent is registered and currently active.
+     * @dev Used by AIYieldEngine to gate prediction submissions.
+     */
+    function isAgentActive(address agent) external view returns (bool) {
+        return agents[agent].isActive;
+    }
 }

@@ -1,12 +1,17 @@
 """AION Yield AI Strategy Engine - FastAPI Server (Multi-Chain).
 
+Reads from AionVault (ERC4626) and produces AI-powered strategy
+allocation and harvest recommendations using Anthropic Claude.
+
 Endpoints:
-  GET  /health                          - Health check
-  GET  /reserve/{asset}?chain=sepolia   - Fetch on-chain reserve data
-  GET  /price/{asset}?chain=sepolia     - Fetch asset price
-  GET  /external-apys                   - Fetch external protocol APYs
-  POST /analyze                         - AI-powered rate & allocation analysis
-  POST /predict                         - AI-powered yield prediction
+  GET  /health                              - Health check
+  GET  /vault?chain=fuji                    - Fetch vault state (TVL, strategies, tranches, PnL)
+  GET  /vault/harvest-preview/{strategy}    - Preview harvest for a strategy
+  GET  /price/{asset}?chain=fuji            - Fetch asset price from oracle
+  GET  /external-apys                       - Fetch external protocol APYs
+  GET  /market-context                      - Fetch macro market data from CoinMarketCap
+  POST /analyze                             - AI-powered allocation & harvest recommendations
+  POST /predict                             - AI-powered yield prediction
 
 Supported chains: sepolia, fuji
 """
@@ -17,13 +22,14 @@ from pydantic import BaseModel, Field
 from typing import Optional
 
 from config import HOST, PORT, ANTHROPIC_API_KEY, CHAIN_CONFIG, get_chain_config
-from chain_reader import get_reserve_data, get_asset_price, fetch_external_apys
+from chain_reader import get_vault_data, get_harvest_preview, get_asset_price, fetch_external_apys, fetch_market_context
 from ai_strategy import analyze_and_recommend, predict_yield
+from kite_payment import pay_for_inference, get_session_spend
 
 app = FastAPI(
     title="AION Yield AI Strategy Engine",
-    description="AI-powered DeFi yield optimization using Anthropic Claude (Sepolia + Avalanche Fuji)",
-    version="2.0.0",
+    description="AI-powered ERC4626 vault yield optimization using Anthropic Claude (Avalanche Fuji + Ethereum Sepolia)",
+    version="3.0.0",
 )
 
 app.add_middleware(
@@ -35,26 +41,16 @@ app.add_middleware(
 )
 
 
-def resolve_asset(asset_address: str | None, chain: str) -> str:
-    """Return the asset address, falling back to MockUSDC if empty or invalid."""
-    if asset_address and asset_address.startswith("0x") and len(asset_address) == 42:
-        return asset_address
-    return get_chain_config(chain)["mock_usdc"]
-
-
 # ── Request Models ──
 
 
 class AnalyzeRequest(BaseModel):
-    asset_address: Optional[str] = Field(default=None, description="ERC-20 token address. Leave empty to use MockUSDC for the selected chain.")
-    asset_symbol: str = "USDC"
     chain: str = Field(default="fuji", description="Chain: sepolia or fuji")
 
 
 class PredictRequest(BaseModel):
-    asset_address: Optional[str] = Field(default=None, description="ERC-20 token address. Leave empty to use MockUSDC for the selected chain.")
-    timeframe_seconds: int = Field(default=1, description="Prediction window in seconds")
     chain: str = Field(default="fuji", description="Chain: sepolia or fuji")
+    timeframe_hours: int = Field(default=24, description="Prediction window in hours")
 
 
 # ── Endpoints ──
@@ -66,17 +62,29 @@ async def health():
         "status": "ok",
         "ai_configured": bool(ANTHROPIC_API_KEY),
         "service": "AION Yield AI Strategy Engine",
+        "version": "3.0.0",
         "supported_chains": list(CHAIN_CONFIG.keys()),
     }
 
 
-@app.get("/reserve/{asset_address}")
-async def get_reserve(
-    asset_address: str,
-    chain: str = Query(default="sepolia", description="Chain: sepolia or fuji"),
+@app.get("/vault")
+async def vault_state(
+    chain: str = Query(default="fuji", description="Chain: sepolia or fuji"),
 ):
-    """Fetch on-chain reserve data for an asset."""
-    data = get_reserve_data(asset_address, chain=chain)
+    """Fetch full AionVault state: TVL, tranches, strategies, unrealized PnL."""
+    data = get_vault_data(chain=chain)
+    if "error" in data:
+        raise HTTPException(status_code=500, detail=data["error"])
+    return data
+
+
+@app.get("/vault/harvest-preview/{strategy_address}")
+async def harvest_preview(
+    strategy_address: str,
+    chain: str = Query(default="fuji", description="Chain: sepolia or fuji"),
+):
+    """Preview what would happen if a strategy is harvested now."""
+    data = get_harvest_preview(strategy_address, chain=chain)
     if "error" in data:
         raise HTTPException(status_code=500, detail=data["error"])
     return data
@@ -85,7 +93,7 @@ async def get_reserve(
 @app.get("/price/{asset_address}")
 async def get_price(
     asset_address: str,
-    chain: str = Query(default="sepolia", description="Chain: sepolia or fuji"),
+    chain: str = Query(default="fuji", description="Chain: sepolia or fuji"),
 ):
     """Fetch asset price from ChainlinkPriceOracle."""
     data = get_asset_price(asset_address, chain=chain)
@@ -96,31 +104,55 @@ async def get_price(
 
 @app.get("/external-apys")
 async def external_apys():
-    """Fetch APYs from external protocols (Aave V3, Compound)."""
+    """Fetch APYs from external protocols (Aave V3, Compound, Benqi)."""
     return await fetch_external_apys()
+
+
+@app.get("/market-context")
+async def market_context():
+    """Fetch macro market data from CoinMarketCap: asset prices, global metrics,
+    stablecoin health, and market risk signal."""
+    data = await fetch_market_context()
+    if "error" in data:
+        raise HTTPException(status_code=503, detail=data["error"])
+    return data
+
+
+@app.get("/kite-payments/session")
+async def kite_session_spend():
+    """Return KITE spending stats for this session."""
+    return get_session_spend()
 
 
 @app.post("/analyze")
 async def analyze(request: AnalyzeRequest):
-    """AI-powered analysis: reads on-chain data, fetches external APYs,
-    and uses Claude to produce rate + allocation recommendations."""
+    """AI-powered analysis: reads AionVault state, fetches external APYs and
+    macro market context, then uses Claude to produce strategy allocation
+    and harvest recommendations.
+
+    Pays a KITE x402 micropayment before calling Claude, creating an
+    on-chain attestation of the AI inference."""
     if not ANTHROPIC_API_KEY:
         raise HTTPException(status_code=503, detail="Anthropic API key not configured")
 
-    asset = resolve_asset(request.asset_address, request.chain)
+    vault_data = get_vault_data(chain=request.chain)
+    if "error" in vault_data:
+        raise HTTPException(status_code=500, detail=f"Vault read error: {vault_data['error']}")
 
-    reserve_data = get_reserve_data(asset, chain=request.chain)
-    if "error" in reserve_data:
-        raise HTTPException(status_code=500, detail=f"Chain read error: {reserve_data['error']}")
+    # x402: pay for inference on Kite chain before calling Claude
+    payment_proof = pay_for_inference(action_type="analyze")
 
-    price_data = get_asset_price(asset, chain=request.chain)
+    # Get asset price for the underlying token
+    cfg = get_chain_config(request.chain)
+    price_data = get_asset_price(cfg["mock_usdc"], chain=request.chain)
     external = await fetch_external_apys()
+    market = await fetch_market_context()
 
     result = await analyze_and_recommend(
-        reserve_data=reserve_data,
-        asset_price=price_data,
+        vault_data=vault_data,
         external_apys=external,
-        asset_symbol=request.asset_symbol,
+        asset_price=price_data if "error" not in price_data else None,
+        market_context=market if "error" not in market else None,
     )
 
     if "error" in result:
@@ -128,32 +160,37 @@ async def analyze(request: AnalyzeRequest):
 
     return {
         "chain": request.chain,
-        "input": {
-            "reserve": reserve_data,
-            "price": price_data,
-        },
+        "vault_state": vault_data,
+        "market_context": market if "error" not in market else None,
         "ai_recommendation": result,
+        "payment_proof": payment_proof,
     }
 
 
 @app.post("/predict")
 async def predict(request: PredictRequest):
-    """AI-powered yield prediction over a timeframe."""
+    """AI-powered yield prediction for the vault over a timeframe.
+
+    Pays a KITE x402 micropayment before calling Claude, creating an
+    on-chain attestation of the AI inference."""
     if not ANTHROPIC_API_KEY:
         raise HTTPException(status_code=503, detail="Anthropic API key not configured")
 
-    asset = resolve_asset(request.asset_address, request.chain)
+    vault_data = get_vault_data(chain=request.chain)
+    if "error" in vault_data:
+        raise HTTPException(status_code=500, detail=f"Vault read error: {vault_data['error']}")
 
-    reserve_data = get_reserve_data(asset, chain=request.chain)
-    if "error" in reserve_data:
-        raise HTTPException(status_code=500, detail=f"Chain read error: {reserve_data['error']}")
+    # x402: pay for inference on Kite chain before calling Claude
+    payment_proof = pay_for_inference(action_type="predict")
 
     external = await fetch_external_apys()
+    market = await fetch_market_context()
 
     result = await predict_yield(
-        reserve_data=reserve_data,
+        vault_data=vault_data,
         external_apys=external,
-        timeframe_seconds=request.timeframe_seconds,
+        timeframe_hours=request.timeframe_hours,
+        market_context=market if "error" not in market else None,
     )
 
     if "error" in result:
@@ -161,8 +198,10 @@ async def predict(request: PredictRequest):
 
     return {
         "chain": request.chain,
-        "input": {"reserve": reserve_data},
+        "vault_state": vault_data,
+        "market_context": market if "error" not in market else None,
         "prediction": result,
+        "payment_proof": payment_proof,
     }
 
 
